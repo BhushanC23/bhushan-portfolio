@@ -381,25 +381,24 @@ export default function HeroSection() {
           background: 'linear-gradient(135deg, #070d0e 0%, #0a1f22 50%, #0d1a1c 100%)',
         }} />
 
-        {/* Scroll Video - Fed with the high-performance local Blob URL */}
-        {videoUrl && (
-          <video
-            ref={videoRef}
-            muted
-            playsInline
-            src={videoUrl}
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center center',
-              opacity: videoLoaded ? 1 : 0,
-              transition: 'opacity 0.8s ease',
-            }}
-          />
-        )}
+        {/* Scroll Video - Always rendered to capture Git ref binding on initial mount */}
+        <video
+          ref={videoRef}
+          muted
+          playsInline
+          src={videoUrl || undefined}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center center',
+            opacity: videoLoaded ? 1 : 0,
+            transition: 'opacity 0.8s ease',
+            pointerEvents: 'none',
+          }}
+        />
 
         {/* Left dark zone — keeps text readable over video */}
         <div className="left-dark-zone" style={{

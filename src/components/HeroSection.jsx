@@ -89,7 +89,7 @@ function TextOverlay({ overlay, progress }) {
         transform: centered 
           ? `translate(-50%, ${slideY}px)` 
           : `translateY(${slideY}px)`,
-        transition: 'opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1)',
+        transition: 'none',
         zIndex: 10,
         width: centered ? '90%' : 'auto',
         maxWidth: centered ? '90%' : '42%',
@@ -177,8 +177,10 @@ function TextOverlay({ overlay, progress }) {
 }
 
 export default function HeroSection() {
-  const { videoRef, containerRef } = useScrollVideo();
   const [scrollProgress, setScrollProgress] = useState(0);
+  const { videoRef, containerRef } = useScrollVideo((progress) => {
+    setScrollProgress(progress);
+  });
   
   // High-performance loading states
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -224,26 +226,13 @@ export default function HeroSection() {
     };
   }, []);
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const rect = container.getBoundingClientRect();
-      const containerHeight = container.offsetHeight - window.innerHeight;
-      const scrolled = -rect.top;
-      const progress = Math.min(Math.max(scrolled / containerHeight, 0), 1);
-      setScrollProgress(progress);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  // The useScrollVideo hook driving progress natively handles all state updates now!
 
   return (
     <section
       ref={containerRef}
-      style={{ height: '300vh', position: 'relative' }}
+      className="hero-scroll-container"
+      style={{ position: 'relative' }}
     >
       {/* Cinematic 0-100% Preloader Overlay */}
       {preloaderActive && (
@@ -261,7 +250,13 @@ export default function HeroSection() {
           pointerEvents: videoLoaded ? 'none' : 'auto',
         }}
         onTransitionEnd={() => {
-          if (videoLoaded) setPreloaderActive(false);
+          if (videoLoaded) {
+            setPreloaderActive(false);
+            // On mobile, trigger automatic cinematic video playback once preloader fades
+            if (window.innerWidth <= 768 && videoRef.current) {
+              videoRef.current.play().catch(err => console.log("Autoplay failed:", err));
+            }
+          }
         }}
         >
           {/* Neon Pulse Logo Ring */}
@@ -532,7 +527,16 @@ export default function HeroSection() {
           display: inline;
         }
 
+        .hero-scroll-container {
+          height: 300vh;
+        }
+
         @media (max-width: 768px) {
+          .hero-scroll-container {
+            height: 100vh !important;
+            height: 100dvh !important;
+          }
+          
           .left-dark-zone {
             background: linear-gradient(to right, rgba(7,13,14,0.75) 0%, rgba(7,13,14,0.3) 30%, transparent 60%) !important;
           }

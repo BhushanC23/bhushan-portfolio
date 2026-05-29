@@ -89,7 +89,7 @@ function TextOverlay({ overlay, progress }) {
         transform: centered 
           ? `translate(-50%, ${slideY}px)` 
           : `translateY(${slideY}px)`,
-        transition: 'none',
+        transition: 'opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1)',
         zIndex: 10,
         width: centered ? '90%' : 'auto',
         maxWidth: centered ? '90%' : '42%',
@@ -179,7 +179,50 @@ function TextOverlay({ overlay, progress }) {
 export default function HeroSection() {
   const { videoRef, containerRef } = useScrollVideo();
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [isLoaded, setIsLoaded] = useState(false);
+  
+  // High-performance loading states
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [videoUrl, setVideoUrl] = useState('');
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [preloaderActive, setPreloaderActive] = useState(true);
+
+  // Progressive XMLHttpRequest Video Preloader
+  useEffect(() => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', '/bhushan.mp4', true);
+    xhr.responseType = 'blob';
+
+    xhr.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        setLoadingProgress(percent);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const blobUrl = URL.createObjectURL(xhr.response);
+        setVideoUrl(blobUrl);
+        setVideoLoaded(true);
+      } else {
+        // High-safety fallback to standard streaming URL
+        setVideoUrl('/bhushan.mp4');
+        setVideoLoaded(true);
+      }
+    };
+
+    xhr.onerror = () => {
+      // High-safety fallback to standard streaming URL
+      setVideoUrl('/bhushan.mp4');
+      setVideoLoaded(true);
+    };
+
+    xhr.send();
+
+    return () => {
+      xhr.abort();
+    };
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -202,6 +245,127 @@ export default function HeroSection() {
       ref={containerRef}
       style={{ height: '300vh', position: 'relative' }}
     >
+      {/* Cinematic 0-100% Preloader Overlay */}
+      {preloaderActive && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: '#070d0e',
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          opacity: videoLoaded ? 0 : 1,
+          transition: 'opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1)',
+          pointerEvents: videoLoaded ? 'none' : 'auto',
+        }}
+        onTransitionEnd={() => {
+          if (videoLoaded) setPreloaderActive(false);
+        }}
+        >
+          {/* Neon Pulse Logo Ring */}
+          <div style={{
+            position: 'relative',
+            width: '160px',
+            height: '160px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            {/* Spinning ambient neon circle */}
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: '50%',
+              border: '2px solid rgba(45,212,191,0.1)',
+              borderTopColor: 'var(--teal-accent)',
+              borderBottomColor: 'var(--gold-accent)',
+              animation: 'spinning-glow 4s linear infinite',
+            }} />
+            
+            {/* Slow breathing pulse circle */}
+            <div style={{
+              position: 'absolute',
+              inset: '-10px',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(45,212,191,0.08) 0%, transparent 70%)',
+              animation: 'breathing-glow 3s ease-in-out infinite',
+            }} />
+            
+            {/* Centered branding logo */}
+            <span style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '2.2rem',
+              fontWeight: 800,
+              color: 'var(--teal-accent)',
+              letterSpacing: '-0.02em',
+              textShadow: '0 0 25px rgba(45,212,191,0.6)',
+            }}>
+              Bhushan
+            </span>
+          </div>
+
+          {/* Slender futuristic percentage loader */}
+          <div style={{
+            marginTop: '3.5rem',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.75rem',
+            width: 'min(280px, 80%)',
+          }}>
+            <div style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: 'var(--text-muted)',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+            }}>
+              <span>Preparing Cinematic Experience</span>
+              <span style={{
+                color: 'var(--teal-accent)',
+                fontWeight: 800,
+                textShadow: '0 0 10px rgba(45,212,191,0.3)',
+              }}>{loadingProgress}%</span>
+            </div>
+
+            {/* Slender loading progress track */}
+            <div style={{
+              width: '100%',
+              height: '2px',
+              background: 'rgba(45,212,191,0.1)',
+              borderRadius: '2px',
+              overflow: 'hidden',
+            }}>
+              <div style={{
+                width: `${loadingProgress}%`,
+                height: '100%',
+                background: 'linear-gradient(90deg, var(--teal-accent), var(--gold-accent))',
+                boxShadow: '0 0 8px var(--teal-accent)',
+                transition: 'width 0.15s ease-out',
+              }} />
+            </div>
+          </div>
+          
+          {/* Inline animations for preloader */}
+          <style>{`
+            @keyframes spinning-glow {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+            @keyframes breathing-glow {
+              0%, 100% { transform: scale(0.95); opacity: 0.6; }
+              50% { transform: scale(1.05); opacity: 1; }
+            }
+          `}</style>
+        </div>
+      )}
+
       {/* Sticky viewport container */}
       <div style={{
         position: 'sticky',
@@ -217,26 +381,25 @@ export default function HeroSection() {
           background: 'linear-gradient(135deg, #070d0e 0%, #0a1f22 50%, #0d1a1c 100%)',
         }} />
 
-        {/* Scroll Video */}
-        <video
-          ref={videoRef}
-          muted
-          playsInline
-          preload="auto"
-          onLoadedData={() => setIsLoaded(true)}
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            objectPosition: 'center center',
-            opacity: isLoaded ? 1 : 0,
-            transition: 'opacity 0.8s ease',
-          }}
-        >
-          <source src="/bhushan.mp4" type="video/mp4" />
-        </video>
+        {/* Scroll Video - Fed with the high-performance local Blob URL */}
+        {videoUrl && (
+          <video
+            ref={videoRef}
+            muted
+            playsInline
+            src={videoUrl}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center center',
+              opacity: videoLoaded ? 1 : 0,
+              transition: 'opacity 0.8s ease',
+            }}
+          />
+        )}
 
         {/* Left dark zone — keeps text readable over video */}
         <div className="left-dark-zone" style={{

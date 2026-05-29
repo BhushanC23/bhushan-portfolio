@@ -7,6 +7,7 @@ export function useScrollVideo(onProgressUpdate) {
   // Interpolation targets for butter-smooth performance
   const targetProgress = useRef(0);
   const currentProgress = useRef(0);
+  const lastRenderedProgress = useRef(-1);
   const loopRef = useRef(null);
 
   // Store the callback in a mutable ref to prevent tearing down listeners/loops on render
@@ -22,7 +23,7 @@ export function useScrollVideo(onProgressUpdate) {
     const rect = container.getBoundingClientRect();
     const containerHeight = container.offsetHeight - window.innerHeight;
     
-    // Safe division check (mobile will return here since container height will be 100vh)
+    // Safe division check
     if (containerHeight <= 0) return;
     
     const scrolled = -rect.top;
@@ -44,28 +45,22 @@ export function useScrollVideo(onProgressUpdate) {
     const updateLoop = () => {
       const vid = videoRef.current;
       if (vid && vid.duration && !isNaN(vid.duration)) {
+        // Easing factors: 0.08 on desktop (creamy scroll), 0.14 on mobile (very responsive)
         const isMobile = window.innerWidth <= 768;
+        const easeFactor = isMobile ? 0.14 : 0.08;
 
-        if (isMobile) {
-          // On mobile, the video plays natively for hardware-accelerated 60fps playback.
-          // We read the current progress directly.
-          const progress = vid.currentTime / vid.duration;
-          currentProgress.current = progress;
-          targetProgress.current = progress;
-          
-          if (onProgressUpdateRef.current) {
-            onProgressUpdateRef.current(progress);
-          }
-        } else {
-          // On desktop, we LERP toward target scroll progress
-          const easeFactor = 0.08;
-          currentProgress.current += (targetProgress.current - currentProgress.current) * easeFactor;
+        currentProgress.current += (targetProgress.current - currentProgress.current) * easeFactor;
 
-          if (Math.abs(targetProgress.current - currentProgress.current) < 0.0002) {
-            currentProgress.current = targetProgress.current;
-          }
+        // Snap to target if very close to avoid micro-rendering calculations
+        if (Math.abs(targetProgress.current - currentProgress.current) < 0.0002) {
+          currentProgress.current = targetProgress.current;
+        }
 
+        // Apply smooth scrub frame only if the progress has actually changed!
+        // This is a massive performance optimization that prevents constant seeking when static!
+        if (lastRenderedProgress.current !== currentProgress.current) {
           vid.currentTime = currentProgress.current * vid.duration;
+          lastRenderedProgress.current = currentProgress.current;
           
           if (onProgressUpdateRef.current) {
             onProgressUpdateRef.current(currentProgress.current);

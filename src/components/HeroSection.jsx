@@ -252,10 +252,6 @@ export default function HeroSection() {
         onTransitionEnd={() => {
           if (videoLoaded) {
             setPreloaderActive(false);
-            // On mobile, trigger automatic cinematic video playback once preloader fades
-            if (window.innerWidth <= 768 && videoRef.current) {
-              videoRef.current.play().catch(err => console.log("Autoplay failed:", err));
-            }
           }
         }}
         >
@@ -533,8 +529,7 @@ export default function HeroSection() {
 
         @media (max-width: 768px) {
           .hero-scroll-container {
-            height: 100vh !important;
-            height: 100dvh !important;
+            height: 135vh !important;
           }
           
           .left-dark-zone {

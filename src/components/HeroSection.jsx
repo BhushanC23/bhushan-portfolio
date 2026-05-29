@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useScrollVideo } from '../hooks/useScrollVideo';
 import Navbar from './Navbar';
 import { ChevronDown } from 'lucide-react';
@@ -54,28 +54,10 @@ const TEXT_OVERLAYS = [
   },
 ];
 
-function TextOverlay({ overlay, progress }) {
-  const { showAt, hideAt, heading, headingLine2, sub, tag, id, posStyle, centered } = overlay;
+function TextOverlay({ overlay }) {
+  const { heading, headingLine2, sub, tag, id, posStyle, centered } = overlay;
 
-  const isVisible = progress >= showAt && progress < hideAt;
-
-  let opacity = 0;
-  let slideY = 20;
-  if (isVisible) {
-    const fadeInEnd = showAt + 0.05;
-    const fadeOutStart = hideAt - 0.06;
-
-    if (progress < fadeInEnd) {
-      opacity = (progress - showAt) / 0.05;
-    } else if (progress > fadeOutStart) {
-      opacity = 1 - (progress - fadeOutStart) / 0.06;
-    } else {
-      opacity = 1;
-    }
-    opacity = Math.min(Math.max(opacity, 0), 1);
-    slideY = (1 - opacity) * 20;
-  }
-
+  const isFirst = id === 'overlay-1';
   const isRightAligned = !!posStyle.right;
 
   return (
@@ -85,16 +67,16 @@ function TextOverlay({ overlay, progress }) {
       style={{
         position: 'absolute',
         ...posStyle,
-        opacity,
+        opacity: isFirst ? 1 : 0,
         transform: centered 
-          ? `translate(-50%, ${slideY}px)` 
-          : `translateY(${slideY}px)`,
+          ? `translate(-50%, ${isFirst ? 0 : 20}px)` 
+          : `translateY(${isFirst ? 0 : 20}px)`,
         transition: 'none',
         zIndex: 10,
         width: centered ? '90%' : 'auto',
         maxWidth: centered ? '90%' : '42%',
         textAlign: centered ? 'center' : (isRightAligned ? 'right' : 'left'),
-        pointerEvents: opacity > 0 ? 'auto' : 'none',
+        pointerEvents: isFirst ? 'auto' : 'none',
       }}
     >
       {/* Tag pill */}
@@ -177,10 +159,64 @@ function TextOverlay({ overlay, progress }) {
 }
 
 export default function HeroSection() {
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const { videoRef, containerRef } = useScrollVideo((progress) => {
-    setScrollProgress(progress);
-  });
+  // High-performance direct DOM updates to achieve 120fps fluid scrolling with ZERO React overhead!
+  const updateHeroDomStyles = useCallback((progress) => {
+    // 1. Overlays
+    TEXT_OVERLAYS.forEach(overlay => {
+      const el = document.getElementById(overlay.id);
+      if (!el) return;
+
+      const { showAt, hideAt, centered } = overlay;
+      const isVisible = progress >= showAt && progress < hideAt;
+
+      let opacity = 0;
+      let slideY = 20;
+      if (isVisible) {
+        const fadeInEnd = showAt + 0.05;
+        const fadeOutStart = hideAt - 0.06;
+
+        if (progress < fadeInEnd) {
+          opacity = (progress - showAt) / 0.05;
+        } else if (progress > fadeOutStart) {
+          opacity = 1 - (progress - fadeOutStart) / 0.06;
+        } else {
+          opacity = 1;
+        }
+        opacity = Math.min(Math.max(opacity, 0), 1);
+        slideY = (1 - opacity) * 20;
+      }
+
+      el.style.opacity = opacity;
+      el.style.transform = centered 
+        ? `translate(-50%, ${slideY}px)` 
+        : `translateY(${slideY}px)`;
+      el.style.pointerEvents = opacity > 0 ? 'auto' : 'none';
+    });
+
+    // 2. Right-side scroll progress bar
+    const scrollBar = document.getElementById('hero-scroll-bar');
+    if (scrollBar) {
+      scrollBar.style.height = `${progress * 100}%`;
+    }
+
+    // 3. Scroll hint (ChevronDown)
+    const scrollHint = document.getElementById('hero-scroll-hint');
+    if (scrollHint) {
+      scrollHint.style.opacity = progress < 0.06 ? `${1 - progress * 16}` : '0';
+    }
+
+    // 4. Progress dots (bottom-left)
+    const dots = document.querySelectorAll('.hero-progress-dot');
+    dots.forEach((dot, i) => {
+      const overlay = TEXT_OVERLAYS[i];
+      if (!overlay) return;
+      const isActive = progress >= overlay.showAt && progress < overlay.hideAt;
+      dot.style.width = isActive ? '20px' : '6px';
+      dot.style.background = isActive ? 'var(--teal-accent)' : 'rgba(45,212,191,0.2)';
+    });
+  }, []);
+
+  const { videoRef, containerRef } = useScrollVideo(updateHeroDomStyles);
   
   // High-performance loading states
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -392,7 +428,6 @@ export default function HeroSection() {
           <TextOverlay
             key={overlay.id}
             overlay={overlay}
-            progress={scrollProgress}
           />
         ))}
 
@@ -415,9 +450,9 @@ export default function HeroSection() {
             borderRadius: '1px',
             overflow: 'hidden',
           }}>
-            <div style={{
+            <div id="hero-scroll-bar" style={{
               width: '100%',
-              height: `${scrollProgress * 100}%`,
+              height: '0%',
               background: 'var(--teal-accent)',
               transition: 'height 0.1s ease',
             }} />
@@ -435,14 +470,14 @@ export default function HeroSection() {
         </div>
 
         {/* Scroll hint — bottom right, fades immediately */}
-        <div style={{
+        <div id="hero-scroll-hint" style={{
           position: 'absolute',
           bottom: '2rem',
           right: '4rem',
           display: 'flex',
           alignItems: 'center',
           gap: '0.4rem',
-          opacity: scrollProgress < 0.06 ? 1 - scrollProgress * 16 : 0,
+          opacity: 1,
           transition: 'opacity 0.3s ease',
           zIndex: 10,
         }}>
@@ -459,13 +494,13 @@ export default function HeroSection() {
           zIndex: 10,
         }}>
           {TEXT_OVERLAYS.map((overlay, i) => {
-            const isActive = scrollProgress >= overlay.showAt && scrollProgress < overlay.hideAt;
+            const isFirst = i === 0;
             return (
-              <div key={i} style={{
-                width: isActive ? '20px' : '6px',
+              <div key={i} className="hero-progress-dot" style={{
+                width: isFirst ? '20px' : '6px',
                 height: '2.5px',
                 borderRadius: '2px',
-                background: isActive ? 'var(--teal-accent)' : 'rgba(45,212,191,0.2)',
+                background: isFirst ? 'var(--teal-accent)' : 'rgba(45,212,191,0.2)',
                 transition: 'all 0.4s ease',
               }} />
             );

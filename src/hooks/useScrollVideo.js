@@ -10,6 +10,21 @@ export function useScrollVideo(onProgressUpdate) {
   const lastRenderedTime = useRef(-1);
   const loopRef = useRef(null);
 
+  // Cached layout dimensions to prevent layout thrashing (synchronous reflow) in event handlers
+  const containerHeightRef = useRef(0);
+  const easeFactorRef = useRef(0.08);
+
+  const updateDimensions = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    
+    // Read heights and viewport dimensions once here (safe layout read, occurs outside scroll events!)
+    containerHeightRef.current = container.offsetHeight - window.innerHeight;
+    
+    const isMobile = window.innerWidth <= 768;
+    easeFactorRef.current = isMobile ? 0.14 : 0.08;
+  }, []);
+
   // Store the callback in a mutable ref to prevent tearing down listeners/loops on render
   const onProgressUpdateRef = useRef(onProgressUpdate);
   useEffect(() => {
@@ -17,17 +32,12 @@ export function useScrollVideo(onProgressUpdate) {
   }, [onProgressUpdate]);
 
   const handleScroll = useCallback(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const rect = container.getBoundingClientRect();
-    const containerHeight = container.offsetHeight - window.innerHeight;
-    
-    // Safe division check
+    const containerHeight = containerHeightRef.current;
     if (containerHeight <= 0) return;
     
-    const scrolled = -rect.top;
-    const progress = Math.min(Math.max(scrolled / containerHeight, 0), 1);
+    // scrollY is layout-free, extremely fast, and prevents layout thrashing
+    const scrollTop = window.scrollY;
+    const progress = Math.min(Math.max(scrollTop / containerHeight, 0), 1);
     
     targetProgress.current = progress;
   }, []);
@@ -39,15 +49,17 @@ export function useScrollVideo(onProgressUpdate) {
     video.preload = 'auto';
     video.load();
 
+    // Initial dimension caching
+    updateDimensions();
+
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', updateDimensions, { passive: true });
 
     // High-performance 60fps/120fps render loop
     const updateLoop = () => {
       const vid = videoRef.current;
       if (vid && vid.duration && !isNaN(vid.duration)) {
-        // Easing factors: 0.08 on desktop (creamy scroll), 0.14 on mobile (very responsive)
-        const isMobile = window.innerWidth <= 768;
-        const easeFactor = isMobile ? 0.14 : 0.08;
+        const easeFactor = easeFactorRef.current;
 
         currentProgress.current += (targetProgress.current - currentProgress.current) * easeFactor;
 
@@ -81,11 +93,12 @@ export function useScrollVideo(onProgressUpdate) {
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', updateDimensions);
       if (loopRef.current) {
         cancelAnimationFrame(loopRef.current);
       }
     };
-  }, [handleScroll]);
+  }, [handleScroll, updateDimensions]);
 
   return { videoRef, containerRef };
 }

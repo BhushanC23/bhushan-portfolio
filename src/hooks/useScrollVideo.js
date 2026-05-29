@@ -7,7 +7,7 @@ export function useScrollVideo(onProgressUpdate) {
   // Interpolation targets for butter-smooth performance
   const targetProgress = useRef(0);
   const currentProgress = useRef(0);
-  const lastRenderedProgress = useRef(-1);
+  const lastRenderedTime = useRef(-1);
   const loopRef = useRef(null);
 
   // Store the callback in a mutable ref to prevent tearing down listeners/loops on render
@@ -56,11 +56,18 @@ export function useScrollVideo(onProgressUpdate) {
           currentProgress.current = targetProgress.current;
         }
 
-        // Apply smooth scrub frame only if the progress has actually changed!
-        // This is a massive performance optimization that prevents constant seeking when static!
-        if (lastRenderedProgress.current !== currentProgress.current) {
-          vid.currentTime = currentProgress.current * vid.duration;
-          lastRenderedProgress.current = currentProgress.current;
+        // Mathematical Snapping to 30fps Video Frames:
+        // By seeking exactly to keyframe multiples (1/30s), we prevent the browser from doing
+        // sub-frame calculations or redundant seeking, making 30fps scrub buttery-smooth.
+        const fps = 30;
+        const frameTime = 1 / fps;
+        const targetTime = currentProgress.current * vid.duration;
+        const roundedTime = Math.round(targetTime / frameTime) * frameTime;
+        const safeTime = Math.min(Math.max(roundedTime, 0), vid.duration);
+
+        if (lastRenderedTime.current !== safeTime) {
+          vid.currentTime = safeTime;
+          lastRenderedTime.current = safeTime;
           
           if (onProgressUpdateRef.current) {
             onProgressUpdateRef.current(currentProgress.current);

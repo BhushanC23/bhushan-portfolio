@@ -255,82 +255,35 @@ export default function HeroSection() {
           }
         }}
         >
-          {/* Neon Pulse Logo Ring */}
+          {/* Centered Large Futuristic Percentage Counter */}
           <div style={{
-            position: 'relative',
-            width: '160px',
-            height: '160px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            {/* Spinning ambient neon circle */}
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              borderRadius: '50%',
-              border: '2px solid rgba(45,212,191,0.1)',
-              borderTopColor: 'var(--teal-accent)',
-              borderBottomColor: 'var(--gold-accent)',
-              animation: 'spinning-glow 4s linear infinite',
-            }} />
-            
-            {/* Slow breathing pulse circle */}
-            <div style={{
-              position: 'absolute',
-              inset: '-10px',
-              borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(45,212,191,0.08) 0%, transparent 70%)',
-              animation: 'breathing-glow 3s ease-in-out infinite',
-            }} />
-            
-            {/* Centered branding logo */}
-            <span style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '2.2rem',
-              fontWeight: 800,
-              color: 'var(--teal-accent)',
-              letterSpacing: '-0.02em',
-              textShadow: '0 0 25px rgba(45,212,191,0.6)',
-            }}>
-              Bhushan
-            </span>
-          </div>
-
-          {/* Slender futuristic percentage loader */}
-          <div style={{
-            marginTop: '3.5rem',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '0.75rem',
-            width: 'min(280px, 80%)',
+            justifyContent: 'center',
+            position: 'relative',
           }}>
-            <div style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              color: 'var(--text-muted)',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
+            {/* Huge, thin premium percentage number */}
+            <span style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(5rem, 12vw, 10rem)',
+              fontWeight: 200,
+              color: '#ffffff',
+              letterSpacing: '-0.05em',
+              lineHeight: 0.9,
+              textShadow: '0 4px 20px rgba(45,212,191,0.15)',
+              userSelect: 'none',
             }}>
-              <span>Preparing Cinematic Experience</span>
-              <span style={{
-                color: 'var(--teal-accent)',
-                fontWeight: 800,
-                textShadow: '0 0 10px rgba(45,212,191,0.3)',
-              }}>{loadingProgress}%</span>
-            </div>
+              {loadingProgress.toString().padStart(2, '0')}
+            </span>
 
-            {/* Slender loading progress track */}
+            {/* Micro-meter track */}
             <div style={{
-              width: '100%',
-              height: '2px',
-              background: 'rgba(45,212,191,0.1)',
-              borderRadius: '2px',
+              marginTop: '1.5rem',
+              width: '160px',
+              height: '1px',
+              background: 'rgba(255,255,255,0.06)',
+              position: 'relative',
               overflow: 'hidden',
             }}>
               <div style={{
@@ -338,20 +291,30 @@ export default function HeroSection() {
                 height: '100%',
                 background: 'linear-gradient(90deg, var(--teal-accent), var(--gold-accent))',
                 boxShadow: '0 0 8px var(--teal-accent)',
-                transition: 'width 0.15s ease-out',
+                transition: 'width 0.1s ease-out',
               }} />
             </div>
+
+            {/* Subtle, premium metadata subtext */}
+            <span style={{
+              marginTop: '1.25rem',
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.62rem',
+              fontWeight: 600,
+              color: 'rgba(255,255,255,0.38)',
+              letterSpacing: '0.35em',
+              textTransform: 'uppercase',
+              animation: 'subtle-pulse 2s ease-in-out infinite',
+            }}>
+              Initializing Portfolio
+            </span>
           </div>
-          
-          {/* Inline animations for preloader */}
+
+          {/* Inline animations for premium minimal preloader */}
           <style>{`
-            @keyframes spinning-glow {
-              0% { transform: rotate(0deg); }
-              100% { transform: rotate(360deg); }
-            }
-            @keyframes breathing-glow {
-              0%, 100% { transform: scale(0.95); opacity: 0.6; }
-              50% { transform: scale(1.05); opacity: 1; }
+            @keyframes subtle-pulse {
+              0%, 100% { opacity: 0.4; }
+              50% { opacity: 0.85; }
             }
           `}</style>
         </div>

@@ -2,7 +2,7 @@
 
 Welcome to the official repository of my personal developer portfolio website! Inspired by premium scroll-driven designs like [patelmann.vercel.app](https://patelmann.vercel.app), this website acts as a fully immersive, cinematic experience featuring a **scroll-controlled video hero**, buttery-smooth custom physics cursors, and an integrated **Google Gemini 2.5 Flash AI Assistant** that knows everything about my journey.
 
-✨ **Live Deployment:** [Coming Soon / Put Your Vercel Link Here]
+✨ **Live Deployment:** [bhushan-portfolio-peach.vercel.app](https://bhushan-portfolio-peach.vercel.app/)
 🌐 **Portfolio Owner:** Bhushan Chaturbhuj (Full Stack Developer & LLM Post-Training Intern)
 
 ---

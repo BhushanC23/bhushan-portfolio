@@ -22,7 +22,7 @@ export function useScrollVideo(onProgressUpdate) {
     containerHeightRef.current = container.offsetHeight - window.innerHeight;
     
     const isMobile = window.innerWidth <= 768;
-    easeFactorRef.current = isMobile ? 0.14 : 0.08;
+    easeFactorRef.current = isMobile ? 0.35 : 0.25;
   }, []);
 
   // Store the callback in a mutable ref to prevent tearing down listeners/loops on render
@@ -68,13 +68,12 @@ export function useScrollVideo(onProgressUpdate) {
           currentProgress.current = targetProgress.current;
         }
 
-        // Mathematical Snapping to 30fps Video Frames:
-        // By seeking exactly to keyframe multiples (1/30s), we prevent the browser from doing
-        // sub-frame calculations or redundant seeking, making 30fps scrub buttery-smooth.
-        const fps = 30;
-        const frameTime = 1 / fps;
+        // Ultra-precise 1ms time seeking:
+        // By seeking with millisecond precision, we allow even the tiniest scroll movement 
+        // to immediately update the frame (eliminating snapping dead zones), while still 
+        // preventing redundant seeks when the user is completely static.
         const targetTime = currentProgress.current * vid.duration;
-        const roundedTime = Math.round(targetTime / frameTime) * frameTime;
+        const roundedTime = Math.round(targetTime * 1000) / 1000;
         const safeTime = Math.min(Math.max(roundedTime, 0), vid.duration);
 
         if (lastRenderedTime.current !== safeTime) {

@@ -387,6 +387,10 @@ export default function HeroSection() {
             opacity: videoLoaded ? 1 : 0,
             transition: 'opacity 0.8s ease',
             pointerEvents: 'none',
+            // Complete compositor hardware-acceleration to bypass compositor lag!
+            transform: 'translate3d(0, 0, 0)',
+            willChange: 'transform, contents',
+            backfaceVisibility: 'hidden',
           }}
         />
 

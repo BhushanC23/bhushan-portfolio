@@ -216,50 +216,43 @@ export default function HeroSection() {
     });
   }, []);
 
-  const { videoRef, containerRef } = useScrollVideo(updateHeroDomStyles);
-  
-  // High-performance loading states
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [videoUrl, setVideoUrl] = useState('');
+  const [images, setImages] = useState([]);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [preloaderActive, setPreloaderActive] = useState(true);
 
-  // Progressive XMLHttpRequest Video Preloader
+  const { canvasRef, containerRef } = useScrollVideo(updateHeroDomStyles, images);
+
+  // Progressive High-Performance Image Sequence Preloader
   useEffect(() => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', '/bhushan.mp4', true);
-    xhr.responseType = 'blob';
+    const frameCount = 94;
+    const loadedImages = [];
+    let loadedCount = 0;
 
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percent = Math.round((event.loaded / event.total) * 100);
-        setLoadingProgress(percent);
-      }
-    };
+    for (let i = 1; i <= frameCount; i++) {
+      const img = new Image();
+      const frameIndex = i.toString().padStart(3, "0"); // "001", "002"
+      img.src = `/sequence/ezgif-frame-${frameIndex}.jpg`;
+      
+      img.onload = () => {
+        loadedCount++;
+        setLoadingProgress(Math.round((loadedCount / frameCount) * 100));
+        if (loadedCount === frameCount) {
+          setVideoLoaded(true);
+        }
+      };
 
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        const blobUrl = URL.createObjectURL(xhr.response);
-        setVideoUrl(blobUrl);
-        setVideoLoaded(true);
-      } else {
-        // High-safety fallback to standard streaming URL
-        setVideoUrl('/bhushan.mp4');
-        setVideoLoaded(true);
-      }
-    };
+      img.onerror = () => {
+        loadedCount++;
+        setLoadingProgress(Math.round((loadedCount / frameCount) * 100));
+        if (loadedCount === frameCount) {
+          setVideoLoaded(true);
+        }
+      };
 
-    xhr.onerror = () => {
-      // High-safety fallback to standard streaming URL
-      setVideoUrl('/bhushan.mp4');
-      setVideoLoaded(true);
-    };
-
-    xhr.send();
-
-    return () => {
-      xhr.abort();
-    };
+      loadedImages.push(img);
+    }
+    setImages(loadedImages);
   }, []);
 
   // The useScrollVideo hook driving progress natively handles all state updates now!
@@ -371,26 +364,18 @@ export default function HeroSection() {
           background: 'linear-gradient(135deg, #070d0e 0%, #0a1f22 50%, #0d1a1c 100%)',
         }} />
 
-        {/* Scroll Video - Always rendered to capture Git ref binding on initial mount */}
-        <video
-          ref={videoRef}
-          muted
-          playsInline
-          src={videoUrl || undefined}
+        {/* Scroll Canvas - Hardware-accelerated 120fps GPU frames drawing */}
+        <canvas
+          ref={canvasRef}
           style={{
             position: 'absolute',
             inset: 0,
             width: '100%',
             height: '100%',
-            objectFit: 'cover',
-            objectPosition: 'center center',
             opacity: videoLoaded ? 1 : 0,
             transition: 'opacity 0.8s ease',
             pointerEvents: 'none',
-            // Complete compositor hardware-acceleration to bypass compositor lag!
-            transform: 'translate3d(0, 0, 0)',
-            willChange: 'transform, contents',
-            backfaceVisibility: 'hidden',
+            display: 'block',
           }}
         />
 

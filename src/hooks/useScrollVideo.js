@@ -1,13 +1,15 @@
 import { useEffect, useRef, useCallback } from 'react';
 
-export function useScrollVideo(onProgressUpdate) {
-  const videoRef = useRef(null);
+const frameCount = 94;
+
+export function useScrollVideo(onProgressUpdate, images) {
+  const canvasRef = useRef(null);
   const containerRef = useRef(null);
   
   // Interpolation targets for butter-smooth performance
   const targetProgress = useRef(0);
   const currentProgress = useRef(0);
-  const lastRenderedTime = useRef(-1);
+  const lastRenderedFrame = useRef(-1);
   const loopRef = useRef(null);
 
   // Cached layout dimensions to prevent layout thrashing (synchronous reflow) in event handlers
@@ -25,12 +27,6 @@ export function useScrollVideo(onProgressUpdate) {
     easeFactorRef.current = isMobile ? 0.35 : 0.25;
   }, []);
 
-  // Store the callback in a mutable ref to prevent tearing down listeners/loops on render
-  const onProgressUpdateRef = useRef(onProgressUpdate);
-  useEffect(() => {
-    onProgressUpdateRef.current = onProgressUpdate;
-  }, [onProgressUpdate]);
-
   const handleScroll = useCallback(() => {
     const containerHeight = containerHeightRef.current;
     if (containerHeight <= 0) return;
@@ -42,49 +38,103 @@ export function useScrollVideo(onProgressUpdate) {
     targetProgress.current = progress;
   }, []);
 
+  const renderFrame = useCallback((index) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    const img = images[index];
+
+    if (!canvas || !ctx || !img) return;
+
+    // Handle canvas scaling for high DPI displays and exact sizes
+    if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    const { width, height } = canvas;
+    const imgRatio = img.width / img.height;
+    const canvasRatio = width / height;
+
+    let drawWidth, drawHeight, offsetX, offsetY;
+
+    if (canvasRatio > imgRatio) {
+      drawWidth = width;
+      drawHeight = width / imgRatio;
+      offsetX = 0;
+      offsetY = (height - drawHeight) / 2;
+    } else {
+      drawWidth = height * imgRatio;
+      drawHeight = height;
+      offsetX = (width - drawWidth) / 2;
+      offsetY = 0;
+    }
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+  }, [images]);
+
+  // Handle Resize
+  const handleResize = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      const frameIndex = Math.min(
+        frameCount - 1,
+        Math.floor(currentProgress.current * frameCount)
+      );
+      renderFrame(frameIndex);
+    }
+  }, [renderFrame]);
+
+  // Store the callback in a mutable ref to prevent tearing down listeners/loops on render
+  const onProgressUpdateRef = useRef(onProgressUpdate);
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    onProgressUpdateRef.current = onProgressUpdate;
+  }, [onProgressUpdate]);
 
-    video.preload = 'auto';
-    video.load();
+  useEffect(() => {
+    if (images.length === 0) return;
 
-    // Initial dimension caching
+    // Initial dimension caching & sizing
     updateDimensions();
+    handleResize();
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', updateDimensions, { passive: true });
+    window.addEventListener('resize', () => {
+      updateDimensions();
+      handleResize();
+    }, { passive: true });
 
-    // High-performance 60fps/120fps render loop
+    // High-performance 120fps render loop
     const updateLoop = () => {
-      const vid = videoRef.current;
-      if (vid && vid.duration && !isNaN(vid.duration)) {
-        const easeFactor = easeFactorRef.current;
+      if (images.length === 0) return;
 
-        currentProgress.current += (targetProgress.current - currentProgress.current) * easeFactor;
+      const easeFactor = easeFactorRef.current;
+      currentProgress.current += (targetProgress.current - currentProgress.current) * easeFactor;
 
-        // Snap to target if very close to avoid micro-rendering calculations
-        if (Math.abs(targetProgress.current - currentProgress.current) < 0.0002) {
-          currentProgress.current = targetProgress.current;
-        }
+      // Snap to target if very close to avoid micro-rendering calculations
+      if (Math.abs(targetProgress.current - currentProgress.current) < 0.0002) {
+        currentProgress.current = targetProgress.current;
+      }
 
-        // Ultra-precise 1ms time seeking:
-        // By seeking with millisecond precision, we allow even the tiniest scroll movement 
-        // to immediately update the frame (eliminating snapping dead zones), while still 
-        // preventing redundant seeks when the user is completely static.
-        const targetTime = currentProgress.current * vid.duration;
-        const roundedTime = Math.round(targetTime * 1000) / 1000;
-        const safeTime = Math.min(Math.max(roundedTime, 0), vid.duration);
+      // Map progress directly to frame indices (0 to 93)
+      const frameIndex = Math.min(
+        frameCount - 1,
+        Math.floor(currentProgress.current * frameCount)
+      );
 
-        if (lastRenderedTime.current !== safeTime) {
-          vid.currentTime = safeTime;
-          lastRenderedTime.current = safeTime;
-          
-          if (onProgressUpdateRef.current) {
-            onProgressUpdateRef.current(currentProgress.current);
-          }
+      // Render only when frame index changes (unparalleled 0ms seek GPU drawing speed!)
+      if (lastRenderedFrame.current !== frameIndex) {
+        renderFrame(frameIndex);
+        lastRenderedFrame.current = frameIndex;
+        
+        if (onProgressUpdateRef.current) {
+          onProgressUpdateRef.current(currentProgress.current);
         }
       }
+      
       loopRef.current = requestAnimationFrame(updateLoop);
     };
 
@@ -93,13 +143,21 @@ export function useScrollVideo(onProgressUpdate) {
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', updateDimensions);
+      window.removeEventListener('resize', handleResize);
       if (loopRef.current) {
         cancelAnimationFrame(loopRef.current);
       }
     };
-  }, [handleScroll, updateDimensions]);
+  }, [images, handleScroll, updateDimensions, handleResize, renderFrame]);
 
-  return { videoRef, containerRef };
+  // Initial draw when loaded
+  useEffect(() => {
+    if (images.length > 0) {
+      renderFrame(0);
+    }
+  }, [images, renderFrame]);
+
+  return { canvasRef, containerRef };
 }
 
 export function useScrollProgress() {

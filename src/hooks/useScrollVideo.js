@@ -41,7 +41,15 @@ export function useScrollVideo(onProgressUpdate, images) {
   const renderFrame = useCallback((index) => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
-    const img = images[index];
+
+    // Progressive load guard — find nearest loaded frame if this slot is null
+    let img = images[index];
+    if (!img) {
+      // Walk backwards to find last available frame
+      for (let k = index - 1; k >= 0; k--) {
+        if (images[k]) { img = images[k]; break; }
+      }
+    }
 
     if (!canvas || !ctx || !img) return;
 
@@ -154,7 +162,8 @@ export function useScrollVideo(onProgressUpdate, images) {
   // Initial draw when images loaded — draw frame 0 AND call progress(0) immediately
   // This ensures the hero overlay text shows instantly when preloader dismisses
   useEffect(() => {
-    if (images.length > 0) {
+    // images[0] may be null during progressive loading — wait until it's ready
+    if (images.length > 0 && images[0]) {
       renderFrame(0);
       lastRenderedFrame.current = 0;
       // Fire progress callback at 0 so Overlay-1 is immediately visible

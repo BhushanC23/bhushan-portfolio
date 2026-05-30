@@ -223,49 +223,52 @@ export default function HeroSection() {
 
   const { canvasRef, containerRef } = useScrollVideo(updateHeroDomStyles, images);
 
-  // Progressive High-Performance Image Sequence Preloader
+  // ─── PROGRESSIVE LOADER ────────────────────────────────────────────────────
+  // Show the site the INSTANT frame-001 is ready (usually < 500ms on cache).
+  // Remaining 93 frames load silently in background. Canvas skips null slots.
   useEffect(() => {
-    const frameCount = 94;
-    const loadedImages = [];
+    const FRAME_COUNT = 94;
+    const slots = new Array(FRAME_COUNT).fill(null); // pre-allocated, index = frame-1
     let loadedCount = 0;
+    let firstFrameShown = false;
 
-    for (let i = 1; i <= frameCount; i++) {
+    for (let i = 1; i <= FRAME_COUNT; i++) {
       const img = new Image();
-      const frameIndex = i.toString().padStart(3, "0"); // "001", "002"
-      img.src = `/sequence/ezgif-frame-${frameIndex}.jpg`;
-      
-      img.onload = () => {
+      img.src = `/sequence/ezgif-frame-${i.toString().padStart(3, '0')}.jpg`;
+
+      const done = (idx) => () => {
+        slots[idx - 1] = img;
         loadedCount++;
-        setLoadingProgress(Math.round((loadedCount / frameCount) * 100));
-        if (loadedCount === frameCount) {
+
+        if (idx === 1 && !firstFrameShown) {
+          // ⚡ Frame 001 ready → dismiss preloader immediately!
+          firstFrameShown = true;
+          setImages([...slots]);
           setVideoLoaded(true);
+          setLoadingProgress(1);
+        } else {
+          setLoadingProgress(Math.round((loadedCount / FRAME_COUNT) * 100));
+          // Refresh canvas image array every 10 frames (avoid thrashing)
+          if (loadedCount % 10 === 0 || loadedCount === FRAME_COUNT) {
+            setImages([...slots]);
+          }
         }
       };
 
-      img.onerror = () => {
-        loadedCount++;
-        setLoadingProgress(Math.round((loadedCount / frameCount) * 100));
-        if (loadedCount === frameCount) {
-          setVideoLoaded(true);
-        }
-      };
-
-      loadedImages.push(img);
+      img.onload = done(i);
+      img.onerror = done(i);
     }
-    setImages(loadedImages);
   }, []);
 
-  // Force-draw initial state immediately when preloader finishes
-  // This ensures Overlay 1 + frame 0 are visible the instant the preloader fades away
+  // Force-render Overlay-1 the moment preloader finishes
   useEffect(() => {
     if (videoLoaded) {
-      // Small delay to sync with the 0.8s preloader fade-out
-      const t = setTimeout(() => {
-        updateHeroDomStyles(0);
-      }, 50);
+      const t = setTimeout(() => updateHeroDomStyles(0), 50);
       return () => clearTimeout(t);
     }
   }, [videoLoaded, updateHeroDomStyles]);
+
+
 
   return (
     <section

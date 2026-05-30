@@ -255,7 +255,17 @@ export default function HeroSection() {
     setImages(loadedImages);
   }, []);
 
-  // The useScrollVideo hook driving progress natively handles all state updates now!
+  // Force-draw initial state immediately when preloader finishes
+  // This ensures Overlay 1 + frame 0 are visible the instant the preloader fades away
+  useEffect(() => {
+    if (videoLoaded) {
+      // Small delay to sync with the 0.8s preloader fade-out
+      const t = setTimeout(() => {
+        updateHeroDomStyles(0);
+      }, 50);
+      return () => clearTimeout(t);
+    }
+  }, [videoLoaded, updateHeroDomStyles]);
 
   return (
     <section
@@ -373,7 +383,6 @@ export default function HeroSection() {
             width: '100%',
             height: '100%',
             opacity: videoLoaded ? 1 : 0,
-            transition: 'opacity 0.8s ease',
             pointerEvents: 'none',
             display: 'block',
           }}

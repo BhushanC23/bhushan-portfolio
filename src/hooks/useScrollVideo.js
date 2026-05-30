@@ -151,10 +151,16 @@ export function useScrollVideo(onProgressUpdate, images) {
     };
   }, [images, handleScroll, updateDimensions, handleResize, renderFrame]);
 
-  // Initial draw when loaded
+  // Initial draw when images loaded — draw frame 0 AND call progress(0) immediately
+  // This ensures the hero overlay text shows instantly when preloader dismisses
   useEffect(() => {
     if (images.length > 0) {
       renderFrame(0);
+      lastRenderedFrame.current = 0;
+      // Fire progress callback at 0 so Overlay-1 is immediately visible
+      if (onProgressUpdateRef.current) {
+        onProgressUpdateRef.current(0);
+      }
     }
   }, [images, renderFrame]);
 

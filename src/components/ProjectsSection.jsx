@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { GitBranch, ExternalLink } from 'lucide-react';
 import { BHUSHAN_DATA } from '../data/bhushanData';
+import { usePortfolioData } from '../hooks/usePortfolioData';
+
 
 const TAG_COLORS = {
   'Full Stack': { bg: 'rgba(45,212,191,0.1)', border: 'rgba(45,212,191,0.25)', color: 'var(--teal-accent)' },
@@ -129,13 +131,13 @@ function ProjectCard({ project, index }) {
           color: 'rgba(240,244,244,0.65)',
           lineHeight: 1.65,
         }}>
-          {project.description}
+          {project.desc || project.description}
         </p>
       </div>
 
       {/* Stack pills */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: 'auto' }}>
-        {project.stack.map((tech, i) => (
+        {(project.tech || project.stack || []).map((tech, i) => (
           <span key={i} style={{
             padding: '0.2rem 0.65rem',
             background: 'rgba(7,13,14,0.5)',
@@ -165,6 +167,9 @@ function ProjectCard({ project, index }) {
 }
 
 export default function ProjectsSection() {
+  const { projects, loading } = usePortfolioData();
+  const projectList = projects || BHUSHAN_DATA.projects;
+
   return (
     <section id="projects" style={{
       background: 'var(--bg-secondary)',
@@ -217,8 +222,10 @@ export default function ProjectsSection() {
           gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
           gap: '1.5rem',
         }}>
-          {BHUSHAN_DATA.projects.map((project, i) => (
-            <ProjectCard key={project.id} project={project} index={i} />
+          {loading ? (
+            <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '3rem', color: 'rgba(240,244,244,0.3)' }}>Loading projects…</div>
+          ) : projectList.map((project, i) => (
+            <ProjectCard key={project.id || i} project={project} index={i} />
           ))}
         </div>
 

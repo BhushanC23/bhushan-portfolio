@@ -2,57 +2,57 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useScrollVideo } from '../hooks/useScrollVideo';
 import Navbar from './Navbar';
 import { ChevronDown } from 'lucide-react';
+import { usePortfolioData } from '../hooks/usePortfolioData';
 
-// Each overlay has its own unique position to create visual variety
-// Face is always center-right in the video, so text stays LEFT side (max 42% width)
-const TEXT_OVERLAYS = [
+// Scroll positions and layout are hardcoded; only text is editable via admin
+const BASE_OVERLAYS = [
   {
-    id: 'overlay-1',
-    showAt: 0.0,
-    hideAt: 0.22,
-    heading: "Bhushan",
-    headingLine2: "Chaturbhuj",
-    sub: "Full Stack Developer.",
-    tag: "MCA Student · LLM AI Intern",
-    // Bottom-left: face is upper-center in this frame
+    id: 'overlay-1', phase: 1,
+    showAt: 0.0, hideAt: 0.22,
+    heading: "Bhushan", headingLine2: "Chaturbhuj",
+    sub: "Full Stack Developer.", tag: "MCA Student · LLM AI Intern",
     posStyle: { left: '5%', bottom: '14%' },
   },
   {
-    id: 'overlay-2',
-    showAt: 0.26,
-    hideAt: 0.48,
-    heading: "I Build",
-    headingLine2: "Things.",
-    sub: "That live on the web.",
-    tag: "React · Node.js · MongoDB",
-    // Upper-left: face tends to be center in this frame
+    id: 'overlay-2', phase: 2,
+    showAt: 0.26, hideAt: 0.48,
+    heading: "I Build", headingLine2: "Things.",
+    sub: "That live on the web.", tag: "React · Node.js · MongoDB",
     posStyle: { left: '5%', top: '28%' },
   },
   {
-    id: 'overlay-3',
-    showAt: 0.52,
-    hideAt: 0.74,
-    heading: "Built with",
-    headingLine2: "Precision.",
-    sub: "MERN · AI/ML · Web AR",
-    tag: null,
-    // Right-center: vertically middle of screen, right side
+    id: 'overlay-3', phase: 3,
+    showAt: 0.52, hideAt: 0.74,
+    heading: "Built with", headingLine2: "Precision.",
+    sub: "MERN · AI/ML · Web AR", tag: null,
     posStyle: { right: '5%', top: 'calc(50% - 70px)' },
     centered: false,
   },
   {
-    id: 'overlay-4',
-    showAt: 0.78,
-    hideAt: 2.0,      // stays visible through remainder of scroll
-    heading: "Let's Create Something Amazing.",
-    headingLine2: null,
-    sub: "Open to exciting opportunities",
-    tag: "Available for work",
-    // Mathematically centered horizontally & pushed lower to prevent overlapping face/body
+    id: 'overlay-4', phase: 4,
+    showAt: 0.78, hideAt: 2.0,
+    heading: "Let's Create Something Amazing.", headingLine2: null,
+    sub: "Open to exciting opportunities", tag: "Available for work",
     posStyle: { left: '50%', bottom: '8%' },
     centered: true,
   },
 ];
+
+// Merge Supabase heroText rows into base overlays (text only)
+function mergeHeroText(baseOverlays, heroTextRows) {
+  if (!heroTextRows?.length) return baseOverlays;
+  return baseOverlays.map(overlay => {
+    const row = heroTextRows.find(r => r.phase === overlay.phase);
+    if (!row) return overlay;
+    return {
+      ...overlay,
+      heading: row.title || overlay.heading,
+      headingLine2: row.title2 !== undefined ? (row.title2 || null) : overlay.headingLine2,
+      sub: row.subtitle || overlay.sub,
+      tag: row.tag !== undefined ? (row.tag || null) : overlay.tag,
+    };
+  });
+}
 
 function TextOverlay({ overlay }) {
   const { heading, headingLine2, sub, tag, id, posStyle, centered } = overlay;
@@ -159,10 +159,15 @@ function TextOverlay({ overlay }) {
 }
 
 export default function HeroSection() {
+  const { heroText } = usePortfolioData();
+
+  // Merge Supabase hero text into base overlays (text only, positions unchanged)
+  const textOverlays = mergeHeroText(BASE_OVERLAYS, heroText);
+
   // High-performance direct DOM updates to achieve 120fps fluid scrolling with ZERO React overhead!
   const updateHeroDomStyles = useCallback((progress) => {
     // 1. Overlays
-    TEXT_OVERLAYS.forEach(overlay => {
+    BASE_OVERLAYS.forEach(overlay => {
       const el = document.getElementById(overlay.id);
       if (!el) return;
 
@@ -187,8 +192,8 @@ export default function HeroSection() {
       }
 
       el.style.opacity = opacity;
-      el.style.transform = centered 
-        ? `translate(-50%, ${slideY}px)` 
+      el.style.transform = centered
+        ? `translate(-50%, ${slideY}px)`
         : `translateY(${slideY}px)`;
       el.style.pointerEvents = opacity > 0 ? 'auto' : 'none';
     });
@@ -208,7 +213,7 @@ export default function HeroSection() {
     // 4. Progress dots (bottom-left)
     const dots = document.querySelectorAll('.hero-progress-dot');
     dots.forEach((dot, i) => {
-      const overlay = TEXT_OVERLAYS[i];
+      const overlay = BASE_OVERLAYS[i];
       if (!overlay) return;
       const isActive = progress >= overlay.showAt && progress < overlay.hideAt;
       dot.style.width = isActive ? '20px' : '6px';
@@ -425,7 +430,7 @@ export default function HeroSection() {
         <Navbar />
 
         {/* Text Overlays */}
-        {TEXT_OVERLAYS.map(overlay => (
+        {textOverlays.map(overlay => (
           <TextOverlay
             key={overlay.id}
             overlay={overlay}
@@ -494,7 +499,7 @@ export default function HeroSection() {
           gap: '0.4rem',
           zIndex: 10,
         }}>
-          {TEXT_OVERLAYS.map((overlay, i) => {
+          {BASE_OVERLAYS.map((overlay, i) => {
             const isFirst = i === 0;
             return (
               <div key={i} className="hero-progress-dot" style={{

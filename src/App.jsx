@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HeroSection from './components/HeroSection';
 import AboutSection from './components/AboutSection';
 import SkillsSection from './components/SkillsSection';
@@ -7,6 +8,9 @@ import ProjectsSection from './components/ProjectsSection';
 import AchievementsSection from './components/AchievementsSection';
 import ContactSection from './components/ContactSection';
 import AIChatSidebar from './components/AIChatSidebar';
+import AdminLogin from './admin/AdminLogin';
+import AdminGuard from './admin/AdminGuard';
+import AdminDashboard from './admin/AdminDashboard';
 import { useScrollProgress } from './hooks/useScrollVideo';
 
 function CustomCursor() {
@@ -83,13 +87,12 @@ function ScrollProgressBar() {
   );
 }
 
-export default function App() {
+// Main public portfolio layout
+function PortfolioLayout() {
   return (
     <>
       {/* Custom cursor — desktop only */}
-      <div className="cursor-wrapper" style={{
-        display: 'block',
-      }}>
+      <div className="cursor-wrapper" style={{ display: 'block' }}>
         <CustomCursor />
       </div>
 
@@ -120,5 +123,27 @@ export default function App() {
         }
       `}</style>
     </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Public portfolio */}
+        <Route path="/" element={<PortfolioLayout />} />
+
+        {/* Hidden admin routes — no links anywhere in the public app */}
+        <Route path="/bx-studio" element={<AdminLogin />} />
+        <Route
+          path="/bx-studio/dashboard"
+          element={
+            <AdminGuard>
+              <AdminDashboard />
+            </AdminGuard>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }

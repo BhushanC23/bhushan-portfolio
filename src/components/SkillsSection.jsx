@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { BHUSHAN_DATA } from '../data/bhushanData';
+import { usePortfolioData } from '../hooks/usePortfolioData';
 
 const CATEGORY_ICONS = {
   frontend: '⚡',
@@ -91,7 +92,9 @@ function SkillCard({ category, skills, index }) {
 }
 
 export default function SkillsSection() {
-  const categories = Object.keys(BHUSHAN_DATA.skills);
+  const { skills } = usePortfolioData();
+  const skillsData = skills || BHUSHAN_DATA.skills;
+  const categories = Object.keys(skillsData);
 
   return (
     <section id="skills" style={{
@@ -148,7 +151,7 @@ export default function SkillsSection() {
             <SkillCard
               key={category}
               category={category}
-              skills={BHUSHAN_DATA.skills[category]}
+              skills={skillsData[category]}
               index={i}
             />
           ))}

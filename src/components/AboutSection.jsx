@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { BHUSHAN_DATA } from '../data/bhushanData';
+import { usePortfolioData } from '../hooks/usePortfolioData';
 
 function CounterStat({ value, suffix, label }) {
   const [count, setCount] = useState(0);
@@ -62,6 +63,18 @@ function CounterStat({ value, suffix, label }) {
 }
 
 export default function AboutSection() {
+  const { about } = usePortfolioData();
+
+  // Bio paragraphs: from Supabase (split by newline) or static fallback
+  const bioParagraphs = about?.bio
+    ? about.bio.split('\n').filter(p => p.trim())
+    : [
+        `Hi, I'm <strong>Bhushan Chaturbhuj</strong> — a Full Stack Developer and MCA student at Sanjivani University, Kopargaon. I build web experiences that are fast, functional, and memorable.`,
+        `Currently interning at <strong style="color:var(--gold-accent)">Ethara AI</strong> on LLM Post-Training (SFT &amp; RLHF workflows). I love turning ideas into reality — from AR heritage platforms to EV buying assistants.`,
+        `🏆 National Rank 52 at NEC 2025 (IIT Bombay E-Cell) — Turning coffee into code, and ideas into impact.`,
+      ];
+
+  const photoSrc = about?.photo_url || '/bhushan-photo.jpg';
   const sectionRef = useRef(null);
   const headingRef = useRef(null);
   const textRef = useRef(null);
@@ -169,27 +182,25 @@ export default function AboutSection() {
               lineHeight: 1.8,
               color: 'rgba(240,244,244,0.8)',
               marginBottom: '1.5rem',
-            }}>
-              Hi, I'm <strong style={{ color: 'var(--teal-accent)' }}>Bhushan Chaturbhuj</strong> — a Full Stack Developer and MCA student at Sanjivani University, Kopargaon. I build web experiences that are fast, functional, and memorable.
-            </p>
-            <p style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '1.05rem',
-              lineHeight: 1.8,
-              color: 'rgba(240,244,244,0.7)',
-              marginBottom: '1.5rem',
-            }}>
-              Currently interning at <strong style={{ color: 'var(--gold-accent)' }}>Ethara AI</strong> on LLM Post-Training (SFT & RLHF workflows). I love turning ideas into reality — from AR heritage platforms to EV buying assistants.
-            </p>
-            <p style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '1rem',
-              lineHeight: 1.8,
-              color: 'rgba(240,244,244,0.6)',
-              marginBottom: '2.5rem',
-            }}>
-              🏆 National Rank 52 at NEC 2025 (IIT Bombay E-Cell) — Turning coffee into code, and ideas into impact.
-            </p>
+            }} dangerouslySetInnerHTML={{ __html: bioParagraphs[0] || '' }} />
+            {bioParagraphs[1] && (
+              <p style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '1.05rem',
+                lineHeight: 1.8,
+                color: 'rgba(240,244,244,0.7)',
+                marginBottom: '1.5rem',
+              }} dangerouslySetInnerHTML={{ __html: bioParagraphs[1] }} />
+            )}
+            {bioParagraphs[2] && (
+              <p style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '1rem',
+                lineHeight: 1.8,
+                color: 'rgba(240,244,244,0.6)',
+                marginBottom: '2.5rem',
+              }} dangerouslySetInnerHTML={{ __html: bioParagraphs[2] }} />
+            )}
 
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <a
@@ -240,7 +251,7 @@ export default function AboutSection() {
                 background: 'var(--teal-dark)',
               }}>
                 <img
-                  src="/bhushan-photo.jpg"
+                  src={photoSrc}
                   alt="Bhushan Chaturbhuj"
                   style={{
                     width: '100%',

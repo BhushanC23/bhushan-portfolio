@@ -45,10 +45,11 @@ export function useScrollVideo(onProgressUpdate, images) {
 
     if (!canvas || !ctx || !img) return;
 
-    // Handle canvas scaling for high DPI displays and exact sizes
-    if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+    // Use client dimensions to perfectly match screen layout and prevent dynamic mobile address bar stretching!
+    const { clientWidth, clientHeight } = canvas;
+    if (canvas.width !== clientWidth || canvas.height !== clientHeight) {
+      canvas.width = clientWidth;
+      canvas.height = clientHeight;
     }
 
     const { width, height } = canvas;
@@ -77,8 +78,8 @@ export function useScrollVideo(onProgressUpdate, images) {
   const handleResize = useCallback(() => {
     const canvas = canvasRef.current;
     if (canvas) {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
       
       const frameIndex = Math.min(
         frameCount - 1,

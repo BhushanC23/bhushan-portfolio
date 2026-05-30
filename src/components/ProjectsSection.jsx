@@ -108,7 +108,7 @@ function ProjectCard({ project, index }) {
           }}
           onMouseEnter={e => e.currentTarget.style.color = 'var(--teal-accent)'}
           onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
-          aria-label={`GitHub repo for ${project.name}`}
+          aria-label={`GitHub repo for ${project.title || project.name}`}
         >
           <GitBranch size={18} />
         </a>
@@ -123,7 +123,7 @@ function ProjectCard({ project, index }) {
           color: 'var(--text-primary)',
           marginBottom: '0.5rem',
         }}>
-          {project.name}
+          {project.title || project.name}
         </h3>
         <p style={{
           fontFamily: 'var(--font-body)',

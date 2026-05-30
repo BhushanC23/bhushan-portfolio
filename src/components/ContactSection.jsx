@@ -99,7 +99,7 @@ export default function ContactSection() {
         </div>
 
         {/* Two-column layout */}
-        <div style={{
+        <div className="contact-two-col" style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1.2fr',
           gap: '4rem',
@@ -139,6 +139,7 @@ export default function ContactSection() {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="contact-social-link"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -193,13 +194,14 @@ export default function ContactSection() {
           </div>
 
           {/* Right — Form */}
-          <div style={{
+          <div className="contact-form-box" style={{
             padding: '2.5rem',
             background: 'rgba(13,26,28,0.5)',
             borderRadius: '20px',
             border: '1px solid rgba(45,212,191,0.1)',
             backdropFilter: 'blur(12px)',
           }}>
+
             {submitted ? (
               <div style={{ textAlign: 'center', padding: '3rem 0' }}>
                 <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
@@ -346,9 +348,25 @@ export default function ContactSection() {
       </div>
 
       <style>{`
+        /* === CONTACT SECTION RESPONSIVE === */
         @media (max-width: 900px) {
-          #contact .container-xl > div:last-of-type {
+          #contact {
+            padding: 4rem 0 3rem !important;
+          }
+          .contact-two-col {
             grid-template-columns: 1fr !important;
+            gap: 2.5rem !important;
+          }
+        }
+        @media (max-width: 640px) {
+          #contact {
+            padding: 3.5rem 0 2.5rem !important;
+          }
+          .contact-form-box {
+            padding: 1.5rem !important;
+          }
+          .contact-social-link {
+            padding: 0.75rem 1rem !important;
           }
         }
         @keyframes spin {

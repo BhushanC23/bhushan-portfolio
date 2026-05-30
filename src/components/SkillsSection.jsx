@@ -156,9 +156,18 @@ export default function SkillsSection() {
       </div>
 
       <style>{`
+        /* === SKILLS RESPONSIVE === */
         @media (max-width: 768px) {
+          #skills {
+            padding: 4rem 0 !important;
+          }
           #skills .container-xl > div:last-child {
             grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 480px) {
+          #skills {
+            padding: 3rem 0 !important;
           }
         }
       `}</style>

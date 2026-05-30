@@ -154,7 +154,7 @@ export default function AboutSection() {
         </div>
 
         {/* Two-column layout */}
-        <div style={{
+        <div className="about-two-col" style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           gap: '4rem',
@@ -215,7 +215,7 @@ export default function AboutSection() {
 
           {/* Right — Photo */}
           <div ref={photoRef} style={{ display: 'flex', justifyContent: 'center' }}>
-            <div style={{
+            <div className="about-photo-wrap" style={{
               position: 'relative',
               width: 'min(380px, 100%)',
             }}>
@@ -278,7 +278,7 @@ export default function AboutSection() {
               </div>
 
               {/* Floating badge */}
-              <div style={{
+              <div className="about-floating-badge" style={{
                 position: 'absolute',
                 top: '-1rem',
                 left: '-1.5rem',
@@ -308,7 +308,7 @@ export default function AboutSection() {
         </div>
 
         {/* Stats row */}
-        <div style={{
+        <div className="about-stats-grid" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(4, 1fr)',
           gap: '2rem',
@@ -324,18 +324,41 @@ export default function AboutSection() {
 
       {/* Responsive styles */}
       <style>{`
+        /* === ABOUT SECTION RESPONSIVE === */
         @media (max-width: 900px) {
-          #about .container-xl > div:nth-child(3) {
+          #about {
+            padding: 5rem 0 !important;
+          }
+          .about-two-col {
             grid-template-columns: 1fr !important;
             gap: 2.5rem !important;
           }
-          #about .container-xl > div:last-child {
+          .about-stats-grid {
             grid-template-columns: repeat(2, 1fr) !important;
+            gap: 1.5rem !important;
+            margin-top: 3rem !important;
           }
         }
-        @media (max-width: 480px) {
-          #about .container-xl > div:last-child {
+        @media (max-width: 640px) {
+          #about {
+            padding: 4rem 0 !important;
+          }
+          .about-photo-wrap {
+            width: min(280px, 80vw) !important;
+            margin: 0 auto;
+          }
+          .about-floating-badge {
+            top: -0.75rem !important;
+            left: -0.75rem !important;
+            padding: 0.5rem 0.9rem !important;
+          }
+          .about-two-col > div:first-child p {
+            font-size: 0.97rem !important;
+          }
+          .about-stats-grid {
             grid-template-columns: repeat(2, 1fr) !important;
+            padding-top: 2rem !important;
+            margin-top: 2.5rem !important;
           }
         }
       `}</style>

@@ -114,6 +114,23 @@ export default function AchievementsSection() {
           ))}
         </div>
       </div>
+
+      <style>{`
+        /* === ACHIEVEMENTS RESPONSIVE === */
+        @media (max-width: 768px) {
+          #achievements {
+            padding: 4rem 0 !important;
+          }
+          #achievements .container-xl > div:last-child {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 480px) {
+          #achievements {
+            padding: 3rem 0 !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -175,8 +175,8 @@ export default function AIChatSidebar() {
         onClick={() => setIsOpen(true)}
         style={{
           position: 'fixed',
-          bottom: '2rem',
-          right: '2rem',
+          bottom: '1.5rem',
+          right: '1.5rem',
           zIndex: 1100,
           display: isOpen ? 'none' : 'flex',
           alignItems: 'center',
@@ -225,12 +225,14 @@ export default function AIChatSidebar() {
       {/* Sidebar Panel */}
       <div
         id="ai-chat-sidebar"
+        className="ai-sidebar-panel"
         style={{
           position: 'fixed',
           top: 0,
           right: 0,
-          height: '100vh',
-          width: 'min(400px, 100vw)',
+          height: '100%',
+          height: '-webkit-fill-available',
+          width: 'min(420px, 100vw)',
           background: 'var(--bg-secondary)',
           borderLeft: '1px solid rgba(45,212,191,0.15)',
           zIndex: 1200,
@@ -239,6 +241,7 @@ export default function AIChatSidebar() {
           transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
           transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
           boxShadow: '-20px 0 60px rgba(0,0,0,0.5)',
+          overflowY: 'hidden',
         }}
       >
         {/* Header */}
@@ -469,6 +472,19 @@ export default function AIChatSidebar() {
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.4; }
+        }
+        /* === AI CHAT RESPONSIVE === */
+        @media (max-width: 480px) {
+          #ai-chat-trigger {
+            bottom: 1.25rem !important;
+            right: 1.25rem !important;
+            padding: 0.75rem 1.2rem !important;
+            font-size: 0.85rem !important;
+          }
+          .ai-sidebar-panel {
+            width: 100vw !important;
+            border-left: none !important;
+          }
         }
       `}</style>
     </>

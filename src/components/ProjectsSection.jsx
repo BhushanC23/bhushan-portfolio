@@ -238,9 +238,18 @@ export default function ProjectsSection() {
       </div>
 
       <style>{`
+        /* === PROJECTS RESPONSIVE === */
         @media (max-width: 768px) {
+          #projects {
+            padding: 4rem 0 !important;
+          }
           #projects .container-xl > div:nth-child(2) {
             grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 480px) {
+          #projects {
+            padding: 3rem 0 !important;
           }
         }
       `}</style>

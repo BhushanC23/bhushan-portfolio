@@ -28,7 +28,7 @@ function TimelineItem({ item, index }) {
   }, [index]);
 
   return (
-    <div ref={itemRef} style={{
+    <div ref={itemRef} className="exp-timeline-item" style={{
       display: 'grid',
       gridTemplateColumns: '1fr 40px 1fr',
       gap: '1.5rem',
@@ -37,7 +37,7 @@ function TimelineItem({ item, index }) {
     }}>
       {/* Left side */}
       {index % 2 === 0 ? (
-        <div style={{
+        <div className="exp-card-left" style={{
           padding: '1.75rem',
           background: 'var(--teal-mid)',
           borderRadius: '16px',
@@ -56,10 +56,10 @@ function TimelineItem({ item, index }) {
         >
           <ExperienceContent item={item} />
         </div>
-      ) : <div />}
+      ) : <div className="exp-empty-col" />}
 
       {/* Center dot */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '1.5rem' }}>
+      <div className="exp-dot-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '1.5rem' }}>
         <div style={{
           width: '14px',
           height: '14px',
@@ -85,7 +85,7 @@ function TimelineItem({ item, index }) {
 
       {/* Right side */}
       {index % 2 !== 0 ? (
-        <div style={{
+        <div className="exp-card-right" style={{
           padding: '1.75rem',
           background: 'var(--teal-mid)',
           borderRadius: '16px',
@@ -104,7 +104,7 @@ function TimelineItem({ item, index }) {
         >
           <ExperienceContent item={item} gold />
         </div>
-      ) : <div />}
+      ) : <div className="exp-empty-col" />}
     </div>
   );
 }
@@ -213,7 +213,7 @@ export default function ExperienceSection() {
         {/* Timeline */}
         <div style={{ position: 'relative', maxWidth: '900px', margin: '0 auto' }}>
           {/* Vertical line */}
-          <div style={{
+          <div className="exp-timeline-line" style={{
             position: 'absolute',
             left: '50%',
             top: 0,
@@ -234,9 +234,40 @@ export default function ExperienceSection() {
           0% { transform: scale(1); opacity: 0.8; }
           100% { transform: scale(2.5); opacity: 0; }
         }
+        /* === EXPERIENCE TIMELINE RESPONSIVE === */
         @media (max-width: 768px) {
-          #experience .container-xl > div:last-child > div > div {
-            grid-template-columns: 1fr !important;
+          #experience {
+            padding: 4rem 0 !important;
+          }
+          /* Force single-column on all timeline items */
+          .exp-timeline-item {
+            grid-template-columns: 32px 1fr !important;
+            gap: 1rem !important;
+            margin-bottom: 1.75rem !important;
+          }
+          /* Hide the empty side placeholder */
+          .exp-empty-col {
+            display: none !important;
+          }
+          /* Show all cards on the right side only */
+          .exp-card-left,
+          .exp-card-right {
+            display: block !important;
+            grid-column: 2 !important;
+          }
+          /* Reorder: dot always col 1, card always col 2 */
+          .exp-dot-col {
+            grid-column: 1 !important;
+            padding-top: 1.25rem !important;
+          }
+          /* Move vertical line to left */
+          .exp-timeline-line {
+            left: 15px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          #experience .container-xl {
+            padding: 0 1rem !important;
           }
         }
       `}</style>

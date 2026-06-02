@@ -393,6 +393,7 @@ export default function HeroSection() {
             opacity: videoLoaded ? 1 : 0,
             pointerEvents: 'none',
             display: 'block',
+            filter: 'brightness(1.15) contrast(1.05) saturate(1.02)',
           }}
         />
 
@@ -400,21 +401,21 @@ export default function HeroSection() {
         <div className="left-dark-zone" style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to right, rgba(7,13,14,0.92) 0%, rgba(7,13,14,0.75) 30%, rgba(7,13,14,0.3) 55%, transparent 75%)',
+          background: 'linear-gradient(to right, rgba(7,13,14,0.72) 0%, rgba(7,13,14,0.4) 30%, transparent 65%)',
           pointerEvents: 'none',
         }} />
         {/* Bottom dark zone */}
         <div className="bottom-dark-zone" style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to top, rgba(7,13,14,0.9) 0%, rgba(7,13,14,0.5) 20%, transparent 45%)',
+          background: 'linear-gradient(to top, rgba(7,13,14,0.7) 0%, transparent 30%)',
           pointerEvents: 'none',
         }} />
         {/* Top vignette */}
         <div className="top-dark-zone" style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to bottom, rgba(7,13,14,0.6) 0%, transparent 20%)',
+          background: 'linear-gradient(to bottom, rgba(7,13,14,0.4) 0%, transparent 15%)',
           pointerEvents: 'none',
         }} />
 
@@ -422,7 +423,7 @@ export default function HeroSection() {
         <div className="grid-texture" style={{
           position: 'absolute',
           inset: 0,
-          opacity: 0.3,
+          opacity: 0.12,
           pointerEvents: 'none',
         }} />
 
@@ -537,10 +538,10 @@ export default function HeroSection() {
           }
           
           .left-dark-zone {
-            background: linear-gradient(to right, rgba(7,13,14,0.75) 0%, rgba(7,13,14,0.3) 30%, transparent 60%) !important;
+            background: linear-gradient(to right, rgba(7,13,14,0.65) 0%, rgba(7,13,14,0.2) 35%, transparent 60%) !important;
           }
           .bottom-dark-zone {
-            background: linear-gradient(to top, rgba(7,13,14,0.85) 0%, rgba(7,13,14,0.4) 15%, transparent 32%) !important;
+            background: linear-gradient(to top, rgba(7,13,14,0.7) 0%, rgba(7,13,14,0.2) 20%, transparent 35%) !important;
           }
           
           .mobile-only-block {

@@ -90,6 +90,26 @@ function ScrollProgressBar() {
 
 // Main public portfolio layout
 function PortfolioLayout() {
+  useEffect(() => {
+    // Disable native browser scroll restoration to prevent landing at scrolled sections on refresh
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+
+    // Force page scroll to top immediately on mount/reload
+    window.scrollTo(0, 0);
+
+    // Safeguard to scroll to top before unloading the page
+    const handleBeforeUnload = () => {
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
   return (
     <>
       {/* Custom cursor — desktop only */}

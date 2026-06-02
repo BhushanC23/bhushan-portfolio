@@ -262,6 +262,26 @@ export default function Navbar() {
             </button>
           ))}
           <a
+            href="/Bhushan_Chaturbhuj_Resume.pdf"
+            download="Bhushan_Chaturbhuj_Resume.pdf"
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '0.6rem',
+              background: 'rgba(201,168,76,0.15)',
+              border: '1px solid rgba(201,168,76,0.3)',
+              color: 'var(--gold-accent)',
+              fontFamily: 'var(--font-body)',
+              fontWeight: 700,
+              fontSize: '0.9rem',
+              borderRadius: '50px',
+              textDecoration: 'none',
+              marginTop: '0.25rem',
+            }}
+          >
+            Download Resume 📄
+          </a>
+          <a
             href="mailto:bhushan.chaturbhuj_25pca@sanjivani.edu.in"
             style={{
               display: 'flex',

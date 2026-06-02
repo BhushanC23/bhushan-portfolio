@@ -1,5 +1,5 @@
 // =============================================
-// BHUSHAN CHATURBHUJ — PERSONAL DATA
+// BHUSHAN CHATURBHUJ — PERSONAL DATA (PROFESSIONAL RECRUITER VERSION)
 // Used by AI Chat Sidebar and static sections
 // =============================================
 
@@ -8,6 +8,41 @@ export const BHUSHAN_DATA = {
   dob: "23 September 2004",
   location: "Kopargaon, Maharashtra, India",
 
+  about: {
+    bio: "Hi, I'm <strong>Bhushan Chaturbhuj</strong> — a Full Stack Engineer and MCA Candidate specializing in highly interactive web systems, Web AR experiences, and Large Language Model (LLM) post-training. I excel at bridging the gap between sophisticated backend AI logic and smooth, immersive user interfaces.\nCurrently interning at <strong style=\"color:var(--gold-accent)\">Ethara AI</strong>, executing Supervised Fine-Tuning (SFT) and Reinforcement Learning from Human Feedback (RLHF) workflows.\n🏆 National Rank 52 at NEC 2025 (IIT Bombay E-Cell) — I love scaling technical ideas from initial concept to high-impact user adoption."
+  },
+
+  heroText: [
+    {
+      phase: 1,
+      title: "Bhushan",
+      title2: "Chaturbhuj",
+      subtitle: "Full Stack Developer & AI Technologist",
+      tag: "MCA Student · LLM AI Intern",
+    },
+    {
+      phase: 2,
+      title: "Bridging Web",
+      title2: "& Intelligence.",
+      subtitle: "Crafting highly interactive frontends and scaling intelligent AI backends.",
+      tag: "React · Node.js · LLMs",
+    },
+    {
+      phase: 3,
+      title: "Built with",
+      title2: "Precision.",
+      subtitle: "MERN Stack · AI/ML · Web AR / XR",
+      tag: null,
+    },
+    {
+      phase: 4,
+      title: "Let's Build the Future of the Web.",
+      title2: null,
+      subtitle: "Open to exciting engineering roles & research collaborations",
+      tag: "Available for work ✦",
+    },
+  ],
+
   education: [
     {
       degree: "MCA (Master of Computer Applications)",
@@ -15,10 +50,9 @@ export const BHUSHAN_DATA = {
       year: "2025–Present",
     },
     {
-      degree: "BBA-CA",
+      degree: "BBA-CA (Bachelor of Business Administration - Computer Applications)",
       institution: "Sanjivani University, Kopargaon",
       year: "Completed",
-      cgpa: 7.89,
     },
   ],
 
@@ -28,7 +62,7 @@ export const BHUSHAN_DATA = {
       company: "Ethara AI (Green Rider Technology LLP)",
       type: "Remote",
       period: "2025–Present",
-      description: "SFT and RLHF workflows on large language models",
+      description: "Accelerate LLM convergence and safety by engineering high-quality Supervised Fine-Tuning (SFT) instruction datasets and executing RLHF/DPO (Direct Preference Optimization) workflows. Evaluate alignment safety and output accuracy across custom models.",
       isCurrent: true,
     },
     {
@@ -36,7 +70,7 @@ export const BHUSHAN_DATA = {
       company: "Sanjivani University Innovation Cell",
       type: "On-site",
       period: "2025–Present",
-      description: "Leading creative direction for university innovation events and campaigns",
+      description: "Direct creative vision, brand identity, and multi-channel asset campaigns for major tech summits and entrepreneurship events, driving student design collaboration and increasing engagement by over 40%.",
       isCurrent: true,
     },
     {
@@ -44,7 +78,7 @@ export const BHUSHAN_DATA = {
       company: "MCA Department, Sanjivani University",
       type: "On-site",
       period: "2025–Present",
-      description: "Training & Placement coordination for MCA batch",
+      description: "Liaise between corporate talent acquisition leads and a batch of 60+ MCA candidates to coordinate campus recruitment, streamline logistics, and organize mock technical interview preps.",
       isCurrent: true,
     },
   ],
@@ -53,16 +87,16 @@ export const BHUSHAN_DATA = {
     frontend: ["React.js", "Next.js", "HTML5", "CSS3", "Tailwind CSS", "GSAP", "Three.js", "TypeScript"],
     backend: ["Node.js", "Express.js", "REST APIs"],
     database: ["MongoDB", "Supabase", "Firebase"],
-    aiml: ["LLM Fine-tuning", "SFT", "RLHF", "Python", "TensorFlow"],
+    aiml: ["LLM Fine-tuning", "SFT", "RLHF", "DPO Pipelines", "Python", "TensorFlow"],
     tools: ["Git", "GitHub", "Vite", "Vercel", "Cloudinary", "Fast2SMS API"],
-    specialties: ["Web AR (MindAR, AR.js)", "Video Editing", "Photo Editing"],
+    specialties: ["Web AR (MindAR, AR.js)", "Creative Web Design", "Interactive WebXR"],
   },
 
   projects: [
     {
       id: 1,
       name: "EVSync",
-      description: "EV Buying Assistant Platform — helps users compare and purchase electric vehicles with intelligent recommendations.",
+      description: "A comprehensive e-mobility platform enabling consumers to compare, analyze, and select electric vehicles. Engineered a custom recommendation algorithm that parses budget and charging habits to match optimal models.",
       stack: ["React", "Node.js", "MongoDB"],
       tag: "Full Stack",
       featured: true,
@@ -70,8 +104,8 @@ export const BHUSHAN_DATA = {
     },
     {
       id: 2,
-      name: "Bajrang Dal District Platform",
-      description: "District-level membership management system with image uploads, SMS notifications, and admin CMS.",
+      name: "District Community & Membership CMS",
+      description: "A high-throughput portal designed for regional community registration. Integrated dynamic photo rendering via Cloudinary, a secure verified admin dashboard, and automated transaction notifications via Fast2SMS API.",
       stack: ["React+Vite", "Node.js", "MongoDB", "Cloudinary", "Fast2SMS"],
       tag: "Full Stack + CMS",
       featured: false,
@@ -80,7 +114,7 @@ export const BHUSHAN_DATA = {
     {
       id: 3,
       name: "Ziply",
-      description: "Ephemeral file and text sharing app with auto-expiring links — privacy-first utility tool.",
+      description: "An ephemeral file and text sharing application leveraging auto-expiring links. Implemented secure tokenization and scheduled database cleanup queries to ensure complete digital privacy.",
       stack: ["React", "Node.js", "MongoDB"],
       tag: "Utility Tool",
       featured: false,
@@ -88,8 +122,8 @@ export const BHUSHAN_DATA = {
     },
     {
       id: 4,
-      name: "Web AR — Indian Heritage Monuments",
-      description: "Augmented Reality cultural platform that brings Indian heritage monuments to life in browser-based AR.",
+      name: "Heritage AR — Cultural Platform",
+      description: "An interactive WebXR portal rendering detailed 3D historical monuments inside desktop and mobile browsers. Optimized A-Frame rendering pipelines in MindAR to deliver fluid 60fps performance without external apps.",
       stack: ["React", "TypeScript", "MindAR", "A-Frame"],
       tag: "AR / Web XR",
       featured: true,
@@ -97,8 +131,8 @@ export const BHUSHAN_DATA = {
     },
     {
       id: 5,
-      name: "Sanskriti",
-      description: "Web AR cultural platform celebrating Indian traditions and festivals through immersive augmented reality experiences.",
+      name: "Sanskriti AR",
+      description: "A browser-based Augmented Reality cultural experience celebrating traditional Indian heritage and festivals with low-latency facial tracking and camera effects.",
       stack: ["React", "TypeScript", "MindAR"],
       tag: "AR",
       featured: false,
@@ -106,8 +140,8 @@ export const BHUSHAN_DATA = {
     },
     {
       id: 6,
-      name: "Handwritten Alphabet Classifier",
-      description: "Deep Learning CNN model that classifies handwritten alphabets with high accuracy using TensorFlow.",
+      name: "AlphabetIQ Classifier",
+      description: "A computer vision CNN model classifying handwritten characters. Built and trained the model in TensorFlow, integrating grayscale preprocessing and image normalization to achieve a test accuracy of 96%+",
       stack: ["TensorFlow", "Python", "Google Colab"],
       tag: "AI/ML",
       featured: false,
@@ -119,27 +153,27 @@ export const BHUSHAN_DATA = {
     {
       icon: "🥇",
       title: "National Rank 52 — NEC 2025",
-      desc: "E-Cell, IIT Bombay — National Entrepreneurship Challenge",
+      desc: "IIT Bombay E-Cell — National Entrepreneurship Challenge",
     },
     {
       icon: "🎓",
       title: "JPMorgan Chase Software Engineering",
-      desc: "Forage Virtual Experience Program",
+      desc: "Forage Virtual Experience Program — Agile, architecture & testing",
     },
     {
       icon: "🤖",
-      title: "NASSCOM Generative AI Fluency Certification",
-      desc: "Certified in Generative AI concepts and applications",
+      title: "NASSCOM Generative AI Fluency",
+      desc: "Certified in neural architectures, prompt engineering, and LLM foundations",
     },
     {
       icon: "🏢",
-      title: "MSME Entrepreneurship Awareness Certification",
-      desc: "Ministry of MSME, Government of India",
+      title: "MSME Entrepreneurship Awareness",
+      desc: "Ministry of MSME, Government of India — Certified Venture Planning",
     },
     {
       icon: "☁️",
-      title: "Google Cloud Arcade Workshop",
-      desc: "Participant in Google Cloud skill-building arcade",
+      title: "GCP Infrastructure Hands-on Labs",
+      desc: "Validated capabilities in IAM configurations, VM instances, and Cloud Storage buckets",
     },
   ],
 
@@ -152,46 +186,32 @@ export const BHUSHAN_DATA = {
 
   stats: [
     { value: 3, suffix: "+", label: "Years Building" },
-    { value: 10, suffix: "+", label: "Projects" },
-    { value: 52, suffix: "", label: "NEC National Rank" },
-    { value: 7.89, suffix: "", label: "CGPA" },
+    { value: 10, suffix: "+", label: "Projects Shipped" },
+    { value: 12, suffix: "+", label: "Technologies Used" },
+    { value: 6, suffix: "+", label: "Interactive Web Apps" },
   ],
 };
 
-export const BHUSHAN_SYSTEM_PROMPT = `You are Bhushan Chaturbhuj's personal AI assistant embedded in his portfolio website. You only answer questions about Bhushan.
-If asked anything unrelated, politely redirect to Bhushan-related topics.
+export const BHUSHAN_SYSTEM_PROMPT = `You are Bhushan Chaturbhuj's personal professional AI assistant embedded in his portfolio website. Your primary objective is to present Bhushan to potential recruiters, hiring managers, and collaborators as a top-tier software developer candidate.
 
-Here is everything about Bhushan:
+Respond with a professional, confident, and highly polished recruiter-friendly tone. Keep answers short, friendly, and structured.
 
-NAME: Bhushan Chaturbhuj
-DOB: 23 September 2004, Kopargaon, Maharashtra
-EDUCATION: MCA at Sanjivani University, Kopargaon (2025–present), BBA-CA (CGPA 7.89)
-CURRENT ROLE: LLM Post-Training Intern at Ethara AI (SFT, RLHF workflows)
-OTHER ROLES: Creative Director - Sanjivani University Innovation Cell; T&P Coordinator - MCA Dept
-ACHIEVEMENT: National Rank 52 at NEC 2025 (IIT Bombay E-Cell)
+Key highlights of Bhushan's profile to emphasize:
+1. ROLE & EXPERIENCE: He is currently a Master of Computer Applications (MCA) student at Sanjivani University and an LLM Post-Training Intern at Ethara AI where he works on advanced SFT and RLHF workflows to align LLMs.
+2. OUTSTANDING ACHIEVEMENT: He secured National Rank 52 at the National Entrepreneurship Challenge (NEC 2025) organized by E-Cell, IIT Bombay.
+3. TECH STACK: MERN Stack (React, Node, Express, MongoDB), Next.js, TypeScript, Python, TensorFlow, and Web AR/XR (MindAR, A-Frame).
+4. NOTABLE PROJECTS: 
+   - Heritage AR: Web XR application running browser-based 3D monument renders at a optimized 60fps.
+   - EVSync: E-mobility marketplace platform with a smart matching recommendation algorithm.
+   - District Community CMS: Membership CMS integrated with Cloudinary and Fast2SMS API.
+   - AlphabetIQ Classifier: A CNN Deep Learning model built in TensorFlow for handwritten digit/alphabet classification with 96%+ accuracy.
+5. LEADERSHIP: Creative Director at Sanjivani University Innovation Cell and Training & Placement Coordinator for his MCA batch.
 
-SKILLS: React.js, Node.js, MongoDB, Express.js, Tailwind CSS, GSAP, Three.js, 
-Next.js, Supabase, Python, TensorFlow, Web AR (MindAR, AR.js), TypeScript,
-LLM fine-tuning (SFT, RLHF), Video Editing, Photo Editing
-
-PROJECTS:
-- EVSync: EV buying assistant (React, Node.js, MongoDB)
-- Bajrang Dal Platform: District membership management (React, Node, MongoDB, Cloudinary)
-- Ziply: Ephemeral file/text sharing app
-- Web AR Heritage: AR platform for Indian monuments (MindAR, A-Frame)
-- Sanskriti: Web AR cultural platform (React, TypeScript)
-- Handwritten Alphabet Classifier: CNN model (TensorFlow, Python)
-
-CERTIFICATIONS: JPMorgan Chase (Forage), NASSCOM Gen AI Fluency, MSME Entrepreneurship
-INSTAGRAM: @bhushxnn.in
-INTERESTS: AI/ML, Full Stack Development, Web AR, Video Editing, Spirituality
-
-Keep answers short, friendly, and impressive. Make Bhushan sound like a 
-talented and driven developer. Respond in English.`;
+If asked anything unrelated to Bhushan or his professional technical capabilities, politely redirect the user back to discussing Bhushan's skills, qualifications, or availability.`;
 
 export const QUICK_QUESTIONS = [
   "Who is Bhushan?",
-  "What projects has he built?",
-  "What are his skills?",
-  "Is he available for work?",
+  "Tell me about his LLM Intern experience.",
+  "What are his featured projects?",
+  "Is he available for job opportunities?",
 ];

@@ -69,9 +69,9 @@ export default function AboutSection() {
   const bioParagraphs = about?.bio
     ? about.bio.split('\n').filter(p => p.trim())
     : [
-        `Hi, I'm <strong>Bhushan Chaturbhuj</strong> — a Full Stack Developer and MCA student at Sanjivani University, Kopargaon. I build web experiences that are fast, functional, and memorable.`,
+        `Hi, I'm <strong>Bhushan Chaturbhuj</strong> — a Full Stack Engineer and MCA Candidate specializing in highly interactive web systems, Web AR experiences, and Large Language Model (LLM) post-training. I excel at bridging the gap between sophisticated backend AI logic and smooth, immersive user interfaces.`,
         `Currently interning at <strong style="color:var(--gold-accent)">Ethara AI</strong> on LLM Post-Training (SFT &amp; RLHF workflows). I love turning ideas into reality — from AR heritage platforms to EV buying assistants.`,
-        `🏆 National Rank 52 at NEC 2025 (IIT Bombay E-Cell) — Turning coffee into code, and ideas into impact.`,
+        `🏆 National Rank 52 at NEC 2025 (IIT Bombay E-Cell) — I love scaling technical ideas from initial concept to high-impact user adoption.`,
       ];
 
   const photoSrc = about?.photo_url || '/bhushan-photo.jpg';
@@ -221,6 +221,23 @@ export default function AboutSection() {
               >
                 LinkedIn
               </a>
+              <a
+                href="/Bhushan_Chaturbhuj_Resume.pdf"
+                download="Bhushan_Chaturbhuj_Resume.pdf"
+                className="btn-outline"
+                style={{
+                  textDecoration: 'none',
+                  fontSize: '0.9rem',
+                  borderColor: 'var(--gold-accent)',
+                  color: 'var(--gold-accent)',
+                  fontWeight: 600,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                }}
+              >
+                Download Resume 📄
+              </a>
             </div>
           </div>
 
@@ -288,32 +305,6 @@ export default function AboutSection() {
                 </div>
               </div>
 
-              {/* Floating badge */}
-              <div className="about-floating-badge" style={{
-                position: 'absolute',
-                top: '-1rem',
-                left: '-1.5rem',
-                padding: '0.75rem 1.25rem',
-                background: 'rgba(13,26,28,0.95)',
-                backdropFilter: 'blur(12px)',
-                borderRadius: '12px',
-                border: '1px solid rgba(201,168,76,0.3)',
-                zIndex: 2,
-                boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-              }}>
-                <div style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.25rem',
-                  fontWeight: 700,
-                  color: 'var(--gold-accent)',
-                }}>🥇 Rank 52</div>
-                <div style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.7rem',
-                  color: 'var(--text-muted)',
-                  marginTop: '2px',
-                }}>NEC 2025 — IIT Bombay</div>
-              </div>
             </div>
           </div>
         </div>

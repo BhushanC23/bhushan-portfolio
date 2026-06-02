@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Send, MessageSquare, Trash2, Bot } from 'lucide-react';
+import { X, Send, MessageSquare, Trash2, Bot, Sparkles } from 'lucide-react';
 import { BHUSHAN_SYSTEM_PROMPT, QUICK_QUESTIONS } from '../data/bhushanData';
 
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`;
@@ -169,10 +169,53 @@ export default function AIChatSidebar() {
 
   return (
     <>
+      {/* Floating Invitation Tooltip */}
+      {!isOpen && (
+        <div
+          className="ai-invite-tooltip"
+          style={{
+            position: 'fixed',
+            bottom: '5.2rem',
+            right: '1.5rem',
+            zIndex: 1100,
+            background: 'rgba(13,26,28,0.92)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(45,212,191,0.3)',
+            borderRadius: '16px 16px 4px 16px',
+            padding: '0.5rem 1rem',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 15px rgba(45,212,191,0.1)',
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+          }}
+        >
+          <span style={{
+            width: '6px',
+            height: '6px',
+            borderRadius: '50%',
+            background: 'var(--teal-accent)',
+            display: 'inline-block',
+            animation: 'pulse 1.5s infinite',
+          }} />
+          <span style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.78rem',
+            fontWeight: 600,
+            color: 'rgba(240,244,244,0.9)',
+            letterSpacing: '0.01em',
+          }}>
+            Got questions? Ask my AI! ⚡
+          </span>
+        </div>
+      )}
+
       {/* Floating Trigger Button */}
       <button
         id="ai-chat-trigger"
         onClick={() => setIsOpen(true)}
+        className="glowing-ai-btn"
         style={{
           position: 'fixed',
           bottom: '1.5rem',
@@ -181,30 +224,36 @@ export default function AIChatSidebar() {
           display: isOpen ? 'none' : 'flex',
           alignItems: 'center',
           gap: '0.6rem',
-          padding: '0.875rem 1.5rem',
-          background: 'linear-gradient(135deg, #2dd4bf, #0d9488)',
-          color: '#070d0e',
-          border: 'none',
+          padding: '0.9rem 1.6rem',
+          background: 'linear-gradient(135deg, #1e293b, #0f172a)',
+          color: '#ffffff',
+          border: '1px solid rgba(45,212,191,0.4)',
           borderRadius: '50px',
           cursor: 'pointer',
           fontFamily: 'var(--font-body)',
           fontWeight: 700,
           fontSize: '0.9rem',
-          boxShadow: '0 8px 30px rgba(45,212,191,0.35)',
-          transition: 'all 0.3s ease',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.transform = 'translateY(-3px)';
-          e.currentTarget.style.boxShadow = '0 14px 40px rgba(45,212,191,0.5)';
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '0 8px 30px rgba(45,212,191,0.35)';
+          boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 15px rgba(45,212,191,0.25)',
+          transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+          overflow: 'hidden',
         }}
         aria-label="Open AI Chat"
       >
-        <MessageSquare size={18} />
-        Ask AI
+        {/* Shimmer overlay effect */}
+        <div className="btn-shimmer" />
+
+        {/* Bot Icon with floating sparks */}
+        <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+          <Bot size={18} color="var(--teal-accent)" className="ai-icon" style={{ transition: 'transform 0.3s ease' }} />
+          <Sparkles size={10} color="var(--gold-accent)" style={{ position: 'absolute', top: '-4px', right: '-4px', transition: 'all 0.3s ease' }} className="spark-micro" />
+        </div>
+        
+        <span style={{ 
+          letterSpacing: '0.04em',
+          background: 'linear-gradient(90deg, #ffffff, rgba(240,244,244,0.95))',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+        }}>Ask AI</span>
       </button>
 
       {/* Sidebar Overlay */}
@@ -473,13 +522,85 @@ export default function AIChatSidebar() {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.4; }
         }
+
+        @keyframes float-btn {
+          0% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+          100% { transform: translateY(0); }
+        }
+
+        .glowing-ai-btn {
+          animation: float-btn 3.5s ease-in-out infinite;
+        }
+
+        /* Hover glows & scale-up */
+        .glowing-ai-btn:hover {
+          border-color: var(--teal-accent) !important;
+          box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 25px rgba(45,212,191,0.5) !important;
+        }
+
+        .glowing-ai-btn:hover .ai-icon {
+          transform: rotate(15deg) scale(1.1);
+        }
+
+        .glowing-ai-btn:hover .spark-micro {
+          transform: rotate(-30deg) scale(1.3);
+          filter: drop-shadow(0 0 4px var(--gold-accent));
+        }
+
+        /* Shimmer sweep effect */
+        .btn-shimmer {
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 50%;
+          height: 100%;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(45,212,191,0.25),
+            transparent
+          );
+          transform: skewX(-25deg);
+          animation: shimmerSweep 4.5s infinite;
+        }
+
+        @keyframes shimmerSweep {
+          0% { left: -100%; }
+          30% { left: 150%; }
+          100% { left: 150%; }
+        }
+
+        /* Breathing invitation tooltip animation */
+        .ai-invite-tooltip {
+          animation: tooltipFloat 3s ease-in-out infinite, fadeInDelayed 1s ease-out 1.5s both;
+        }
+
+        @keyframes tooltipFloat {
+          0% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
+          100% { transform: translateY(0); }
+        }
+
+        @keyframes fadeInDelayed {
+          0% { opacity: 0; transform: translateY(10px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
         /* === AI CHAT RESPONSIVE === */
         @media (max-width: 480px) {
-          #ai-chat-trigger {
+          .ai-invite-tooltip {
+            bottom: 4.8rem !important;
+            right: 1.25rem !important;
+            padding: 0.4rem 0.8rem !important;
+          }
+          .ai-invite-tooltip span:last-child {
+            font-size: 0.72rem !important;
+          }
+          .glowing-ai-btn {
             bottom: 1.25rem !important;
             right: 1.25rem !important;
-            padding: 0.75rem 1.2rem !important;
-            font-size: 0.85rem !important;
+            padding: 0.8rem 1.4rem !important;
           }
           .ai-sidebar-panel {
             width: 100vw !important;

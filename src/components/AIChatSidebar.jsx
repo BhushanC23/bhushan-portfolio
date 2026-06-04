@@ -278,9 +278,8 @@ export default function AIChatSidebar() {
         style={{
           position: 'fixed',
           top: 0,
+          bottom: 0,
           right: 0,
-          height: '100%',
-          height: '-webkit-fill-available',
           width: 'min(420px, 100vw)',
           background: 'var(--bg-secondary)',
           borderLeft: '1px solid rgba(45,212,191,0.15)',

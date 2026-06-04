@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useScrollVideo } from '../hooks/useScrollVideo';
 import Navbar from './Navbar';
-import { ChevronDown } from 'lucide-react';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 
 // Scroll positions and layout are hardcoded; only text is editable via admin
@@ -31,7 +30,7 @@ const BASE_OVERLAYS = [
   {
     id: 'overlay-4', phase: 4,
     showAt: 0.78, hideAt: 2.0,
-    heading: "Let's Create Something Amazing.", headingLine2: null,
+    heading: "Let's Create", headingLine2: "Something Amazing.",
     sub: "Open to exciting opportunities", tag: "Available for work",
     posStyle: { left: '50%', bottom: '8%' },
     centered: true,
@@ -55,8 +54,7 @@ function mergeHeroText(baseOverlays, heroTextRows) {
 }
 
 function TextOverlay({ overlay }) {
-  const { heading, headingLine2, sub, tag, id, posStyle, centered } = overlay;
-
+  const { heading, headingLine2, sub, tag, id, posStyle, centered, eyebrow } = overlay;
   const isFirst = id === 'overlay-1';
   const isRightAligned = !!posStyle.right;
 
@@ -68,8 +66,8 @@ function TextOverlay({ overlay }) {
         position: 'absolute',
         ...posStyle,
         opacity: isFirst ? 1 : 0,
-        transform: centered 
-          ? `translate(-50%, ${isFirst ? 0 : 20}px)` 
+        transform: centered
+          ? `translate(-50%, ${isFirst ? 0 : 20}px)`
           : `translateY(${isFirst ? 0 : 20}px)`,
         transition: 'none',
         zIndex: 10,
@@ -79,6 +77,21 @@ function TextOverlay({ overlay }) {
         pointerEvents: isFirst ? 'auto' : 'none',
       }}
     >
+      {/* Eyebrow label */}
+      {eyebrow && (
+        <div style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: '10px',
+          fontWeight: 500,
+          letterSpacing: '0.25em',
+          textTransform: 'uppercase',
+          color: 'var(--teal-accent)',
+          marginBottom: '0.75rem',
+        }}>
+          {eyebrow}
+        </div>
+      )}
+
       {/* Tag pill */}
       {tag && (
         <div style={{
@@ -86,7 +99,7 @@ function TextOverlay({ overlay }) {
           alignItems: 'center',
           padding: '0.22rem 0.8rem',
           background: 'rgba(45,212,191,0.1)',
-          border: '1px solid rgba(45,212,191,0.35)',
+          border: '1px solid rgba(45,212,191,0.25)',
           borderRadius: '50px',
           marginBottom: '0.75rem',
           backdropFilter: 'blur(8px)',
@@ -105,38 +118,31 @@ function TextOverlay({ overlay }) {
         </div>
       )}
 
-      {/* Main heading */}
+      {/* Main heading — serif/sans split */}
       <h1 style={{
         fontFamily: 'var(--font-display)',
         fontSize: centered
           ? 'clamp(1.2rem, 2.2vw, 2.2rem)'
-          : 'clamp(2rem, 4.5vw, 4.5rem)',
-        fontWeight: 800,
-        lineHeight: 1.05,
-        letterSpacing: '-0.02em',
+          : 'clamp(2.5rem, 6vw, 5.5rem)',
+        fontWeight: 700,
+        lineHeight: 0.95,
+        letterSpacing: '-0.04em',
         color: '#ffffff',
         textShadow: '0 2px 8px rgba(0,0,0,0.85)',
         margin: 0,
-        whiteSpace: centered ? 'nowrap' : 'normal',
+        whiteSpace: centered ? 'normal' : 'normal',
       }} className={centered ? 'final-heading' : ''}>
-        {id === 'overlay-4' ? (
+        {heading}
+        {headingLine2 && (
           <>
-            <span className="desktop-only-inline">Let's Create Something Amazing.</span>
-            <span className="mobile-only-block">
-              Let's Create Something
-              <br />
-              <span className="animated-underline">Amazing.</span>
-            </span>
-          </>
-        ) : (
-          <>
-            {heading}
-            {headingLine2 && (
-              <>
-                <br />
-                <span className="animated-underline">{headingLine2}</span>
-              </>
-            )}
+            <br />
+            <span style={{
+              fontFamily: 'var(--font-serif)',
+              fontStyle: 'italic',
+              fontWeight: 300,
+              color: 'var(--cream)',
+              letterSpacing: '-0.02em',
+            }}>{headingLine2}</span>
           </>
         )}
       </h1>
@@ -145,12 +151,11 @@ function TextOverlay({ overlay }) {
       <p style={{
         fontFamily: 'var(--font-body)',
         fontSize: 'clamp(0.8rem, 1.2vw, 1.0rem)',
-        fontWeight: 500,
-        color: 'rgba(255,255,255,0.92)',
-        marginTop: '0.5rem',
-        letterSpacing: '0.03em',
+        fontWeight: 400,
+        color: 'rgba(255,255,255,0.7)',
+        marginTop: '0.75rem',
+        letterSpacing: '0.02em',
         textShadow: '0 1px 6px rgba(0,0,0,0.8)',
-        whiteSpace: 'nowrap',
       }} className={centered ? 'final-sub' : ''}>
         {sub}
       </p>
@@ -160,13 +165,9 @@ function TextOverlay({ overlay }) {
 
 export default function HeroSection() {
   const { heroText } = usePortfolioData();
-
-  // Merge Supabase hero text into base overlays (text only, positions unchanged)
   const textOverlays = mergeHeroText(BASE_OVERLAYS, heroText);
 
-  // High-performance direct DOM updates to achieve 120fps fluid scrolling with ZERO React overhead!
   const updateHeroDomStyles = useCallback((progress) => {
-    // 1. Overlays
     BASE_OVERLAYS.forEach(overlay => {
       const el = document.getElementById(overlay.id);
       if (!el) return;
@@ -198,26 +199,22 @@ export default function HeroSection() {
       el.style.pointerEvents = opacity > 0 ? 'auto' : 'none';
     });
 
-    // 2. Right-side scroll progress bar
+    // Scroll bar
     const scrollBar = document.getElementById('hero-scroll-bar');
-    if (scrollBar) {
-      scrollBar.style.height = `${progress * 100}%`;
-    }
+    if (scrollBar) scrollBar.style.height = `${progress * 100}%`;
 
-    // 3. Scroll hint (ChevronDown)
+    // Scroll hint
     const scrollHint = document.getElementById('hero-scroll-hint');
-    if (scrollHint) {
-      scrollHint.style.opacity = progress < 0.06 ? `${1 - progress * 16}` : '0';
-    }
+    if (scrollHint) scrollHint.style.opacity = progress < 0.06 ? `${1 - progress * 16}` : '0';
 
-    // 4. Progress dots (bottom-left)
+    // Progress dots
     const dots = document.querySelectorAll('.hero-progress-dot');
     dots.forEach((dot, i) => {
       const overlay = BASE_OVERLAYS[i];
       if (!overlay) return;
       const isActive = progress >= overlay.showAt && progress < overlay.hideAt;
       dot.style.width = isActive ? '20px' : '6px';
-      dot.style.background = isActive ? 'var(--teal-accent)' : 'rgba(45,212,191,0.2)';
+      dot.style.background = isActive ? 'var(--teal-accent)' : 'rgba(45,212,191,0.15)';
     });
   }, []);
 
@@ -228,12 +225,10 @@ export default function HeroSection() {
 
   const { canvasRef, containerRef } = useScrollVideo(updateHeroDomStyles, images);
 
-  // ─── PROGRESSIVE LOADER ────────────────────────────────────────────────────
-  // Show the site the INSTANT frame-001 is ready (usually < 500ms on cache).
-  // Remaining 93 frames load silently in background. Canvas skips null slots.
+  // Progressive loader
   useEffect(() => {
     const FRAME_COUNT = 94;
-    const slots = new Array(FRAME_COUNT).fill(null); // pre-allocated, index = frame-1
+    const slots = new Array(FRAME_COUNT).fill(null);
     let loadedCount = 0;
     let firstFrameShown = false;
 
@@ -246,14 +241,12 @@ export default function HeroSection() {
         loadedCount++;
 
         if (idx === 1 && !firstFrameShown) {
-          // ⚡ Frame 001 ready → dismiss preloader immediately!
           firstFrameShown = true;
           setImages([...slots]);
           setVideoLoaded(true);
           setLoadingProgress(1);
         } else {
           setLoadingProgress(Math.round((loadedCount / FRAME_COUNT) * 100));
-          // Refresh canvas image array every 10 frames (avoid thrashing)
           if (loadedCount % 10 === 0 || loadedCount === FRAME_COUNT) {
             setImages([...slots]);
           }
@@ -265,7 +258,6 @@ export default function HeroSection() {
     }
   }, []);
 
-  // Force-render Overlay-1 the moment preloader finishes
   useEffect(() => {
     if (videoLoaded) {
       const t = setTimeout(() => updateHeroDomStyles(0), 50);
@@ -273,15 +265,13 @@ export default function HeroSection() {
     }
   }, [videoLoaded, updateHeroDomStyles]);
 
-
-
   return (
     <section
       ref={containerRef}
       className="hero-scroll-container"
       style={{ position: 'relative' }}
     >
-      {/* Cinematic 0-100% Preloader Overlay */}
+      {/* Preloader */}
       {preloaderActive && (
         <div style={{
           position: 'fixed',
@@ -297,20 +287,15 @@ export default function HeroSection() {
           pointerEvents: videoLoaded ? 'none' : 'auto',
         }}
         onTransitionEnd={() => {
-          if (videoLoaded) {
-            setPreloaderActive(false);
-          }
+          if (videoLoaded) setPreloaderActive(false);
         }}
         >
-          {/* Centered Large Futuristic Percentage Counter */}
           <div style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
             position: 'relative',
           }}>
-            {/* Huge, thin premium percentage number */}
             <span style={{
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(5rem, 12vw, 10rem)',
@@ -324,7 +309,6 @@ export default function HeroSection() {
               {loadingProgress.toString().padStart(2, '0')}
             </span>
 
-            {/* Micro-meter track */}
             <div style={{
               marginTop: '1.5rem',
               width: '160px',
@@ -342,7 +326,6 @@ export default function HeroSection() {
               }} />
             </div>
 
-            {/* Subtle, premium metadata subtext */}
             <span style={{
               marginTop: '1.25rem',
               fontFamily: 'var(--font-body)',
@@ -356,18 +339,10 @@ export default function HeroSection() {
               Initializing Portfolio
             </span>
           </div>
-
-          {/* Inline animations for premium minimal preloader */}
-          <style>{`
-            @keyframes subtle-pulse {
-              0%, 100% { opacity: 0.4; }
-              50% { opacity: 0.85; }
-            }
-          `}</style>
         </div>
       )}
 
-      {/* Sticky viewport container */}
+      {/* Sticky viewport */}
       <div style={{
         position: 'sticky',
         top: 0,
@@ -382,7 +357,25 @@ export default function HeroSection() {
           background: 'linear-gradient(135deg, #070d0e 0%, #0a1f22 50%, #0d1a1c 100%)',
         }} />
 
-        {/* Scroll Canvas - Hardware-accelerated 120fps GPU frames drawing */}
+        {/* Decorative bg text */}
+        <div style={{
+          position: 'absolute',
+          right: '-2%',
+          bottom: '5%',
+          fontFamily: 'var(--font-display)',
+          fontWeight: 800,
+          fontSize: '20vw',
+          color: 'var(--teal-accent)',
+          opacity: 0.03,
+          lineHeight: 1,
+          pointerEvents: 'none',
+          userSelect: 'none',
+          zIndex: 2,
+        }}>
+          DEVELOPER
+        </div>
+
+        {/* Canvas */}
         <canvas
           ref={canvasRef}
           style={{
@@ -397,33 +390,23 @@ export default function HeroSection() {
           }}
         />
 
-        {/* Left dark zone — keeps text readable over video */}
+        {/* Dark zones */}
         <div className="left-dark-zone" style={{
           position: 'absolute',
           inset: 0,
           background: 'linear-gradient(to right, rgba(7,13,14,0.72) 0%, rgba(7,13,14,0.4) 30%, transparent 65%)',
           pointerEvents: 'none',
         }} />
-        {/* Bottom dark zone */}
         <div className="bottom-dark-zone" style={{
           position: 'absolute',
           inset: 0,
           background: 'linear-gradient(to top, rgba(7,13,14,0.7) 0%, transparent 30%)',
           pointerEvents: 'none',
         }} />
-        {/* Top vignette */}
         <div className="top-dark-zone" style={{
           position: 'absolute',
           inset: 0,
           background: 'linear-gradient(to bottom, rgba(7,13,14,0.4) 0%, transparent 15%)',
-          pointerEvents: 'none',
-        }} />
-
-        {/* Grid texture */}
-        <div className="grid-texture" style={{
-          position: 'absolute',
-          inset: 0,
-          opacity: 0.12,
           pointerEvents: 'none',
         }} />
 
@@ -432,13 +415,32 @@ export default function HeroSection() {
 
         {/* Text Overlays */}
         {textOverlays.map(overlay => (
-          <TextOverlay
-            key={overlay.id}
-            overlay={overlay}
-          />
+          <TextOverlay key={overlay.id} overlay={overlay} />
         ))}
 
-        {/* Right-side scroll progress bar */}
+        {/* Floating ambient dots */}
+        {[
+          { size: 4, x: '15%', y: '30%', delay: 0 },
+          { size: 2, x: '80%', y: '20%', delay: 1 },
+          { size: 6, x: '70%', y: '65%', delay: 2 },
+          { size: 3, x: '25%', y: '75%', delay: 0.5 },
+        ].map((dot, i) => (
+          <div key={i} style={{
+            position: 'absolute',
+            left: dot.x,
+            top: dot.y,
+            width: `${dot.size}px`,
+            height: `${dot.size}px`,
+            borderRadius: '50%',
+            background: 'var(--teal-accent)',
+            opacity: 0.3,
+            pointerEvents: 'none',
+            animation: `float-dot 4s ease-in-out ${dot.delay}s infinite alternate`,
+            zIndex: 5,
+          }} />
+        ))}
+
+        {/* Right-side scroll progress */}
         <div style={{
           position: 'absolute',
           right: '2rem',
@@ -447,12 +449,22 @@ export default function HeroSection() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '0.5rem',
+          gap: '0.75rem',
           zIndex: 10,
         }}>
+          <span style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '10px',
+            color: 'var(--text-muted)',
+            writingMode: 'vertical-rl',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+          }}>
+            Scroll
+          </span>
           <div style={{
-            width: '2px',
-            height: '70px',
+            width: '1px',
+            height: '60px',
             background: 'rgba(45,212,191,0.15)',
             borderRadius: '1px',
             overflow: 'hidden',
@@ -464,34 +476,37 @@ export default function HeroSection() {
               transition: 'height 0.1s ease',
             }} />
           </div>
-          <span style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.58rem',
-            color: 'var(--text-muted)',
-            writingMode: 'vertical-rl',
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-          }}>
-            Scroll
-          </span>
         </div>
 
-        {/* Scroll hint — bottom right, fades immediately */}
+        {/* Scroll hint — bottom center, fades immediately */}
         <div id="hero-scroll-hint" style={{
           position: 'absolute',
           bottom: '2rem',
-          right: '4rem',
+          left: '50%',
+          transform: 'translateX(-50%)',
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
-          gap: '0.4rem',
+          gap: '0.5rem',
           opacity: 1,
-          transition: 'opacity 0.3s ease',
           zIndex: 10,
         }}>
-          <ChevronDown size={14} color="var(--teal-accent)" style={{ animation: 'bounce 2s infinite' }} />
+          <span style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '10px',
+            color: 'var(--text-muted)',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+          }}>SCROLL</span>
+          <div style={{
+            width: '1px',
+            height: '24px',
+            background: 'var(--teal-accent)',
+            animation: 'scroll-line-pulse 2s ease-in-out infinite',
+          }} />
         </div>
 
-        {/* Progress dots — bottom left */}
+        {/* Progress dots */}
         <div style={{
           position: 'absolute',
           left: '5%',
@@ -505,9 +520,9 @@ export default function HeroSection() {
             return (
               <div key={i} className="hero-progress-dot" style={{
                 width: isFirst ? '20px' : '6px',
-                height: '2.5px',
+                height: '2px',
                 borderRadius: '2px',
-                background: isFirst ? 'var(--teal-accent)' : 'rgba(45,212,191,0.2)',
+                background: isFirst ? 'var(--teal-accent)' : 'rgba(45,212,191,0.15)',
                 transition: 'all 0.4s ease',
               }} />
             );
@@ -516,16 +531,18 @@ export default function HeroSection() {
       </div>
 
       <style>{`
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(6px); }
+        @keyframes subtle-pulse {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 0.85; }
         }
-        
-        .mobile-only-block {
-          display: none;
+        @keyframes float-dot {
+          from { transform: translateY(0); }
+          to { transform: translateY(-15px); }
         }
-        .desktop-only-inline {
-          display: inline;
+        @keyframes scroll-line-pulse {
+          0% { opacity: 0.3; transform: scaleY(0.5); }
+          50% { opacity: 1; transform: scaleY(1); }
+          100% { opacity: 0.3; transform: scaleY(0.5); }
         }
 
         .hero-scroll-container {
@@ -536,50 +553,41 @@ export default function HeroSection() {
           .hero-scroll-container {
             height: 135vh !important;
           }
-          
           .left-dark-zone {
             background: linear-gradient(to right, rgba(7,13,14,0.65) 0%, rgba(7,13,14,0.2) 35%, transparent 60%) !important;
           }
           .bottom-dark-zone {
             background: linear-gradient(to top, rgba(7,13,14,0.7) 0%, rgba(7,13,14,0.2) 20%, transparent 35%) !important;
           }
-          
-          .mobile-only-block {
-            display: block;
-          }
-          .desktop-only-inline {
-            display: none;
-          }
-          
           #overlay-2, #overlay-3 {
             display: none !important;
           }
           #overlay-1 {
             max-width: 80% !important;
             left: 4% !important;
-            bottom: 8% !important; /* Pushed lower on mobile to match Overlay 4! */
+            bottom: 8% !important;
           }
           #overlay-1 h1 {
-            font-size: clamp(1.4rem, 6vw, 1.8rem) !important; /* Reduced mobile size! */
+            font-size: clamp(1.4rem, 6vw, 1.8rem) !important;
             line-height: 1.2 !important;
           }
           #overlay-1 p {
-            font-size: 0.82rem !important; /* Reduced subtext mobile size! */
+            font-size: 0.82rem !important;
           }
           #overlay-4 {
             width: 92% !important;
             max-width: 92% !important;
             left: 50% !important;
-            bottom: 8% !important; /* Pushed lower on mobile view too! */
+            bottom: 8% !important;
           }
           .final-heading {
             white-space: normal !important;
-            font-size: clamp(1.1rem, 4.5vw, 1.6rem) !important; /* Reduced mobile size! */
+            font-size: clamp(1.1rem, 4.5vw, 1.6rem) !important;
             line-height: 1.35 !important;
           }
           .final-sub {
             white-space: normal !important;
-            font-size: 0.82rem !important; /* Reduced subtext mobile size! */
+            font-size: 0.82rem !important;
           }
         }
       `}</style>

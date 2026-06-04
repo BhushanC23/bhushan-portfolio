@@ -110,11 +110,13 @@ export function useScrollVideo(onProgressUpdate, images) {
     updateDimensions();
     handleResize();
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', () => {
+    const handleResizeEvent = () => {
       updateDimensions();
       handleResize();
-    }, { passive: true });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResizeEvent, { passive: true });
 
     // High-performance 120fps render loop
     const updateLoop = () => {
@@ -151,8 +153,7 @@ export function useScrollVideo(onProgressUpdate, images) {
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', updateDimensions);
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleResizeEvent);
       if (loopRef.current) {
         cancelAnimationFrame(loopRef.current);
       }

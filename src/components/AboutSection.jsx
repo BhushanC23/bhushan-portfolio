@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
+import ScrollTrigger from 'gsap/ScrollTrigger';
 import { BHUSHAN_DATA } from '../data/bhushanData';
 import { usePortfolioData } from '../hooks/usePortfolioData';
+
+gsap.registerPlugin(ScrollTrigger);
 
 function CounterStat({ value, suffix, label }) {
   const [count, setCount] = useState(0);
@@ -34,14 +38,14 @@ function CounterStat({ value, suffix, label }) {
   }, [value]);
 
   return (
-    <div ref={ref} style={{ textAlign: 'center' }}>
+    <div ref={ref} style={{ textAlign: 'center', position: 'relative' }}>
       <div style={{
         fontFamily: 'var(--font-display)',
-        fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+        fontSize: 'clamp(2.5rem, 5vw, 5rem)',
         fontWeight: 800,
         color: 'var(--teal-accent)',
         lineHeight: 1,
-        textShadow: '0 0 30px rgba(45,212,191,0.4)',
+        letterSpacing: '-0.04em',
       }}>
         {typeof value === 'number' && !Number.isInteger(value)
           ? Number(count).toFixed(2)
@@ -50,10 +54,10 @@ function CounterStat({ value, suffix, label }) {
       </div>
       <div style={{
         fontFamily: 'var(--font-body)',
-        fontSize: '0.9rem',
+        fontSize: '11px',
         color: 'var(--text-muted)',
-        marginTop: '0.4rem',
-        letterSpacing: '0.05em',
+        marginTop: '0.6rem',
+        letterSpacing: '0.2em',
         textTransform: 'uppercase',
       }}>
         {label}
@@ -64,8 +68,12 @@ function CounterStat({ value, suffix, label }) {
 
 export default function AboutSection() {
   const { about } = usePortfolioData();
+  const sectionRef = useRef(null);
+  const headingRef = useRef(null);
+  const textRef = useRef(null);
+  const photoRef = useRef(null);
+  const statsRef = useRef(null);
 
-  // Bio paragraphs: from Supabase (split by newline) or static fallback
   const bioParagraphs = about?.bio
     ? about.bio.split('\n').filter(p => p.trim())
     : [
@@ -75,130 +83,126 @@ export default function AboutSection() {
       ];
 
   const photoSrc = about?.photo_url || '/bhushan-photo.jpg';
-  const sectionRef = useRef(null);
-  const headingRef = useRef(null);
-  const textRef = useRef(null);
-  const photoRef = useRef(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-          }
-        });
-      },
-      { threshold: 0.2 }
-    );
+    const ctx = gsap.context(() => {
+      const els = [headingRef.current, textRef.current, photoRef.current].filter(Boolean);
 
-    [headingRef, textRef, photoRef].forEach(ref => {
-      if (ref.current) {
-        ref.current.style.opacity = '0';
-        ref.current.style.transform = 'translateY(40px)';
-        ref.current.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-        observer.observe(ref.current);
+      els.forEach((el, i) => {
+        gsap.fromTo(el,
+          { opacity: 0, y: 60 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            delay: i * 0.15,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 78%',
+              toggleActions: 'play reverse play reverse',
+            }
+          }
+        );
+      });
+
+      if (statsRef.current) {
+        gsap.fromTo(statsRef.current,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: statsRef.current,
+              start: 'top 85%',
+              toggleActions: 'play reverse play reverse',
+            }
+          }
+        );
       }
     });
 
-    if (textRef.current) {
-      textRef.current.style.transitionDelay = '0.15s';
-    }
-    if (photoRef.current) {
-      photoRef.current.style.transitionDelay = '0.25s';
-    }
-
-    return () => observer.disconnect();
+    return () => ctx.revert();
   }, []);
 
   return (
     <section id="about" ref={sectionRef} style={{
       background: 'var(--bg-secondary)',
-      padding: '7rem 0',
+      padding: '10rem 0',
       position: 'relative',
       overflow: 'hidden',
     }}>
+      {/* Decorative number */}
+      <div className="section-deco-number" style={{ right: '-2%', top: '-5%' }}>01</div>
+
       {/* Background accents */}
       <div style={{
         position: 'absolute',
-        top: '-100px',
-        right: '-100px',
-        width: '400px',
-        height: '400px',
+        top: '-100px', right: '-100px',
+        width: '500px', height: '500px',
         borderRadius: '50%',
         background: 'radial-gradient(circle, rgba(45,212,191,0.06) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
       <div style={{
         position: 'absolute',
-        bottom: '-80px',
-        left: '-80px',
-        width: '300px',
-        height: '300px',
+        bottom: '-80px', left: '-80px',
+        width: '300px', height: '300px',
         borderRadius: '50%',
         background: 'radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
 
       <div className="container-xl">
-        {/* Section label */}
-        <div ref={headingRef}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            marginBottom: '0.75rem',
-          }}>
-            <div style={{ width: '30px', height: '1.5px', background: 'var(--teal-accent)' }} />
-            <span style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '0.8rem',
-              fontWeight: 600,
-              color: 'var(--teal-accent)',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-            }}>About Me</span>
-          </div>
-          <h2 className="section-title" style={{ marginBottom: '1.5rem', color: 'var(--text-primary)' }}>
-            The Person Behind<br />
-            <span className="animated-underline">the Code.</span>
+        {/* Section header */}
+        <div ref={headingRef} style={{ marginBottom: '3.5rem' }}>
+          <h2 className="heading-display">
+            The person{' '}
+            <span className="serif-accent">behind the code</span>
           </h2>
         </div>
 
-        {/* Two-column layout */}
+        {/* Two-column layout: 55% text / 45% image */}
         <div className="about-two-col" style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '4rem',
+          gridTemplateColumns: '55% 42%',
+          gap: '3rem',
           alignItems: 'center',
-          marginTop: '3rem',
         }}>
           {/* Left — Text */}
           <div ref={textRef}>
             <p style={{
               fontFamily: 'var(--font-body)',
-              fontSize: '1.1rem',
+              fontSize: 'var(--text-body-lg)',
               lineHeight: 1.8,
-              color: 'rgba(240,244,244,0.8)',
+              color: 'var(--text-muted)',
               marginBottom: '1.5rem',
             }} dangerouslySetInnerHTML={{ __html: bioParagraphs[0] || '' }} />
+
             {bioParagraphs[1] && (
               <p style={{
                 fontFamily: 'var(--font-body)',
-                fontSize: '1.05rem',
+                fontSize: 'var(--text-body-lg)',
                 lineHeight: 1.8,
-                color: 'rgba(240,244,244,0.7)',
-                marginBottom: '1.5rem',
+                color: 'var(--text-muted)',
+                marginBottom: '2rem',
               }} dangerouslySetInnerHTML={{ __html: bioParagraphs[1] }} />
             )}
+
+            {/* Blockquote highlight */}
             {bioParagraphs[2] && (
-              <p style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: '1rem',
-                lineHeight: 1.8,
-                color: 'rgba(240,244,244,0.6)',
+              <blockquote style={{
+                borderLeft: '2px solid var(--teal-accent)',
+                paddingLeft: '1.5rem',
                 marginBottom: '2.5rem',
+                fontFamily: 'var(--font-serif)',
+                fontStyle: 'italic',
+                fontWeight: 300,
+                fontSize: '1.2rem',
+                lineHeight: 1.7,
+                color: 'var(--cream)',
               }} dangerouslySetInnerHTML={{ __html: bioParagraphs[2] }} />
             )}
 
@@ -207,8 +211,8 @@ export default function AboutSection() {
                 href={BHUSHAN_DATA.social.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-teal"
-                style={{ textDecoration: 'none', fontSize: '0.9rem' }}
+                className="btn-teal magnetic"
+                style={{ textDecoration: 'none' }}
               >
                 View GitHub →
               </a>
@@ -216,57 +220,73 @@ export default function AboutSection() {
                 href={BHUSHAN_DATA.social.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-outline"
-                style={{ textDecoration: 'none', fontSize: '0.9rem' }}
+                className="btn-outline magnetic"
+                style={{ textDecoration: 'none' }}
               >
                 LinkedIn
               </a>
               <a
                 href="/Bhushan_Chaturbhuj_Resume.pdf"
                 download="Bhushan_Chaturbhuj_Resume.pdf"
-                className="btn-outline"
+                className="btn-outline magnetic"
                 style={{
                   textDecoration: 'none',
-                  fontSize: '0.9rem',
-                  borderColor: 'var(--gold-accent)',
+                  borderColor: 'rgba(201,168,76,0.4)',
                   color: 'var(--gold-accent)',
-                  fontWeight: 600,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
                 }}
               >
-                Download Resume 📄
+                Resume ↓
               </a>
             </div>
           </div>
 
           {/* Right — Photo */}
-          <div ref={photoRef} style={{ display: 'flex', justifyContent: 'center' }}>
+          <div ref={photoRef} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div className="about-photo-wrap" style={{
               position: 'relative',
               width: 'min(380px, 100%)',
             }}>
-              {/* Glow ring */}
+              {/* Offset border for depth */}
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                border: '1px solid var(--teal-accent)',
+                borderRadius: '20px',
+                transform: 'translate(12px, 12px)',
+                opacity: 0.3,
+                zIndex: 0,
+              }} />
+
+              {/* Glow */}
               <div style={{
                 position: 'absolute',
                 inset: '-12px',
                 borderRadius: '24px',
-                background: 'linear-gradient(135deg, rgba(45,212,191,0.3), rgba(201,168,76,0.15), transparent)',
+                background: 'linear-gradient(135deg, rgba(45,212,191,0.2), rgba(201,168,76,0.1), transparent)',
                 filter: 'blur(20px)',
                 zIndex: 0,
               }} />
 
               {/* Photo container */}
-              <div style={{
-                position: 'relative',
-                zIndex: 1,
-                border: '1px solid rgba(45,212,191,0.2)',
-                borderRadius: '20px',
-                overflow: 'hidden',
-                aspectRatio: '3/4',
-                background: 'var(--teal-dark)',
-              }}>
+              <div
+                className="photo-container"
+                style={{
+                  position: 'relative',
+                  zIndex: 1,
+                  border: '1px solid var(--card-border)',
+                  borderRadius: '20px',
+                  overflow: 'hidden',
+                  aspectRatio: '3/4',
+                  background: 'var(--teal-dark)',
+                  transition: 'transform 0.4s ease',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.transform = 'scale(1.03) translate(-4px, -4px)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.transform = 'scale(1) translate(0, 0)';
+                }}
+              >
                 <img
                   src={photoSrc}
                   alt="Bhushan Chaturbhuj"
@@ -276,18 +296,17 @@ export default function AboutSection() {
                     objectFit: 'cover',
                     objectPosition: 'top',
                     display: 'block',
+                    transition: 'filter 0.4s ease',
                   }}
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
+                  onError={(e) => { e.target.style.display = 'none'; }}
                 />
 
-                {/* Corner accent */}
+                {/* Available badge */}
                 <div style={{
                   position: 'absolute',
                   bottom: '1rem',
                   right: '1rem',
-                  padding: '0.5rem 1rem',
+                  padding: '0.4rem 0.9rem',
                   background: 'rgba(7,13,14,0.85)',
                   backdropFilter: 'blur(8px)',
                   borderRadius: '8px',
@@ -295,72 +314,66 @@ export default function AboutSection() {
                 }}>
                   <span style={{
                     fontFamily: 'var(--font-body)',
-                    fontSize: '0.75rem',
+                    fontSize: '0.72rem',
                     color: 'var(--teal-accent)',
-                    fontWeight: 600,
+                    fontWeight: 500,
                     letterSpacing: '0.05em',
                   }}>
                     Available for work ✦
                   </span>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
 
         {/* Stats row */}
-        <div className="about-stats-grid" style={{
+        <div ref={statsRef} className="about-stats-grid" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '2rem',
-          marginTop: '5rem',
+          marginTop: '6rem',
           paddingTop: '3rem',
-          borderTop: '1px solid rgba(45,212,191,0.1)',
+          borderTop: '1px solid rgba(45,212,191,0.08)',
+          position: 'relative',
         }}>
+          {/* Vertical dividers */}
+          {[1, 2, 3].map(i => (
+            <div key={i} className="about-stat-divider" style={{
+              position: 'absolute',
+              left: `${(100 / 4) * i}%`,
+              top: '3rem',
+              bottom: 0,
+              width: '1px',
+              background: 'rgba(45,212,191,0.08)',
+            }} />
+          ))}
           {BHUSHAN_DATA.stats.map((stat, i) => (
             <CounterStat key={i} {...stat} />
           ))}
         </div>
       </div>
 
-      {/* Responsive styles */}
+      {/* Responsive */}
       <style>{`
-        /* === ABOUT SECTION RESPONSIVE === */
         @media (max-width: 900px) {
-          #about {
-            padding: 5rem 0 !important;
-          }
+          #about { padding: 6rem 0 !important; }
           .about-two-col {
             grid-template-columns: 1fr !important;
-            gap: 2.5rem !important;
+            gap: 3rem !important;
           }
           .about-stats-grid {
             grid-template-columns: repeat(2, 1fr) !important;
-            gap: 1.5rem !important;
-            margin-top: 3rem !important;
+            gap: 2rem 0 !important;
+          }
+          .about-stat-divider {
+            display: none !important;
           }
         }
         @media (max-width: 640px) {
-          #about {
-            padding: 4rem 0 !important;
-          }
+          #about { padding: 5rem 0 !important; }
           .about-photo-wrap {
             width: min(280px, 80vw) !important;
             margin: 0 auto;
-          }
-          .about-floating-badge {
-            top: -0.75rem !important;
-            left: -0.75rem !important;
-            padding: 0.5rem 0.9rem !important;
-          }
-          .about-two-col > div:first-child p {
-            font-size: 0.97rem !important;
-          }
-          .about-stats-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-            padding-top: 2rem !important;
-            margin-top: 2.5rem !important;
           }
         }
       `}</style>

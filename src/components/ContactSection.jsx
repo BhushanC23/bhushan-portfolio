@@ -1,6 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { GitBranch, Link, AtSign, Mail, Send, MapPin } from 'lucide-react';
+import gsap from 'gsap';
+import ScrollTrigger from 'gsap/ScrollTrigger';
 import { BHUSHAN_DATA } from '../data/bhushanData';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const SOCIAL_LINKS = [
   { icon: GitBranch, href: BHUSHAN_DATA.social.github, label: 'GitHub', handle: '@BhushanC23' },
@@ -13,7 +17,56 @@ export default function ContactSection() {
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const sectionRef = useRef(null);
+  const headingRef = useRef(null);
   const formRef = useRef(null);
+  const formBoxRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      if (headingRef.current) {
+        gsap.fromTo(headingRef.current,
+          { opacity: 0, y: 60 },
+          {
+            opacity: 1, y: 0,
+            duration: 1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 78%',
+              toggleActions: 'play reverse play reverse',
+            }
+          }
+        );
+      }
+      if (formBoxRef.current) {
+        gsap.fromTo(formBoxRef.current,
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1, y: 0,
+            duration: 0.9,
+            delay: isMobile ? 0 : 0.2,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: formBoxRef.current,
+              start: 'top 85%',
+              toggleActions: 'play reverse play reverse',
+            }
+          }
+        );
+      }
+    });
+
+    return () => ctx.revert();
+  }, [isMobile]);
 
   const handleChange = (e) => {
     setFormState(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -22,7 +75,6 @@ export default function ContactSection() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate submission — integrate with EmailJS/Formspree in production
     await new Promise(r => setTimeout(r, 1500));
     setIsSubmitting(false);
     setSubmitted(true);
@@ -30,108 +82,140 @@ export default function ContactSection() {
     setTimeout(() => setSubmitted(false), 5000);
   };
 
-  const inputStyle = {
+  const underlineInputStyle = {
     width: '100%',
-    padding: '0.875rem 1.25rem',
-    background: 'rgba(13,26,28,0.8)',
-    border: '1px solid rgba(45,212,191,0.15)',
-    borderRadius: '12px',
+    padding: '1rem 0',
+    background: 'transparent',
+    border: 'none',
+    borderBottom: '1px solid rgba(45,212,191,0.2)',
     color: 'var(--text-primary)',
     fontFamily: 'var(--font-body)',
-    fontSize: '0.95rem',
+    fontSize: '1rem',
     outline: 'none',
-    transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
-    backdropFilter: 'blur(8px)',
-  };
-
-  const focusStyle = {
-    borderColor: 'rgba(45,212,191,0.5)',
-    boxShadow: '0 0 0 3px rgba(45,212,191,0.08)',
+    transition: 'border-color 0.3s ease',
   };
 
   return (
-    <section id="contact" style={{
+    <section id="contact" ref={sectionRef} style={{
       background: 'var(--bg-primary)',
-      padding: '7rem 0 5rem',
+      padding: '10rem 0 5rem',
       position: 'relative',
       overflow: 'hidden',
     }}>
+      {/* Decorative number */}
+      <div className="section-deco-number" style={{ left: '-2%', top: '-5%' }}>06</div>
+
       {/* Background glow */}
       <div style={{
         position: 'absolute',
         bottom: 0,
         left: '50%',
         transform: 'translateX(-50%)',
-        width: '600px',
-        height: '300px',
+        width: '700px',
+        height: '350px',
         background: 'radial-gradient(ellipse, rgba(45,212,191,0.05) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
 
       <div className="container-xl" style={{ position: 'relative', zIndex: 1 }}>
-        {/* Header */}
-        <div style={{ marginBottom: '4rem', textAlign: 'center' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', justifyContent: 'center' }}>
-            <div style={{ width: '30px', height: '1.5px', background: 'var(--teal-accent)' }} />
-            <span style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '0.8rem',
-              fontWeight: 600,
-              color: 'var(--teal-accent)',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-            }}>Get In Touch</span>
-            <div style={{ width: '30px', height: '1.5px', background: 'var(--teal-accent)' }} />
+        {/* Editorial headline — full width, centered */}
+        <div ref={headingRef} style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+
+          {/* Very large editorial title */}
+          <div style={{
+            fontFamily: 'var(--font-display)',
+            fontWeight: 700,
+            fontSize: 'clamp(3rem, 7vw, 6.5rem)',
+            letterSpacing: '-0.04em',
+            lineHeight: 0.95,
+            color: 'var(--text-primary)',
+          }}>
+            Let's build <span style={{
+              fontFamily: 'var(--font-serif)',
+              fontStyle: 'italic',
+              fontWeight: 300,
+              color: 'var(--cream)',
+              letterSpacing: '-0.02em',
+            }}>something</span>
           </div>
-          <h2 className="section-title" style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>
-            Let's Work<br />
-            <span className="animated-underline">Together.</span>
-          </h2>
+          <div style={{
+            fontFamily: 'var(--font-serif)',
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 'clamp(3rem, 7vw, 6.5rem)',
+            letterSpacing: '-0.02em',
+            lineHeight: 0.95,
+            color: 'var(--cream)',
+          }}>
+            extraordinary
+          </div>
+
           <p style={{
             fontFamily: 'var(--font-body)',
-            fontSize: '1.05rem',
+            fontSize: '1rem',
             color: 'var(--text-muted)',
-            maxWidth: '480px',
-            margin: '0 auto',
+            marginTop: '1.5rem',
           }}>
-            Have a project in mind? I'm currently open to freelance work and full-time opportunities.
+            Available for full-time roles and freelance projects.
           </p>
+
+          {/* Large email CTA */}
+          <a
+            href={`mailto:${BHUSHAN_DATA.social.email}`}
+            className="magnetic"
+            style={{
+              display: 'inline-block',
+              marginTop: '1.5rem',
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(1rem, 2vw, 1.5rem)',
+              fontWeight: 600,
+              color: 'var(--teal-accent)',
+              textDecoration: 'none',
+              letterSpacing: '-0.01em',
+              position: 'relative',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            {BHUSHAN_DATA.social.email}
+            <span style={{
+              position: 'absolute',
+              bottom: '-2px',
+              left: 0,
+              width: '100%',
+              height: '1px',
+              background: 'var(--teal-accent)',
+              transformOrigin: 'left',
+              transform: 'scaleX(0)',
+              transition: 'transform 0.3s ease',
+            }} className="email-underline" />
+          </a>
         </div>
 
-        {/* Two-column layout */}
+        {/* Two-column: social + form */}
         <div className="contact-two-col" style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1.2fr',
           gap: '4rem',
           alignItems: 'start',
         }}>
-          {/* Left — Info */}
+          {/* Left — Location + social links */}
           <div>
             <div style={{ marginBottom: '2.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                <MapPin size={18} color="var(--teal-accent)" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                <MapPin size={16} color="var(--teal-accent)" />
                 <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                   Kopargaon, Maharashtra, India
                 </span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <Mail size={18} color="var(--teal-accent)" />
-                <a href={`mailto:${BHUSHAN_DATA.social.email}`} style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.9rem',
-                  color: 'var(--text-muted)',
-                  textDecoration: 'none',
-                  transition: 'color 0.2s ease',
-                }}
-                  onMouseEnter={e => e.target.style.color = 'var(--teal-accent)'}
-                  onMouseLeave={e => e.target.style.color = 'var(--text-muted)'}
-                >
-                  {BHUSHAN_DATA.social.email}
-                </a>
-              </div>
             </div>
 
-            {/* Social links */}
+            {/* Social links — icon only + label */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {SOCIAL_LINKS.map(({ icon: Icon, href, label, handle }) => (
                 <a
@@ -139,52 +223,50 @@ export default function ContactSection() {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="contact-social-link"
+                  className="magnetic"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '1rem',
-                    padding: '1rem 1.25rem',
-                    background: 'rgba(13,26,28,0.6)',
-                    border: '1px solid rgba(45,212,191,0.1)',
+                    padding: '0.875rem 1.25rem',
+                    background: 'var(--card-bg)',
+                    border: '1px solid var(--card-border)',
                     borderRadius: '12px',
                     textDecoration: 'none',
                     transition: 'all 0.3s ease',
                     backdropFilter: 'blur(8px)',
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = 'rgba(45,212,191,0.3)';
-                    e.currentTarget.style.background = 'rgba(13,26,28,0.9)';
-                    e.currentTarget.style.transform = 'translateX(4px)';
+                    e.currentTarget.style.borderColor = 'rgba(45,212,191,0.25)';
+                    e.currentTarget.style.transform = 'translateX(6px)';
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = 'rgba(45,212,191,0.1)';
-                    e.currentTarget.style.background = 'rgba(13,26,28,0.6)';
+                    e.currentTarget.style.borderColor = 'var(--card-border)';
                     e.currentTarget.style.transform = 'translateX(0)';
                   }}
                 >
                   <div style={{
-                    width: '38px',
-                    height: '38px',
-                    borderRadius: '10px',
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '8px',
                     background: 'rgba(45,212,191,0.08)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}>
-                    <Icon size={18} color="var(--teal-accent)" />
+                    <Icon size={16} color="var(--teal-accent)" />
                   </div>
                   <div>
                     <div style={{
                       fontFamily: 'var(--font-body)',
                       fontSize: '0.85rem',
-                      fontWeight: 600,
+                      fontWeight: 500,
                       color: 'var(--text-primary)',
                     }}>{label}</div>
                     <div style={{
                       fontFamily: 'var(--font-body)',
-                      fontSize: '0.75rem',
+                      fontSize: '0.72rem',
                       color: 'var(--text-muted)',
                     }}>{handle}</div>
                   </div>
@@ -193,98 +275,46 @@ export default function ContactSection() {
             </div>
           </div>
 
-          {/* Right — Form */}
-          <div className="contact-form-box" style={{
-            padding: '2.5rem',
-            background: 'rgba(13,26,28,0.5)',
-            borderRadius: '20px',
-            border: '1px solid rgba(45,212,191,0.1)',
-            backdropFilter: 'blur(12px)',
-          }}>
-
+          {/* Right — Contact form */}
+          <div ref={formBoxRef} className="contact-form-box">
             {submitted ? (
-              <div style={{ textAlign: 'center', padding: '3rem 0' }}>
-                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
-                <h3 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.5rem',
-                  fontWeight: 700,
-                  color: 'var(--teal-accent)',
-                  marginBottom: '0.5rem',
-                }}>Message Sent!</h3>
-                <p style={{ fontFamily: 'var(--font-body)', color: 'var(--text-muted)' }}>
+              <div style={{ textAlign: 'center', padding: '4rem 0' }}>
+                <div style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontStyle: 'italic',
+                  fontWeight: 300,
+                  fontSize: '2rem',
+                  color: 'var(--cream)',
+                  marginBottom: '0.75rem',
+                }}>Message sent.</div>
+                <p style={{ fontFamily: 'var(--font-body)', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                   I'll get back to you soon. Thanks!
                 </p>
               </div>
             ) : (
-              <form ref={formRef} onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.82rem',
-                    fontWeight: 600,
-                    color: 'var(--text-muted)',
-                    marginBottom: '0.5rem',
-                    letterSpacing: '0.05em',
-                    textTransform: 'uppercase',
-                  }}>Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    id="contact-name"
-                    value={formState.name}
-                    onChange={handleChange}
-                    placeholder="Your name"
-                    required
-                    style={inputStyle}
-                    onFocus={e => Object.assign(e.target.style, focusStyle)}
-                    onBlur={e => {
-                      e.target.style.borderColor = 'rgba(45,212,191,0.15)';
-                      e.target.style.boxShadow = 'none';
-                    }}
-                  />
-                </div>
+              <form ref={formRef} onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                {/* Float-label inputs */}
+                {[
+                  { name: 'name', type: 'text', label: 'Your name', required: true },
+                  { name: 'email', type: 'email', label: 'your@email.com', required: true },
+                ].map(({ name, type, label, required }) => (
+                  <div key={name} style={{ position: 'relative' }}>
+                    <input
+                      type={type}
+                      name={name}
+                      id={`contact-${name}`}
+                      value={formState[name]}
+                      onChange={handleChange}
+                      placeholder={label}
+                      required={required}
+                      style={underlineInputStyle}
+                      onFocus={e => e.target.style.borderBottomColor = 'var(--teal-accent)'}
+                      onBlur={e => e.target.style.borderBottomColor = 'rgba(45,212,191,0.2)'}
+                    />
+                  </div>
+                ))}
 
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.82rem',
-                    fontWeight: 600,
-                    color: 'var(--text-muted)',
-                    marginBottom: '0.5rem',
-                    letterSpacing: '0.05em',
-                    textTransform: 'uppercase',
-                  }}>Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    id="contact-email"
-                    value={formState.email}
-                    onChange={handleChange}
-                    placeholder="your@email.com"
-                    required
-                    style={inputStyle}
-                    onFocus={e => Object.assign(e.target.style, focusStyle)}
-                    onBlur={e => {
-                      e.target.style.borderColor = 'rgba(45,212,191,0.15)';
-                      e.target.style.boxShadow = 'none';
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.82rem',
-                    fontWeight: 600,
-                    color: 'var(--text-muted)',
-                    marginBottom: '0.5rem',
-                    letterSpacing: '0.05em',
-                    textTransform: 'uppercase',
-                  }}>Message</label>
+                <div style={{ position: 'relative' }}>
                   <textarea
                     name="message"
                     id="contact-message"
@@ -293,12 +323,9 @@ export default function ContactSection() {
                     placeholder="Tell me about your project..."
                     required
                     rows={5}
-                    style={{ ...inputStyle, resize: 'vertical', minHeight: '130px' }}
-                    onFocus={e => Object.assign(e.target.style, focusStyle)}
-                    onBlur={e => {
-                      e.target.style.borderColor = 'rgba(45,212,191,0.15)';
-                      e.target.style.boxShadow = 'none';
-                    }}
+                    style={{ ...underlineInputStyle, resize: 'none' }}
+                    onFocus={e => e.target.style.borderBottomColor = 'var(--teal-accent)'}
+                    onBlur={e => e.target.style.borderBottomColor = 'rgba(45,212,191,0.2)'}
                   />
                 </div>
 
@@ -306,11 +333,12 @@ export default function ContactSection() {
                   type="submit"
                   id="contact-submit"
                   disabled={isSubmitting}
-                  className="btn-teal"
+                  className="btn-teal magnetic"
                   style={{
                     justifyContent: 'center',
                     opacity: isSubmitting ? 0.7 : 1,
                     cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                    alignSelf: 'flex-start',
                   }}
                 >
                   {isSubmitting ? (
@@ -320,7 +348,7 @@ export default function ContactSection() {
                     </>
                   ) : (
                     <>
-                      <Send size={16} />
+                      <Send size={15} />
                       Send Message
                     </>
                   )}
@@ -332,46 +360,69 @@ export default function ContactSection() {
 
         {/* Footer */}
         <div style={{
-          marginTop: '5rem',
+          marginTop: '6rem',
           paddingTop: '2rem',
-          borderTop: '1px solid rgba(45,212,191,0.08)',
-          textAlign: 'center',
+          borderTop: '1px solid rgba(45,212,191,0.06)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '1rem',
         }}>
           <p style={{
             fontFamily: 'var(--font-body)',
-            fontSize: '0.85rem',
-            color: 'var(--text-muted)',
+            fontSize: '12px',
+            color: 'var(--text-dim)',
+            letterSpacing: '0.1em',
           }}>
-            © 2025 Bhushan Chaturbhuj. Designed & Built with ❤️ and lots of ☕
+            Bhushan Chaturbhuj © 2025 — Built with React &amp; GSAP
           </p>
+          <div style={{ display: 'flex', gap: '2rem' }}>
+            {SOCIAL_LINKS.map(({ icon: Icon, href, label }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="magnetic"
+                style={{
+                  color: 'var(--text-muted)',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.color = 'var(--teal-accent)';
+                  e.currentTarget.style.transform = 'scale(1.2)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.color = 'var(--text-muted)';
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+                aria-label={label}
+              >
+                <Icon size={18} />
+              </a>
+            ))}
+          </div>
         </div>
       </div>
 
       <style>{`
-        /* === CONTACT SECTION RESPONSIVE === */
         @media (max-width: 900px) {
-          #contact {
-            padding: 4rem 0 3rem !important;
-          }
+          #contact { padding: 6rem 0 3rem !important; }
           .contact-two-col {
             grid-template-columns: 1fr !important;
             gap: 2.5rem !important;
           }
         }
-        @media (max-width: 640px) {
-          #contact {
-            padding: 3.5rem 0 2.5rem !important;
-          }
-          .contact-form-box {
-            padding: 1.5rem !important;
-          }
-          .contact-social-link {
-            padding: 0.75rem 1rem !important;
-          }
-        }
         @keyframes spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
+        }
+        .email-underline { display: block; }
+        a:hover .email-underline { transform: scaleX(1) !important; }
+        input::placeholder, textarea::placeholder {
+          color: var(--text-dim);
+          font-family: var(--font-body);
         }
       `}</style>
     </section>

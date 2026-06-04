@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import gsap from 'gsap';
 import HeroSection from './components/HeroSection';
 import AboutSection from './components/AboutSection';
 import SkillsSection from './components/SkillsSection';
@@ -9,14 +10,18 @@ import AchievementsSection from './components/AchievementsSection';
 import ContactSection from './components/ContactSection';
 import AIChatSidebar from './components/AIChatSidebar';
 import FlyingResumeButton from './components/FlyingResumeButton';
+import GrainOverlay from './components/GrainOverlay';
+import PageLoader from './components/PageLoader';
 import AdminLogin from './admin/AdminLogin';
 import AdminGuard from './admin/AdminGuard';
 import AdminDashboard from './admin/AdminDashboard';
 import { useScrollProgress } from './hooks/useScrollVideo';
 
+/* ─────────── Magnetic Morphing Cursor ─────────── */
 function CustomCursor() {
   const dotRef = useRef(null);
   const ringRef = useRef(null);
+  const labelRef = useRef(null);
   const mousePos = useRef({ x: 0, y: 0 });
   const ringPos = useRef({ x: 0, y: 0 });
   const rafRef = useRef(null);
@@ -24,6 +29,7 @@ function CustomCursor() {
   useEffect(() => {
     const dot = dotRef.current;
     const ring = ringRef.current;
+    const label = labelRef.current;
     if (!dot || !ring) return;
 
     const handleMouseMove = (e) => {
@@ -41,30 +47,58 @@ function CustomCursor() {
     };
 
     const handleMouseOver = (e) => {
-      if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
-        dot.style.transform = 'translate(-50%, -50%) scale(2)';
-        ring.style.width = '48px';
-        ring.style.height = '48px';
-        ring.style.borderColor = 'rgba(45,212,191,0.7)';
+      const target = e.target.closest('a, button, .magnetic');
+      const projectCard = e.target.closest('.project-card');
+
+      if (projectCard) {
+        dot.style.opacity = '0';
+        ring.style.width = '80px';
+        ring.style.height = '80px';
+        ring.style.borderColor = 'rgba(45,212,191,0.5)';
+        ring.style.background = 'rgba(45,212,191,0.08)';
+        if (label) { label.style.opacity = '1'; label.textContent = 'View →'; }
+      } else if (target) {
+        dot.style.opacity = '0';
+        ring.style.width = '60px';
+        ring.style.height = '60px';
+        ring.style.borderColor = 'rgba(45,212,191,0.6)';
+        ring.style.background = 'var(--teal-glow)';
+        if (label) label.style.opacity = '0';
       }
     };
 
-    const handleMouseOut = () => {
-      dot.style.transform = 'translate(-50%, -50%) scale(1)';
-      ring.style.width = '32px';
-      ring.style.height = '32px';
-      ring.style.borderColor = 'rgba(45,212,191,0.5)';
+    const handleMouseOut = (e) => {
+      const target = e.target.closest('a, button, .magnetic, .project-card');
+      if (target) {
+        dot.style.opacity = '1';
+        ring.style.width = '40px';
+        ring.style.height = '40px';
+        ring.style.borderColor = 'rgba(45,212,191,0.4)';
+        ring.style.background = 'transparent';
+        if (label) label.style.opacity = '0';
+      }
+    };
+
+    const handleMouseDown = () => {
+      gsap.to(ring, { width: 20, height: 20, duration: 0.1, ease: 'power2.in' });
+    };
+    const handleMouseUp = () => {
+      gsap.to(ring, { width: 40, height: 40, duration: 0.4, ease: 'elastic.out(1, 0.5)' });
     };
 
     window.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseout', handleMouseOut);
+    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mouseup', handleMouseUp);
     rafRef.current = requestAnimationFrame(animateRing);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseout', handleMouseOut);
+      document.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('mouseup', handleMouseUp);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
@@ -72,7 +106,9 @@ function CustomCursor() {
   return (
     <>
       <div ref={dotRef} className="cursor-dot" />
-      <div ref={ringRef} className="cursor-ring" />
+      <div ref={ringRef} className="cursor-ring">
+        <span ref={labelRef} className="cursor-label" />
+      </div>
     </>
   );
 }
@@ -88,30 +124,104 @@ function ScrollProgressBar() {
   );
 }
 
-// Main public portfolio layout
-function PortfolioLayout() {
+/* ─────────── Magnetic Effect Hook ─────────── */
+function useMagneticEffect() {
   useEffect(() => {
-    // Disable native browser scroll restoration to prevent landing at scrolled sections on refresh
+    const elements = document.querySelectorAll('.magnetic');
+    const handlers = [];
+
+    elements.forEach(el => {
+      const onMove = (e) => {
+        const rect = el.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const deltaX = (e.clientX - centerX) * 0.3;
+        const deltaY = (e.clientY - centerY) * 0.3;
+        gsap.to(el, { x: deltaX, y: deltaY, duration: 0.3, ease: 'power2.out' });
+      };
+      const onLeave = () => {
+        gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+      };
+      el.addEventListener('mousemove', onMove);
+      el.addEventListener('mouseleave', onLeave);
+      handlers.push({ el, onMove, onLeave });
+    });
+
+    return () => {
+      handlers.forEach(({ el, onMove, onLeave }) => {
+        el.removeEventListener('mousemove', onMove);
+        el.removeEventListener('mouseleave', onLeave);
+      });
+    };
+  }, []);
+}
+
+/* ─────────── Mouse Spotlight ─────────── */
+function useMouseSpotlight() {
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      const x = (e.clientX / window.innerWidth) * 100;
+      const y = (e.clientY / window.innerHeight) * 100;
+      document.documentElement.style.setProperty('--mouse-x', `${x}%`);
+      document.documentElement.style.setProperty('--mouse-y', `${y}%`);
+    };
+    document.addEventListener('mousemove', handleMouseMove);
+    return () => document.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+}
+
+/* ─────────── Main Portfolio Layout ─────────── */
+function PortfolioLayout() {
+  const [loaderDone, setLoaderDone] = useState(false);
+
+  useMouseSpotlight();
+  useMagneticEffect();
+
+  useEffect(() => {
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
-
-    // Force page scroll to top immediately on mount/reload
     window.scrollTo(0, 0);
 
-    // Safeguard to scroll to top before unloading the page
     const handleBeforeUnload = () => {
       window.scrollTo(0, 0);
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  // Initialize Lenis smooth scroll
+  useEffect(() => {
+    let lenis;
+    const initLenis = async () => {
+      try {
+        const LenisModule = await import('@studio-freight/lenis');
+        const Lenis = LenisModule.default;
+        lenis = new Lenis({
+          duration: 1.4,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smooth: true,
+        });
+
+        // Connect Lenis to GSAP ticker
+        gsap.ticker.add((time) => lenis.raf(time * 1000));
+        gsap.ticker.lagSmoothing(0);
+      } catch (e) {
+        // Lenis not available, native scroll continues
+      }
+    };
+    initLenis();
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      if (lenis) lenis.destroy();
     };
   }, []);
 
   return (
     <>
+      {/* Page Loader */}
+      <PageLoader onComplete={() => setLoaderDone(true)} />
+
       {/* Custom cursor — desktop only */}
       <div className="cursor-wrapper" style={{ display: 'block' }}>
         <CustomCursor />
@@ -136,6 +246,9 @@ function PortfolioLayout() {
 
       {/* AI Chat Sidebar */}
       <AIChatSidebar />
+
+      {/* Film Grain */}
+      <GrainOverlay />
 
       <style>{`
         @media (max-width: 768px) {

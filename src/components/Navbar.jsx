@@ -2,313 +2,285 @@ import { useState, useEffect, useRef } from 'react';
 import { Menu, X } from 'lucide-react';
 
 const NAV_LINKS = [
-  { href: '#about', label: 'About' },
-  { href: '#skills', label: 'Skills' },
+  { href: '#about',      label: 'About' },
+  { href: '#skills',     label: 'Skills' },
   { href: '#experience', label: 'Experience' },
-  { href: '#projects', label: 'Projects' },
-  { href: '#contact', label: 'Contact' },
+  { href: '#projects',   label: 'Projects' },
+  { href: '#contact',    label: 'Contact' },
 ];
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled,    setIsScrolled]    = useState(false);
+  const [isMenuOpen,    setIsMenuOpen]    = useState(false);
   const [activeSection, setActiveSection] = useState('');
-  const menuRef = useRef(null);
+  const [indicatorStyle,setIndicatorStyle]= useState({});
+  const linksRef = useRef([]);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close menu on outside click
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setIsMenuOpen(false);
-      }
-    };
-    if (isMenuOpen) document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isMenuOpen]);
-
-  // Active section via IntersectionObserver
   useEffect(() => {
     const sections = NAV_LINKS.map(l => document.querySelector(l.href)).filter(Boolean);
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) setActiveSection('#' + entry.target.id);
-        });
-      },
-      { threshold: 0.4 }
+      entries => entries.forEach(e => { if (e.isIntersecting) setActiveSection('#' + e.target.id); }),
+      { threshold: 0.35 }
     );
     sections.forEach(s => observer.observe(s));
     return () => sections.forEach(s => observer.unobserve(s));
   }, []);
 
+  /* sliding pill indicator */
+  useEffect(() => {
+    const idx = NAV_LINKS.findIndex(l => l.href === activeSection);
+    if (idx < 0 || !linksRef.current[idx]) { setIndicatorStyle({ opacity: 0 }); return; }
+    const el = linksRef.current[idx];
+    setIndicatorStyle({ opacity: 1, left: el.offsetLeft, width: el.offsetWidth });
+  }, [activeSection]);
+
+  /* close menu on outside click */
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const handler = (e) => {
+      if (!e.target.closest('.navbar-mobile')) setIsMenuOpen(false);
+    };
+    document.addEventListener('pointerdown', handler);
+    return () => document.removeEventListener('pointerdown', handler);
+  }, [isMenuOpen]);
+
   const handleNavClick = (href) => {
     setIsMenuOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <nav
-      ref={menuRef}
-      style={{
-        position: 'fixed',
-        top: isScrolled ? '10px' : '16px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 1000,
-        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-        width: isScrolled ? 'min(700px, 92vw)' : 'min(740px, 94vw)',
-      }}
-    >
-      {/* Main pill */}
-      <div
+    <>
+      {/* ────────────────────────────────
+          DESKTOP  floating capsule
+          ──────────────────────────────── */}
+      <nav
+        className="navbar-capsule"
         style={{
+          position: 'fixed',
+          top: isScrolled ? '1rem' : '1.5rem',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 1000,
+          borderRadius: '100px',
+          padding: '0 6px',
+          height: '52px',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: isScrolled ? '0.55rem 1.25rem' : '0.65rem 1.5rem',
-          background: 'rgba(7, 13, 14, 0.85)',
-          backdropFilter: 'blur(14px)',
-          WebkitBackdropFilter: 'blur(14px)',
-          border: `1px solid ${isScrolled ? 'rgba(45,212,191,0.25)' : 'rgba(45,212,191,0.15)'}`,
-          borderRadius: '50px',
-          boxShadow: isScrolled ? '0 8px 32px rgba(0,0,0,0.5)' : 'none',
-          transition: 'all 0.4s ease',
+          background: isScrolled
+            ? 'rgba(7, 13, 14, 0.88)'
+            : 'rgba(7, 13, 14, 0.55)',
+          backdropFilter: 'blur(24px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+          border: `1px solid ${isScrolled ? 'rgba(45,212,191,0.20)' : 'rgba(45,212,191,0.10)'}`,
+          boxShadow: isScrolled
+            ? '0 8px 40px rgba(0,0,0,0.5), inset 0 0 24px rgba(45,212,191,0.04)'
+            : '0 4px 20px rgba(0,0,0,0.25)',
+          transition: 'top 0.4s ease, background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease',
+          whiteSpace: 'nowrap',
         }}
       >
-        {/* Logo */}
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 800,
-            fontSize: '1.05rem',
-            color: 'var(--teal-accent)',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            letterSpacing: '-0.01em',
-            textShadow: '0 0 20px rgba(45,212,191,0.4)',
-            padding: 0,
-            flexShrink: 0,
-            transition: 'text-shadow 0.3s ease',
-            whiteSpace: 'nowrap',
-          }}
-          onMouseEnter={e => e.target.style.textShadow = '0 0 30px rgba(45,212,191,0.8)'}
-          onMouseLeave={e => e.target.style.textShadow = '0 0 20px rgba(45,212,191,0.4)'}
-        >
-          Bhushan
-        </button>
-
-        {/* Divider */}
-        <div style={{
-          width: '1px',
-          height: '18px',
-          background: 'rgba(45,212,191,0.2)',
-          flexShrink: 0,
-          marginLeft: '1.2rem',
-          marginRight: '0.5rem',
+        {/* Sliding active indicator */}
+        <span aria-hidden style={{
+          position: 'absolute',
+          top: '6px',
+          height: 'calc(100% - 12px)',
+          borderRadius: '100px',
+          background: 'rgba(45,212,191,0.10)',
+          border: '1px solid rgba(45,212,191,0.18)',
+          transition: 'left 0.35s cubic-bezier(0.4,0,0.2,1), width 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.2s',
+          pointerEvents: 'none',
+          zIndex: 0,
+          ...indicatorStyle,
         }} />
 
-        {/* Desktop nav links */}
-        <div
-          className="desktop-nav"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1.5rem',
-            flex: 1,
-          }}
-        >
-          {NAV_LINKS.map(link => (
+        {NAV_LINKS.map((link, i) => {
+          const isActive = activeSection === link.href;
+          return (
             <button
               key={link.href}
+              ref={el => linksRef.current[i] = el}
               onClick={() => handleNavClick(link.href)}
               style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: activeSection === link.href ? 'var(--teal-accent)' : 'var(--text-muted)',
+                position: 'relative', zIndex: 1,
+                background: 'none', border: 'none', cursor: 'pointer',
+                height: '40px', padding: '0 1rem',
+                display: 'flex', alignItems: 'center',
                 fontFamily: 'var(--font-body)',
-                fontWeight: 500,
-                fontSize: '0.875rem',
-                letterSpacing: '0.01em',
-                padding: '0.35rem 0',
-                position: 'relative',
-                transition: 'color 0.25s ease',
-                whiteSpace: 'nowrap',
+                fontSize: '12px', fontWeight: isActive ? 600 : 400,
+                letterSpacing: '0.08em', textTransform: 'uppercase',
+                color: isActive ? 'var(--teal-accent)' : 'rgba(240,244,244,0.60)',
+                transition: 'color 0.2s ease',
+                borderRadius: '100px',
               }}
-              onMouseEnter={e => {
-                if (activeSection !== link.href) e.currentTarget.style.color = 'rgba(240,244,244,0.9)';
-              }}
-              onMouseLeave={e => {
-                if (activeSection !== link.href) e.currentTarget.style.color = 'var(--text-muted)';
-              }}
+              onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = 'rgba(240,244,244,0.9)'; }}
+              onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = 'rgba(240,244,244,0.60)'; }}
             >
               {link.label}
-              {activeSection === link.href && (
-                <span style={{
-                  position: 'absolute',
-                  bottom: '0px',
-                  left: 0,
-                  width: '100%',
-                  height: '1.5px',
-                  background: 'var(--teal-accent)',
-                  borderRadius: '1px',
-                }} />
-              )}
             </button>
-          ))}
-        </div>
+          );
+        })}
 
-        {/* Hire Me CTA */}
+        <div style={{ width: '1px', height: '18px', background: 'rgba(45,212,191,0.15)', margin: '0 4px', flexShrink: 0 }} />
+
         <a
           href="mailto:bhushan.chaturbhuj_25pca@sanjivani.edu.in"
-          className="desktop-nav"
           style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            padding: '0.45rem 1.1rem',
-            background: 'linear-gradient(135deg, #2dd4bf, #0d9488)',
-            color: '#070d0e',
-            fontFamily: 'var(--font-body)',
-            fontWeight: 700,
-            fontSize: '0.82rem',
-            borderRadius: '50px',
-            textDecoration: 'none',
-            letterSpacing: '0.02em',
-            whiteSpace: 'nowrap',
-            flexShrink: 0,
-            marginLeft: '1rem',
-            transition: 'all 0.3s ease',
+            position: 'relative', zIndex: 1,
+            display: 'inline-flex', alignItems: 'center',
+            padding: '0 1.1rem', height: '38px', marginRight: '2px',
+            background: 'linear-gradient(135deg, rgba(45,212,191,0.18), rgba(45,212,191,0.08))',
+            border: '1px solid rgba(45,212,191,0.30)',
+            borderRadius: '100px',
+            fontFamily: 'var(--font-body)', fontWeight: 600,
+            fontSize: '11.5px', letterSpacing: '0.08em', textTransform: 'uppercase',
+            color: 'var(--teal-accent)', textDecoration: 'none', flexShrink: 0,
+            transition: 'all 0.25s ease',
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.transform = 'translateY(-1px)';
-            e.currentTarget.style.boxShadow = '0 6px 20px rgba(45,212,191,0.4)';
+            e.currentTarget.style.background = 'var(--teal-accent)';
+            e.currentTarget.style.color = '#070d0e';
+            e.currentTarget.style.boxShadow = '0 4px 20px rgba(45,212,191,0.30)';
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(45,212,191,0.18), rgba(45,212,191,0.08))';
+            e.currentTarget.style.color = 'var(--teal-accent)';
             e.currentTarget.style.boxShadow = 'none';
           }}
         >
           Hire Me
         </a>
+      </nav>
 
-        {/* Mobile hamburger */}
-        <button
-          className="mobile-menu-btn"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          style={{
-            display: 'none',
-            background: 'none',
-            border: 'none',
-            color: 'var(--teal-accent)',
-            cursor: 'pointer',
-            padding: '0.25rem',
-            marginLeft: '0.5rem',
-          }}
-          aria-label="Toggle menu"
-        >
-          {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      </div>
-
-      {/* Mobile dropdown */}
+      {/* ────────────────────────────────
+          MOBILE  floating pill drawer
+          ──────────────────────────────── */}
       <div
+        className="navbar-mobile"
         style={{
+          position: 'fixed',
+          top: '0.75rem',
+          left: '1rem',
+          right: '1rem',
+          zIndex: 1000,
+          borderRadius: '18px',
           overflow: 'hidden',
-          maxHeight: isMenuOpen ? '360px' : '0',
-          transition: 'max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-          marginTop: '0.4rem',
+          background: 'rgba(7,13,14,0.92)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid rgba(45,212,191,0.14)',
+          boxShadow: '0 4px 30px rgba(0,0,0,0.4)',
+          transition: 'box-shadow 0.3s ease',
         }}
       >
-        <div
-          style={{
-            padding: '1rem 1.25rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.6rem',
-            background: 'rgba(7,13,14,0.9)',
-            backdropFilter: 'blur(14px)',
-            border: '1px solid rgba(45,212,191,0.15)',
-            borderRadius: '16px',
-          }}
-        >
-          {NAV_LINKS.map(link => (
-            <button
-              key={link.href}
-              onClick={() => handleNavClick(link.href)}
+        {/* Top bar */}
+        <div style={{
+          display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 1.1rem',
+          height: '50px',
+        }}>
+          <span style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '13px', fontWeight: 700,
+            color: 'var(--teal-accent)',
+            letterSpacing: '0.15em', textTransform: 'uppercase',
+          }}>
+            Bhushan
+          </span>
+
+          <button
+            onClick={() => setIsMenuOpen(v => !v)}
+            style={{
+              background: 'rgba(45,212,191,0.06)',
+              border: '1px solid rgba(45,212,191,0.12)',
+              borderRadius: '10px',
+              color: 'var(--teal-accent)',
+              cursor: 'pointer',
+              width: '36px', height: '36px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'background 0.2s ease',
+            }}
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? <X size={17} /> : <Menu size={17} />}
+          </button>
+        </div>
+
+        {/* Dropdown */}
+        <div style={{
+          maxHeight: isMenuOpen ? '400px' : '0',
+          overflow: 'hidden',
+          transition: 'max-height 0.4s cubic-bezier(0.4,0,0.2,1)',
+        }}>
+          <div style={{ padding: '0.25rem 0.75rem 0.75rem', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            {NAV_LINKS.map(link => {
+              const isActive = activeSection === link.href;
+              return (
+                <button
+                  key={link.href}
+                  onClick={() => handleNavClick(link.href)}
+                  style={{
+                    background: isActive ? 'rgba(45,212,191,0.10)' : 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: isActive ? 'var(--teal-accent)' : 'rgba(240,244,244,0.65)',
+                    fontFamily: 'var(--font-body)', fontWeight: isActive ? 600 : 400,
+                    fontSize: '13px', letterSpacing: '0.07em', textTransform: 'uppercase',
+                    textAlign: 'left',
+                    padding: '0.8rem 1rem',
+                    borderRadius: '12px',
+                    transition: 'all 0.2s ease',
+                    minHeight: '44px',
+                    display: 'flex', alignItems: 'center',
+                  }}
+                >
+                  {isActive && (
+                    <span style={{
+                      display: 'inline-block', width: '4px', height: '4px',
+                      borderRadius: '50%', background: 'var(--teal-accent)',
+                      marginRight: '0.6rem', flexShrink: 0,
+                    }} />
+                  )}
+                  {link.label}
+                </button>
+              );
+            })}
+
+            <a
+              href="mailto:bhushan.chaturbhuj_25pca@sanjivani.edu.in"
               style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: activeSection === link.href ? 'var(--teal-accent)' : 'var(--text-muted)',
-                fontFamily: 'var(--font-body)',
-                fontWeight: 500,
-                fontSize: '1rem',
-                textAlign: 'left',
-                padding: '0.5rem 0',
-                transition: 'color 0.2s ease',
-                borderBottom: '1px solid rgba(45,212,191,0.07)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                minHeight: '44px', marginTop: '0.4rem',
+                background: 'rgba(45,212,191,0.10)',
+                border: '1px solid rgba(45,212,191,0.22)',
+                borderRadius: '12px',
+                color: 'var(--teal-accent)',
+                fontFamily: 'var(--font-body)', fontWeight: 600,
+                fontSize: '12.5px', letterSpacing: '0.08em', textTransform: 'uppercase',
+                textDecoration: 'none',
               }}
             >
-              {link.label}
-            </button>
-          ))}
-          <a
-            href="/Bhushan_Chaturbhuj_Resume.pdf"
-            download="Bhushan_Chaturbhuj_Resume.pdf"
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              padding: '0.6rem',
-              background: 'rgba(201,168,76,0.15)',
-              border: '1px solid rgba(201,168,76,0.3)',
-              color: 'var(--gold-accent)',
-              fontFamily: 'var(--font-body)',
-              fontWeight: 700,
-              fontSize: '0.9rem',
-              borderRadius: '50px',
-              textDecoration: 'none',
-              marginTop: '0.25rem',
-            }}
-          >
-            Download Resume 📄
-          </a>
-          <a
-            href="mailto:bhushan.chaturbhuj_25pca@sanjivani.edu.in"
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              padding: '0.6rem',
-              background: 'linear-gradient(135deg, #2dd4bf, #0d9488)',
-              color: '#070d0e',
-              fontFamily: 'var(--font-body)',
-              fontWeight: 700,
-              fontSize: '0.9rem',
-              borderRadius: '50px',
-              textDecoration: 'none',
-              marginTop: '0.25rem',
-            }}
-          >
-            Hire Me
-          </a>
+              Hire Me ✦
+            </a>
+          </div>
         </div>
       </div>
 
-      {/* Responsive overrides */}
       <style>{`
-        @media (max-width: 768px) {
-          .desktop-nav { display: none !important; }
-          .mobile-menu-btn { display: flex !important; }
+        .navbar-capsule { display: flex !important; }
+        .navbar-mobile  { display: none !important; }
+        @media (max-width: 820px) {
+          .navbar-capsule { display: none !important; }
+          .navbar-mobile  { display: block !important; }
         }
       `}</style>
-    </nav>
+    </>
   );
 }

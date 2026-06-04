@@ -73,6 +73,9 @@ export default function AboutSection() {
   const textRef = useRef(null);
   const photoRef = useRef(null);
   const statsRef = useRef(null);
+  const photoBorderRef = useRef(null);
+  const photoContainerRef = useRef(null);
+  const photoImgRef = useRef(null);
 
   const bioParagraphs = about?.bio
     ? about.bio.split('\n').filter(p => p.trim())
@@ -118,6 +121,108 @@ export default function AboutSection() {
               trigger: statsRef.current,
               start: 'top 85%',
               toggleActions: 'play reverse play reverse',
+            }
+          }
+        );
+      }
+
+      // Premium entrance reveal for photo container mask & zoom
+      if (photoContainerRef.current) {
+        gsap.fromTo(photoContainerRef.current,
+          { clipPath: 'polygon(0 100%, 100% 100%, 100% 100%, 0 100%)' },
+          {
+            clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+            duration: 1.3,
+            ease: 'power4.out',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 75%',
+              toggleActions: 'play reverse play reverse',
+            }
+          }
+        );
+      }
+
+      if (photoImgRef.current) {
+        gsap.fromTo(photoImgRef.current,
+          { scale: 1.3 },
+          {
+            scale: 1,
+            duration: 1.5,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 75%',
+              toggleActions: 'play reverse play reverse',
+            }
+          }
+        );
+      }
+
+      if (photoBorderRef.current) {
+        gsap.fromTo(photoBorderRef.current,
+          { opacity: 0, x: 0, y: 0 },
+          {
+            opacity: 0.3,
+            x: 12,
+            y: 12,
+            duration: 1.3,
+            delay: 0.1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 75%',
+              toggleActions: 'play reverse play reverse',
+            }
+          }
+        );
+      }
+
+      // Parallax scroll scrub & 3D Tilt on scroll (both mobile and PC)
+      if (photoContainerRef.current && photoImgRef.current && photoBorderRef.current) {
+        // Subtle 3D Tilt on scroll
+        gsap.fromTo(photoContainerRef.current,
+          { rotationY: -6, rotationX: 4 },
+          {
+            rotationY: 6,
+            rotationX: -4,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true,
+            }
+          }
+        );
+
+        // Parallax image shift inside overflow: hidden container
+        gsap.fromTo(photoImgRef.current,
+          { yPercent: -8 },
+          {
+            yPercent: 8,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true,
+            }
+          }
+        );
+
+        // Depth border offset parallax
+        gsap.fromTo(photoBorderRef.current,
+          { x: 8, y: 8 },
+          {
+            x: 16,
+            y: 16,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true,
             }
           }
         );
@@ -245,17 +350,23 @@ export default function AboutSection() {
             <div className="about-photo-wrap" style={{
               position: 'relative',
               width: 'min(380px, 100%)',
+              perspective: '1000px',
+              transformStyle: 'preserve-3d',
             }}>
               {/* Offset border for depth */}
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                border: '1px solid var(--teal-accent)',
-                borderRadius: '20px',
-                transform: 'translate(12px, 12px)',
-                opacity: 0.3,
-                zIndex: 0,
-              }} />
+              <div
+                ref={photoBorderRef}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  border: '1px solid var(--teal-accent)',
+                  borderRadius: '20px',
+                  transform: 'translate(12px, 12px)',
+                  opacity: 0.3,
+                  zIndex: 0,
+                  transformStyle: 'preserve-3d',
+                }}
+              />
 
               {/* Glow */}
               <div style={{
@@ -269,6 +380,7 @@ export default function AboutSection() {
 
               {/* Photo container */}
               <div
+                ref={photoContainerRef}
                 className="photo-container"
                 style={{
                   position: 'relative',
@@ -278,25 +390,27 @@ export default function AboutSection() {
                   overflow: 'hidden',
                   aspectRatio: '3/4',
                   background: 'var(--teal-dark)',
-                  transition: 'transform 0.4s ease',
+                  transformStyle: 'preserve-3d',
                 }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.transform = 'scale(1.03) translate(-4px, -4px)';
+                onMouseEnter={() => {
+                  gsap.to(photoContainerRef.current, { scale: 1.03, z: 20, duration: 0.4, overwrite: 'auto' });
                 }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.transform = 'scale(1) translate(0, 0)';
+                onMouseLeave={() => {
+                  gsap.to(photoContainerRef.current, { scale: 1, z: 0, duration: 0.4, overwrite: 'auto' });
                 }}
               >
                 <img
+                  ref={photoImgRef}
                   src={photoSrc}
                   alt="Bhushan Chaturbhuj"
                   style={{
                     width: '100%',
-                    height: '100%',
+                    height: '115%', // slightly taller for parallax scroll shift
                     objectFit: 'cover',
                     objectPosition: 'top',
                     display: 'block',
-                    transition: 'filter 0.4s ease',
+                    transformOrigin: 'center center',
+                    willChange: 'transform',
                   }}
                   onError={(e) => { e.target.style.display = 'none'; }}
                 />

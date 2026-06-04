@@ -89,7 +89,8 @@ export default function AboutSection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const els = [headingRef.current, textRef.current, photoRef.current].filter(Boolean);
+      // Heading & text elements reveal (removed photoRef from els to prevent conflicting animations)
+      const els = [headingRef.current, textRef.current].filter(Boolean);
 
       els.forEach((el, i) => {
         gsap.fromTo(el,
@@ -126,17 +127,18 @@ export default function AboutSection() {
         );
       }
 
-      // Premium entrance reveal for photo container mask & zoom
+      // Premium visual: Dual-sliding parallax reveal for the photo container
       if (photoContainerRef.current) {
         gsap.fromTo(photoContainerRef.current,
-          { clipPath: 'polygon(0 100%, 100% 100%, 100% 100%, 0 100%)' },
+          { xPercent: 100, opacity: 0 },
           {
-            clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
-            duration: 1.3,
+            xPercent: 0,
+            opacity: 1,
+            duration: 1.4,
             ease: 'power4.out',
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: 'top 75%',
+              start: 'top 78%',
               toggleActions: 'play reverse play reverse',
             }
           }
@@ -145,14 +147,15 @@ export default function AboutSection() {
 
       if (photoImgRef.current) {
         gsap.fromTo(photoImgRef.current,
-          { scale: 1.3 },
+          { xPercent: -35, scale: 1.25 },
           {
-            scale: 1,
-            duration: 1.5,
-            ease: 'power3.out',
+            xPercent: 0,
+            scale: 1.0,
+            duration: 1.4,
+            ease: 'power4.out',
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: 'top 75%',
+              start: 'top 78%',
               toggleActions: 'play reverse play reverse',
             }
           }
@@ -161,68 +164,17 @@ export default function AboutSection() {
 
       if (photoBorderRef.current) {
         gsap.fromTo(photoBorderRef.current,
-          { opacity: 0, x: 0, y: 0 },
+          { xPercent: 120, opacity: 0 },
           {
+            xPercent: 0,
             opacity: 0.3,
-            x: 12,
-            y: 12,
-            duration: 1.3,
+            duration: 1.5,
             delay: 0.1,
-            ease: 'power3.out',
+            ease: 'power4.out',
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: 'top 75%',
+              start: 'top 78%',
               toggleActions: 'play reverse play reverse',
-            }
-          }
-        );
-      }
-
-      // Parallax scroll scrub & 3D Tilt on scroll (both mobile and PC)
-      if (photoContainerRef.current && photoImgRef.current && photoBorderRef.current) {
-        // Subtle 3D Tilt on scroll
-        gsap.fromTo(photoContainerRef.current,
-          { rotationY: -6, rotationX: 4 },
-          {
-            rotationY: 6,
-            rotationX: -4,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: true,
-            }
-          }
-        );
-
-        // Parallax image shift inside overflow: hidden container
-        gsap.fromTo(photoImgRef.current,
-          { yPercent: -8 },
-          {
-            yPercent: 8,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: true,
-            }
-          }
-        );
-
-        // Depth border offset parallax
-        gsap.fromTo(photoBorderRef.current,
-          { x: 8, y: 8 },
-          {
-            x: 16,
-            y: 16,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: true,
             }
           }
         );

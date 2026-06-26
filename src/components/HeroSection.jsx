@@ -163,7 +163,7 @@ function TextOverlay({ overlay }) {
   );
 }
 
-export default function HeroSection() {
+export default function HeroSection({ images = [] }) {
   const { heroText } = usePortfolioData();
   const textOverlays = mergeHeroText(BASE_OVERLAYS, heroText);
 
@@ -218,52 +218,7 @@ export default function HeroSection() {
     });
   }, []);
 
-  const [images, setImages] = useState([]);
-  const [videoLoaded, setVideoLoaded] = useState(false);
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [preloaderActive, setPreloaderActive] = useState(true);
-
   const { canvasRef, containerRef } = useScrollVideo(updateHeroDomStyles, images);
-
-  // Progressive loader
-  useEffect(() => {
-    const FRAME_COUNT = 94;
-    const slots = new Array(FRAME_COUNT).fill(null);
-    let loadedCount = 0;
-    let firstFrameShown = false;
-
-    for (let i = 1; i <= FRAME_COUNT; i++) {
-      const img = new Image();
-      img.src = `/sequence/ezgif-frame-${i.toString().padStart(3, '0')}.jpg`;
-
-      const done = (idx) => () => {
-        slots[idx - 1] = img;
-        loadedCount++;
-
-        if (idx === 1 && !firstFrameShown) {
-          firstFrameShown = true;
-          setImages([...slots]);
-          setVideoLoaded(true);
-          setLoadingProgress(1);
-        } else {
-          setLoadingProgress(Math.round((loadedCount / FRAME_COUNT) * 100));
-          if (loadedCount % 10 === 0 || loadedCount === FRAME_COUNT) {
-            setImages([...slots]);
-          }
-        }
-      };
-
-      img.onload = done(i);
-      img.onerror = done(i);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (videoLoaded) {
-      const t = setTimeout(() => updateHeroDomStyles(0), 50);
-      return () => clearTimeout(t);
-    }
-  }, [videoLoaded, updateHeroDomStyles]);
 
   return (
     <section
@@ -271,76 +226,6 @@ export default function HeroSection() {
       className="hero-scroll-container"
       style={{ position: 'relative' }}
     >
-      {/* Preloader */}
-      {preloaderActive && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: '#070d0e',
-          zIndex: 9999,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          opacity: videoLoaded ? 0 : 1,
-          transition: 'opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1)',
-          pointerEvents: videoLoaded ? 'none' : 'auto',
-        }}
-        onTransitionEnd={() => {
-          if (videoLoaded) setPreloaderActive(false);
-        }}
-        >
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            position: 'relative',
-          }}>
-            <span style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(5rem, 12vw, 10rem)',
-              fontWeight: 200,
-              color: '#ffffff',
-              letterSpacing: '-0.05em',
-              lineHeight: 0.9,
-              textShadow: '0 4px 20px rgba(45,212,191,0.15)',
-              userSelect: 'none',
-            }}>
-              {loadingProgress.toString().padStart(2, '0')}
-            </span>
-
-            <div style={{
-              marginTop: '1.5rem',
-              width: '160px',
-              height: '1px',
-              background: 'rgba(255,255,255,0.06)',
-              position: 'relative',
-              overflow: 'hidden',
-            }}>
-              <div style={{
-                width: `${loadingProgress}%`,
-                height: '100%',
-                background: 'linear-gradient(90deg, var(--teal-accent), var(--gold-accent))',
-                boxShadow: '0 0 8px var(--teal-accent)',
-                transition: 'width 0.1s ease-out',
-              }} />
-            </div>
-
-            <span style={{
-              marginTop: '1.25rem',
-              fontFamily: 'var(--font-body)',
-              fontSize: '0.62rem',
-              fontWeight: 600,
-              color: 'rgba(255,255,255,0.38)',
-              letterSpacing: '0.35em',
-              textTransform: 'uppercase',
-              animation: 'subtle-pulse 2s ease-in-out infinite',
-            }}>
-              Initializing Portfolio
-            </span>
-          </div>
-        </div>
-      )}
 
       {/* Sticky viewport */}
       <div style={{
@@ -383,7 +268,7 @@ export default function HeroSection() {
             inset: 0,
             width: '100%',
             height: '100%',
-            opacity: videoLoaded ? 1 : 0,
+            opacity: images.length > 0 ? 1 : 0,
             pointerEvents: 'none',
             display: 'block',
             filter: 'brightness(1.15) contrast(1.05) saturate(1.02)',

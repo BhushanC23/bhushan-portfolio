@@ -173,6 +173,8 @@ function useMouseSpotlight() {
 /* ─────────── Main Portfolio Layout ─────────── */
 function PortfolioLayout() {
   const [loaderDone, setLoaderDone] = useState(false);
+  const [images, setImages] = useState([]);
+  const [loadingProgress, setLoadingProgress] = useState(0);
 
   useMouseSpotlight();
   useMagneticEffect();
@@ -188,6 +190,39 @@ function PortfolioLayout() {
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  // Preload image sequence for Hero scroll-scrub video
+  useEffect(() => {
+    const FRAME_COUNT = 94;
+    const slots = new Array(FRAME_COUNT).fill(null);
+    let loadedCount = 0;
+    let firstFrameShown = false;
+
+    for (let i = 1; i <= FRAME_COUNT; i++) {
+      const img = new Image();
+      img.src = `/sequence/ezgif-frame-${i.toString().padStart(3, '0')}.jpg`;
+
+      const done = (idx) => () => {
+        slots[idx - 1] = img;
+        loadedCount++;
+
+        if (idx === 1 && !firstFrameShown) {
+          firstFrameShown = true;
+          setImages([...slots]);
+          setLoadingProgress(1);
+        } else {
+          const progress = Math.round((loadedCount / FRAME_COUNT) * 100);
+          setLoadingProgress(progress);
+          if (loadedCount % 10 === 0 || loadedCount === FRAME_COUNT) {
+            setImages([...slots]);
+          }
+        }
+      };
+
+      img.onload = done(i);
+      img.onerror = done(i);
+    }
   }, []);
 
   // Initialize Lenis smooth scroll
@@ -220,7 +255,7 @@ function PortfolioLayout() {
   return (
     <>
       {/* Page Loader */}
-      <PageLoader onComplete={() => setLoaderDone(true)} />
+      <PageLoader progress={loadingProgress} onComplete={() => setLoaderDone(true)} />
 
       {/* Custom cursor — desktop only */}
       <div className="cursor-wrapper" style={{ display: 'block' }}>
@@ -232,7 +267,7 @@ function PortfolioLayout() {
 
       {/* Main sections */}
       <main>
-        <HeroSection />
+        <HeroSection images={images} />
         <AboutSection />
         <SkillsSection />
         <ExperienceSection />

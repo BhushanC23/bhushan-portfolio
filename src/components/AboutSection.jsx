@@ -76,6 +76,8 @@ export default function AboutSection() {
   const photoBorderRef = useRef(null);
   const photoContainerRef = useRef(null);
   const photoImgRef = useRef(null);
+  const curtain1Ref = useRef(null);
+  const curtain2Ref = useRef(null);
 
   const bioParagraphs = about?.bio
     ? about.bio.split('\n').filter(p => p.trim())
@@ -127,56 +129,47 @@ export default function AboutSection() {
         );
       }
 
-      // Premium visual: Dual-sliding parallax reveal for the photo container
-      if (photoContainerRef.current) {
-        gsap.fromTo(photoContainerRef.current,
-          { xPercent: 100, opacity: 0 },
-          {
-            xPercent: 0,
-            opacity: 1,
-            duration: 1.4,
-            ease: 'power4.out',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top 78%',
-              toggleActions: 'play reverse play reverse',
-            }
-          }
+      // Premium visual: Double-curtain reveal with image scale/parallax
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 72%',
+          toggleActions: 'play reverse play reverse',
+        }
+      });
+
+      // Curtain 2 (Dark) slides from left-to-right (0% to 101%)
+      if (curtain2Ref.current) {
+        tl.fromTo(curtain2Ref.current,
+          { xPercent: 0 },
+          { xPercent: 101, duration: 1.1, ease: 'power3.inOut' }
         );
       }
 
+      // Curtain 1 (Teal) slides from left-to-right (0% to 101%) with overlap
+      if (curtain1Ref.current) {
+        tl.fromTo(curtain1Ref.current,
+          { xPercent: 0 },
+          { xPercent: 101, duration: 1.1, ease: 'power3.inOut' },
+          '-=0.9'
+        );
+      }
+
+      // Profile image counter-slides and scales down
       if (photoImgRef.current) {
-        gsap.fromTo(photoImgRef.current,
-          { xPercent: -35, scale: 1.25 },
-          {
-            xPercent: 0,
-            scale: 1.0,
-            duration: 1.4,
-            ease: 'power4.out',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top 78%',
-              toggleActions: 'play reverse play reverse',
-            }
-          }
+        tl.fromTo(photoImgRef.current,
+          { xPercent: -20, scale: 1.3 },
+          { xPercent: 0, scale: 1.0, duration: 1.2, ease: 'power2.out' },
+          '-=0.9'
         );
       }
 
+      // Offset border frame slides in and snaps with a springy ease
       if (photoBorderRef.current) {
-        gsap.fromTo(photoBorderRef.current,
-          { xPercent: 120, opacity: 0 },
-          {
-            xPercent: 0,
-            opacity: 0.3,
-            duration: 1.5,
-            delay: 0.1,
-            ease: 'power4.out',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top 78%',
-              toggleActions: 'play reverse play reverse',
-            }
-          }
+        tl.fromTo(photoBorderRef.current,
+          { xPercent: -30, opacity: 0 },
+          { xPercent: 0, opacity: 0.3, duration: 1.0, ease: 'back.out(1.4)' },
+          '-=0.8'
         );
       }
     });
@@ -351,6 +344,31 @@ export default function AboutSection() {
                   gsap.to(photoContainerRef.current, { scale: 1, z: 0, duration: 0.4, overwrite: 'auto' });
                 }}
               >
+                {/* Curtain 1: Teal Accent */}
+                <div
+                  ref={curtain1Ref}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'var(--teal-accent)',
+                    zIndex: 2,
+                    pointerEvents: 'none',
+                    borderRadius: '20px',
+                  }}
+                />
+                {/* Curtain 2: Dark Background */}
+                <div
+                  ref={curtain2Ref}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'var(--teal-dark)',
+                    zIndex: 3,
+                    pointerEvents: 'none',
+                    borderRadius: '20px',
+                  }}
+                />
+
                 <img
                   ref={photoImgRef}
                   src={photoSrc}
@@ -363,6 +381,8 @@ export default function AboutSection() {
                     display: 'block',
                     transformOrigin: 'center center',
                     willChange: 'transform',
+                    position: 'relative',
+                    zIndex: 1,
                   }}
                   onError={(e) => { e.target.style.display = 'none'; }}
                 />
@@ -377,6 +397,7 @@ export default function AboutSection() {
                   backdropFilter: 'blur(8px)',
                   borderRadius: '8px',
                   border: '1px solid rgba(45,212,191,0.2)',
+                  zIndex: 1,
                 }}>
                   <span style={{
                     fontFamily: 'var(--font-body)',

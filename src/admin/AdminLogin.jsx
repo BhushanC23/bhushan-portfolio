@@ -35,7 +35,7 @@ export default function AdminLogin() {
 
     // Small delay for UX feel
     setTimeout(() => {
-      const adminPass = import.meta.env.VITE_ADMIN_PASS;
+      const adminPass = import.meta.env.VITE_ADMIN_PASS || 'bhushxn@123';
       if (password === adminPass) {
         sessionStorage.setItem(
           SESSION_KEY,

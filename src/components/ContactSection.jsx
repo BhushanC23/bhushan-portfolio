@@ -111,10 +111,7 @@ export default function ContactSection() {
     setIsSubmitting(true);
 
     try {
-      const apiKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
-      if (!apiKey) {
-        throw new Error('Web3Forms Access Key not set in environment.');
-      }
+      const apiKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || '0186bb1b-0807-4b4e-9aa9-e0331a592844';
 
       const payload = {
         access_key: apiKey,

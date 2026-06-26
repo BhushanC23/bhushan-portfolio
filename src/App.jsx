@@ -32,6 +32,9 @@ function CustomCursor() {
     const label = labelRef.current;
     if (!dot || !ring) return;
 
+    ring.style.opacity = '0';
+    let currentHoverType = null;
+
     const handleMouseMove = (e) => {
       mousePos.current = { x: e.clientX, y: e.clientY };
       dot.style.left = `${e.clientX}px`;
@@ -51,18 +54,24 @@ function CustomCursor() {
       const projectCard = e.target.closest('.project-card');
 
       if (projectCard) {
-        dot.style.opacity = '0';
-        ring.style.width = '80px';
-        ring.style.height = '80px';
-        ring.style.borderColor = 'rgba(45,212,191,0.5)';
-        ring.style.background = 'rgba(45,212,191,0.08)';
+        currentHoverType = 'project';
+        dot.style.width = '32px';
+        dot.style.height = '32px';
+        ring.style.opacity = '1';
+        ring.style.width = '90px';
+        ring.style.height = '90px';
+        ring.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+        ring.style.background = 'transparent';
         if (label) { label.style.opacity = '1'; label.textContent = 'View →'; }
       } else if (target) {
-        dot.style.opacity = '0';
-        ring.style.width = '60px';
-        ring.style.height = '60px';
-        ring.style.borderColor = 'rgba(45,212,191,0.6)';
-        ring.style.background = 'var(--teal-glow)';
+        currentHoverType = 'interactive';
+        dot.style.width = '24px';
+        dot.style.height = '24px';
+        ring.style.opacity = '1';
+        ring.style.width = '70px';
+        ring.style.height = '70px';
+        ring.style.borderColor = 'rgba(255, 255, 255, 0.4)';
+        ring.style.background = 'transparent';
         if (label) label.style.opacity = '0';
       }
     };
@@ -70,20 +79,29 @@ function CustomCursor() {
     const handleMouseOut = (e) => {
       const target = e.target.closest('a, button, .magnetic, .project-card');
       if (target) {
-        dot.style.opacity = '1';
-        ring.style.width = '40px';
-        ring.style.height = '40px';
-        ring.style.borderColor = 'rgba(45,212,191,0.4)';
+        currentHoverType = null;
+        dot.style.width = '20px';
+        dot.style.height = '20px';
+        ring.style.opacity = '0';
+        ring.style.width = '30px';
+        ring.style.height = '30px';
+        ring.style.borderColor = 'rgba(255, 255, 255, 0.5)';
         ring.style.background = 'transparent';
         if (label) label.style.opacity = '0';
       }
     };
 
     const handleMouseDown = () => {
-      gsap.to(ring, { width: 20, height: 20, duration: 0.1, ease: 'power2.in' });
+      const targetWidth = currentHoverType === 'project' ? 45 : (currentHoverType === 'interactive' ? 35 : 15);
+      gsap.to(ring, { width: targetWidth, height: targetWidth, duration: 0.15, ease: 'power2.inOut' });
+      const dotWidth = currentHoverType === 'project' ? 16 : (currentHoverType === 'interactive' ? 12 : 10);
+      gsap.to(dot, { width: dotWidth, height: dotWidth, duration: 0.15 });
     };
     const handleMouseUp = () => {
-      gsap.to(ring, { width: 40, height: 40, duration: 0.4, ease: 'elastic.out(1, 0.5)' });
+      const targetWidth = currentHoverType === 'project' ? 90 : (currentHoverType === 'interactive' ? 70 : 30);
+      gsap.to(ring, { width: targetWidth, height: targetWidth, duration: 0.4, ease: 'elastic.out(1, 0.5)' });
+      const dotWidth = currentHoverType === 'project' ? 32 : (currentHoverType === 'interactive' ? 24 : 20);
+      gsap.to(dot, { width: dotWidth, height: dotWidth, duration: 0.4 });
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -112,6 +130,7 @@ function CustomCursor() {
     </>
   );
 }
+
 
 function ScrollProgressBar() {
   const { progressRef } = useScrollProgress();
@@ -237,6 +256,7 @@ function PortfolioLayout() {
           easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           smooth: true,
         });
+        window.lenis = lenis;
 
         // Connect Lenis to GSAP ticker
         gsap.ticker.add((time) => lenis.raf(time * 1000));
@@ -248,7 +268,12 @@ function PortfolioLayout() {
     initLenis();
 
     return () => {
-      if (lenis) lenis.destroy();
+      if (lenis) {
+        lenis.destroy();
+        if (window.lenis === lenis) {
+          window.lenis = undefined;
+        }
+      }
     };
   }, []);
 
@@ -262,8 +287,8 @@ function PortfolioLayout() {
         <CustomCursor />
       </div>
 
-      {/* Scroll progress bar */}
-      <ScrollProgressBar />
+      {/* Scroll progress bar — only after loader */}
+      {loaderDone && <ScrollProgressBar />}
 
       {/* Main sections */}
       <main>

@@ -14,7 +14,16 @@ const SOCIAL_LINKS = [
 ];
 
 export default function ContactSection() {
-  const [formState, setFormState] = useState({ name: '', email: '', message: '' });
+  const [formState, setFormState] = useState({
+    name: '',
+    email: '',
+    company: '',
+    purpose: 'General Inquiry',
+    role: '',
+    jobType: 'Full-Time',
+    budget: 'TBD / Flexible',
+    message: ''
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const sectionRef = useRef(null);
@@ -22,6 +31,10 @@ export default function ContactSection() {
   const formRef = useRef(null);
   const formBoxRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
+
+  const setField = (name, value) => {
+    setFormState(prev => ({ ...prev, [name]: value }));
+  };
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -72,14 +85,88 @@ export default function ContactSection() {
     setFormState(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const getEmailSubject = () => {
+    if (formState.purpose === 'Hiring / Job Offer') {
+      return `[Hiring] ${formState.role || 'Position'} at ${formState.company || 'Unknown Company'}`;
+    }
+    if (formState.purpose === 'Freelance Project') {
+      return `[Freelance] Project Inquiry - Budget: ${formState.budget}`;
+    }
+    return `[General] Portfolio Message from ${formState.name}`;
+  };
+
+  const getPlaceholderText = () => {
+    switch (formState.purpose) {
+      case 'Hiring / Job Offer':
+        return 'Tell me about the position, team structure, tech stack, and next steps in your recruitment process...';
+      case 'Freelance Project':
+        return 'Tell me about your project, key goals, timeline, and any specific requirements...';
+      default:
+        return 'Tell me how I can help you, or details about your inquiry...';
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    await new Promise(r => setTimeout(r, 1500));
-    setIsSubmitting(false);
-    setSubmitted(true);
-    setFormState({ name: '', email: '', message: '' });
-    setTimeout(() => setSubmitted(false), 5000);
+
+    try {
+      const apiKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+      if (!apiKey) {
+        throw new Error('Web3Forms Access Key not set in environment.');
+      }
+
+      const payload = {
+        access_key: apiKey,
+        subject: getEmailSubject(),
+        from_name: 'Bhushan Portfolio',
+        name: formState.name,
+        email: formState.email,
+        purpose: formState.purpose,
+        message: formState.message,
+      };
+
+      if (formState.purpose === 'Hiring / Job Offer') {
+        payload.company = formState.company;
+        payload.role = formState.role;
+        payload.job_type = formState.jobType;
+      } else if (formState.purpose === 'Freelance Project') {
+        if (formState.company) payload.company = formState.company;
+        payload.budget = formState.budget;
+      }
+
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setSubmitted(true);
+        setFormState({
+          name: '',
+          email: '',
+          company: '',
+          purpose: 'General Inquiry',
+          role: '',
+          jobType: 'Full-Time',
+          budget: 'TBD / Flexible',
+          message: ''
+        });
+        setTimeout(() => setSubmitted(false), 5000);
+      } else {
+        alert('Oops! There was an issue sending your message. Please try again.');
+      }
+    } catch (error) {
+      console.error('Email submission error:', error);
+      alert('Failed to connect to the email server. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const underlineInputStyle = {
@@ -314,13 +401,195 @@ export default function ContactSection() {
                   </div>
                 ))}
 
+                {/* Purpose of Contact selector */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+                  <label style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+                    Purpose of Contact
+                  </label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    {['General Inquiry', 'Hiring / Job Offer', 'Freelance Project'].map((opt) => {
+                      const active = formState.purpose === opt;
+                      return (
+                        <button
+                          key={opt}
+                          type="button"
+                          onClick={() => setField('purpose', opt)}
+                          style={{
+                            padding: '0.6rem 1.2rem',
+                            borderRadius: '50px',
+                            fontFamily: 'var(--font-body)',
+                            fontSize: '0.85rem',
+                            fontWeight: 500,
+                            background: active ? 'rgba(45, 212, 191, 0.12)' : 'rgba(13, 26, 28, 0.4)',
+                            border: `1px solid ${active ? 'var(--teal-accent)' : 'var(--card-border)'}`,
+                            color: active ? 'var(--teal-accent)' : 'var(--text-muted)',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                            boxShadow: active ? '0 0 12px rgba(45, 212, 191, 0.15)' : 'none',
+                          }}
+                        >
+                          {opt}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Conditional Fields Wrapper with smooth CSS animation */}
+                {(() => {
+                  const showHiring = formState.purpose === 'Hiring / Job Offer';
+                  const showFreelance = formState.purpose === 'Freelance Project';
+                  const hasConditional = showHiring || showFreelance;
+                  return (
+                    <div
+                      style={{
+                        maxHeight: hasConditional ? '320px' : '0px',
+                        opacity: hasConditional ? 1 : 0,
+                        transform: hasConditional ? 'translateY(0)' : 'translateY(-10px)',
+                        overflow: 'hidden',
+                        transition: 'max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease, transform 0.35s ease, margin 0.35s ease',
+                        marginTop: hasConditional ? '0.5rem' : '0px',
+                        marginBottom: hasConditional ? '0.5rem' : '0px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '1.5rem',
+                      }}
+                    >
+                      {/* Hiring Fields */}
+                      {showHiring && (
+                        <>
+                          <div className="form-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                            <div style={{ position: 'relative' }}>
+                              <input
+                                type="text"
+                                name="company"
+                                id="contact-company"
+                                value={formState.company}
+                                onChange={handleChange}
+                                placeholder="Company / Organization"
+                                required={showHiring}
+                                style={underlineInputStyle}
+                                onFocus={e => e.target.style.borderBottomColor = 'var(--teal-accent)'}
+                                onBlur={e => e.target.style.borderBottomColor = 'rgba(45,212,191,0.2)'}
+                              />
+                            </div>
+                            <div style={{ position: 'relative' }}>
+                              <input
+                                type="text"
+                                name="role"
+                                id="contact-role"
+                                value={formState.role}
+                                onChange={handleChange}
+                                placeholder="Target Role / Position"
+                                required={showHiring}
+                                style={underlineInputStyle}
+                                onFocus={e => e.target.style.borderBottomColor = 'var(--teal-accent)'}
+                                onBlur={e => e.target.style.borderBottomColor = 'rgba(45,212,191,0.2)'}
+                              />
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                            <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                              Job Type
+                            </span>
+                            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                              {['Full-Time', 'Contract', 'Part-Time / Other'].map((t) => {
+                                const active = formState.jobType === t;
+                                return (
+                                  <button
+                                    key={t}
+                                    type="button"
+                                    onClick={() => setField('jobType', t)}
+                                    style={{
+                                      padding: '0.4rem 0.9rem',
+                                      borderRadius: '20px',
+                                      fontFamily: 'var(--font-body)',
+                                      fontSize: '0.78rem',
+                                      fontWeight: 500,
+                                      background: active ? 'rgba(45, 212, 191, 0.08)' : 'transparent',
+                                      border: `1px solid ${active ? 'var(--teal-accent)' : 'rgba(45, 212, 191, 0.15)'}`,
+                                      color: active ? 'var(--teal-accent)' : 'var(--text-muted)',
+                                      cursor: 'pointer',
+                                      transition: 'all 0.2s ease',
+                                    }}
+                                  >
+                                    {t}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '-0.25rem' }}>
+                            <span style={{ color: 'var(--teal-accent)', fontSize: '1.1rem', lineHeight: '0.8' }}>✦</span>
+                            <span>I am open to full-time remote or hybrid positions (relocation negotiable).</span>
+                          </div>
+                        </>
+                      )}
+
+                      {/* Freelance Fields */}
+                      {showFreelance && (
+                        <>
+                          <div style={{ position: 'relative' }}>
+                            <input
+                              type="text"
+                              name="company"
+                              id="contact-project-company"
+                              value={formState.company}
+                              onChange={handleChange}
+                              placeholder="Company / Project Name (Optional)"
+                              style={underlineInputStyle}
+                              onFocus={e => e.target.style.borderBottomColor = 'var(--teal-accent)'}
+                              onBlur={e => e.target.style.borderBottomColor = 'rgba(45,212,191,0.2)'}
+                            />
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                            <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                              Project Budget (USD)
+                            </span>
+                            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                              {['TBD / Flexible', 'Under $2k', '$2k - $5k', '$5k+'].map((b) => {
+                                const active = formState.budget === b;
+                                return (
+                                  <button
+                                    key={b}
+                                    type="button"
+                                    onClick={() => setField('budget', b)}
+                                    style={{
+                                      padding: '0.4rem 0.9rem',
+                                      borderRadius: '20px',
+                                      fontFamily: 'var(--font-body)',
+                                      fontSize: '0.78rem',
+                                      fontWeight: 500,
+                                      background: active ? 'rgba(45, 212, 191, 0.08)' : 'transparent',
+                                      border: `1px solid ${active ? 'var(--teal-accent)' : 'rgba(45, 212, 191, 0.15)'}`,
+                                      color: active ? 'var(--teal-accent)' : 'var(--text-muted)',
+                                      cursor: 'pointer',
+                                      transition: 'all 0.2s ease',
+                                    }}
+                                  >
+                                    {b}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '-0.25rem' }}>
+                            <span style={{ color: 'var(--teal-accent)', fontSize: '1.1rem', lineHeight: '0.8' }}>✦</span>
+                            <span>Please share high-level project goals, timeline, and tech constraints.</span>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })()}
+
                 <div style={{ position: 'relative' }}>
                   <textarea
                     name="message"
                     id="contact-message"
                     value={formState.message}
                     onChange={handleChange}
-                    placeholder="Tell me about your project..."
+                    placeholder={getPlaceholderText()}
                     required
                     rows={5}
                     style={{ ...underlineInputStyle, resize: 'none' }}
@@ -412,6 +681,12 @@ export default function ContactSection() {
           .contact-two-col {
             grid-template-columns: 1fr !important;
             gap: 2.5rem !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .form-grid-2col {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
           }
         }
         @keyframes spin {

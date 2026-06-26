@@ -22,15 +22,15 @@ export default function AchievementsSection() {
     const ctx = gsap.context(() => {
       if (headerRef.current) {
         gsap.fromTo(headerRef.current,
-          { opacity: 0, y: 50 },
+          { opacity: 0, y: 30 },
           {
             opacity: 1, y: 0,
-            duration: 0.9,
-            ease: 'power3.out',
+            duration: 0.8,
+            ease: 'power2.out',
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: 'top 78%',
-              toggleActions: 'play reverse play reverse',
+              start: 'top 92%',
+              once: true,
             }
           }
         );
@@ -39,17 +39,17 @@ export default function AchievementsSection() {
       cardsRef.current.forEach((el, i) => {
         if (!el) return;
         gsap.fromTo(el,
-          { opacity: 0, clipPath: 'inset(0 0 100% 0)' },
+          { opacity: 0, y: 30 },
           {
             opacity: 1,
-            clipPath: 'inset(0 0 0% 0)',
-            duration: 0.9,
-            delay: isMobile ? 0 : (i === 0 ? 0 : (i % 2 === 1 ? 0 : 0.15)),
-            ease: 'power3.out',
+            y: 0,
+            duration: 0.8,
+            delay: isMobile ? 0 : i * 0.08,
+            ease: 'power2.out',
             scrollTrigger: {
               trigger: el,
-              start: 'top 85%',
-              toggleActions: 'play reverse play reverse',
+              start: 'top 92%',
+              once: true,
             }
           }
         );
@@ -86,155 +86,265 @@ export default function AchievementsSection() {
           </h2>
         </div>
 
-        {/* Featured achievement — full width */}
-        <div
-          ref={el => cardsRef.current[0] = el}
-          style={{
-            position: 'relative',
-            padding: isMobile ? '1.5rem 1.25rem 1.5rem 1.5rem' : '2.5rem 2rem 2.5rem 3rem',
-            borderLeft: '2px solid var(--gold-accent)',
-            marginBottom: '2rem',
-            overflow: 'hidden',
-            background: 'rgba(13,26,28,0.4)',
-            borderRadius: '0 12px 12px 0',
-            boxShadow: '0 0 60px rgba(201,168,76,0.06)',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.background = 'rgba(13,26,28,0.7)';
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.background = 'rgba(13,26,28,0.4)';
-          }}
-        >
-          {/* Large decorative "52" */}
-          <div style={{
-            position: 'absolute',
-            right: '2rem',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            fontFamily: 'var(--font-display)',
-            fontWeight: 800,
-            fontSize: '10vw',
-            color: 'var(--gold-accent)',
-            opacity: 0.05,
-            lineHeight: 1,
-            userSelect: 'none',
-            pointerEvents: 'none',
-          }}>
-            52
-          </div>
-
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <span style={{
-              display: 'inline-flex',
-              padding: '0.2rem 0.75rem',
-              background: 'rgba(201,168,76,0.1)',
-              border: '1px solid rgba(201,168,76,0.3)',
-              borderRadius: '20px',
-              fontSize: '10px',
-              fontWeight: 600,
-              color: 'var(--gold-accent)',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              fontFamily: 'var(--font-display)',
-              marginBottom: '0.75rem',
-            }}>
-              NATIONAL RANK
-            </span>
-
-            <h3 style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: isMobile ? '1.1rem' : 'clamp(1.1rem, 2vw, 1.5rem)',
-              fontWeight: 600,
-              color: 'var(--text-primary)',
-              marginBottom: '0.25rem',
-            }}>
-              {featuredAchievement.title}
-            </h3>
-            <p style={{
-              fontFamily: 'var(--font-serif)',
-              fontStyle: 'italic',
-              fontWeight: 300,
-              fontSize: '1rem',
-              color: 'var(--cream)',
-            }}>
-              {featuredAchievement.desc}
-            </p>
-          </div>
-        </div>
-
-        {/* Other achievements — 2-column grid */}
+        {/* Bento Grid */}
         <div className="achievements-grid" style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '0',
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+          gap: '1.5rem',
         }}>
-          {otherAchievements.map((item, i) => (
-            <div
-              key={i}
-              ref={el => cardsRef.current[i + 1] = el}
-              style={{
-                padding: isMobile ? '1.25rem 1.25rem 1.25rem 1.5rem' : '1.5rem 1.5rem 1.5rem 2rem',
-                borderLeft: '2px solid var(--teal-accent)',
-                borderBottom: '1px solid rgba(45,212,191,0.06)',
-                background: 'transparent',
-                transition: 'all 0.3s ease',
-                margin: '0.25rem',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = 'rgba(13,26,28,0.5)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = 'transparent';
-              }}
-            >
-              <span style={{
-                display: 'inline-flex',
-                padding: '0.15rem 0.6rem',
-                background: 'rgba(45,212,191,0.07)',
-                border: '1px solid rgba(45,212,191,0.15)',
-                borderRadius: '20px',
-                fontSize: '9px',
-                fontWeight: 700,
-                color: 'var(--teal-accent)',
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                fontFamily: 'var(--font-display)',
-                marginBottom: '0.6rem',
-              }}>
-                CERTIFIED
-              </span>
-
-              <h3 style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '0.95rem',
-                fontWeight: 600,
-                color: 'var(--text-primary)',
-                marginBottom: '0.3rem',
-                lineHeight: 1.35,
-              }}>
-                {item.title}
-              </h3>
-              <p style={{
-                fontFamily: 'var(--font-serif)',
-                fontStyle: 'italic',
-                fontWeight: 300,
-                fontSize: '0.85rem',
-                color: 'var(--cream)',
-                lineHeight: 1.5,
-              }}>
-                {item.desc}
-              </p>
+          {/* Card 1: IIT Bombay (Featured) */}
+          <div
+            ref={el => cardsRef.current[0] = el}
+            className="bento-card bento-gold"
+            style={{
+              gridColumn: isMobile ? 'span 1' : 'span 2',
+              minHeight: '220px',
+            }}
+          >
+            {/* Watermark 52 */}
+            <div style={{
+              position: 'absolute', right: '1.5rem', top: '50%', transform: 'translateY(-50%)',
+              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: isMobile ? '6rem' : '8.5rem',
+              color: 'var(--gold-accent)', opacity: 0.05, lineHeight: 1, pointerEvents: 'none', userSelect: 'none',
+            }}>
+              52
             </div>
-          ))}
+
+            <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
+                  <span style={{ fontSize: '1.3rem' }}>{featuredAchievement.icon || "🥇"}</span>
+                  <span style={{
+                    padding: '0.2rem 0.75rem', background: 'rgba(201,168,76,0.1)',
+                    border: '1px solid rgba(201,168,76,0.25)', borderRadius: '20px',
+                    fontSize: '10px', fontWeight: 700, color: 'var(--gold-accent)',
+                    letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
+                  }}>
+                    NATIONAL RANK
+                  </span>
+                </div>
+                <h3 style={{
+                  fontFamily: 'var(--font-display)', fontSize: isMobile ? '1.1rem' : '1.4rem',
+                  fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem',
+                  letterSpacing: '-0.01em',
+                }}>
+                  {featuredAchievement.title}
+                </h3>
+                <p style={{
+                  fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300,
+                  fontSize: '1.05rem', color: 'var(--cream)', lineHeight: 1.5,
+                  maxWidth: '90%',
+                }}>
+                  {featuredAchievement.desc}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: JPMorgan */}
+          <div
+            ref={el => cardsRef.current[1] = el}
+            className="bento-card bento-teal"
+            style={{ gridColumn: 'span 1' }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
+                  <span style={{ fontSize: '1.3rem' }}>{otherAchievements[0].icon || "🎓"}</span>
+                  <span style={{
+                    padding: '0.2rem 0.75rem', background: 'rgba(45,212,191,0.08)',
+                    border: '1px solid rgba(45,212,191,0.2)', borderRadius: '20px',
+                    fontSize: '10px', fontWeight: 700, color: 'var(--teal-accent)',
+                    letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
+                  }}>
+                    SWE CERTIFIED
+                  </span>
+                </div>
+                <h3 style={{
+                  fontFamily: 'var(--font-display)', fontSize: '1.05rem',
+                  fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem',
+                  lineHeight: 1.3,
+                }}>
+                  {otherAchievements[0].title}
+                </h3>
+                <p style={{
+                  fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300,
+                  fontSize: '0.9rem', color: 'var(--cream)', lineHeight: 1.5,
+                }}>
+                  {otherAchievements[0].desc}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: NASSCOM */}
+          <div
+            ref={el => cardsRef.current[2] = el}
+            className="bento-card bento-teal"
+            style={{ gridColumn: 'span 1' }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
+                  <span style={{ fontSize: '1.3rem' }}>{otherAchievements[1].icon || "🤖"}</span>
+                  <span style={{
+                    padding: '0.2rem 0.75rem', background: 'rgba(45,212,191,0.08)',
+                    border: '1px solid rgba(45,212,191,0.2)', borderRadius: '20px',
+                    fontSize: '10px', fontWeight: 700, color: 'var(--teal-accent)',
+                    letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
+                  }}>
+                    GENERATIVE AI
+                  </span>
+                </div>
+                <h3 style={{
+                  fontFamily: 'var(--font-display)', fontSize: '1.05rem',
+                  fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem',
+                  lineHeight: 1.3,
+                }}>
+                  {otherAchievements[1].title}
+                </h3>
+                <p style={{
+                  fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300,
+                  fontSize: '0.9rem', color: 'var(--cream)', lineHeight: 1.5,
+                }}>
+                  {otherAchievements[1].desc}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 4: MSME */}
+          <div
+            ref={el => cardsRef.current[3] = el}
+            className="bento-card bento-amber"
+            style={{ gridColumn: 'span 1' }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
+                  <span style={{ fontSize: '1.3rem' }}>{otherAchievements[2].icon || "🏢"}</span>
+                  <span style={{
+                    padding: '0.2rem 0.75rem', background: 'rgba(249,115,22,0.08)',
+                    border: '1px solid rgba(249,115,22,0.2)', borderRadius: '20px',
+                    fontSize: '10px', fontWeight: 700, color: '#fb923c',
+                    letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
+                  }}>
+                    GOVERNMENT MSME
+                  </span>
+                </div>
+                <h3 style={{
+                  fontFamily: 'var(--font-display)', fontSize: '1.05rem',
+                  fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem',
+                  lineHeight: 1.3,
+                }}>
+                  {otherAchievements[2].title}
+                </h3>
+                <p style={{
+                  fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300,
+                  fontSize: '0.9rem', color: 'var(--cream)', lineHeight: 1.5,
+                }}>
+                  {otherAchievements[2].desc}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 5: GCP */}
+          <div
+            ref={el => cardsRef.current[4] = el}
+            className="bento-card bento-blue"
+            style={{ gridColumn: 'span 1' }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
+                  <span style={{ fontSize: '1.3rem' }}>{otherAchievements[3].icon || "☁️"}</span>
+                  <span style={{
+                    padding: '0.2rem 0.75rem', background: 'rgba(59,130,246,0.08)',
+                    border: '1px solid rgba(59,130,246,0.2)', borderRadius: '20px',
+                    fontSize: '10px', fontWeight: 700, color: '#60a5fa',
+                    letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
+                  }}>
+                    CLOUD ARCH
+                  </span>
+                </div>
+                <h3 style={{
+                  fontFamily: 'var(--font-display)', fontSize: '1.05rem',
+                  fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem',
+                  lineHeight: 1.3,
+                }}>
+                  {otherAchievements[3].title}
+                </h3>
+                <p style={{
+                  fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300,
+                  fontSize: '0.9rem', color: 'var(--cream)', lineHeight: 1.5,
+                }}>
+                  {otherAchievements[3].desc}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <style>{`
+        .bento-card {
+          background: rgba(13,26,28,0.45);
+          border: 1px solid var(--card-border);
+          border-radius: 16px;
+          padding: 1.75rem;
+          position: relative;
+          overflow: hidden;
+          transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+          will-change: transform;
+        }
+
+        .bento-card:hover {
+          transform: translateY(-6px);
+          background: rgba(13,26,28,0.65);
+        }
+
+        .bento-gold {
+          background: radial-gradient(circle at 10% 10%, rgba(201, 168, 76, 0.06), transparent 70%), rgba(13,26,28,0.45);
+        }
+        .bento-gold:hover {
+          border-color: var(--gold-accent) !important;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(201, 168, 76, 0.08) !important;
+        }
+
+        .bento-teal {
+          background: radial-gradient(circle at 10% 10%, rgba(45, 212, 191, 0.06), transparent 70%), rgba(13,26,28,0.45);
+        }
+        .bento-teal:hover {
+          border-color: var(--teal-accent) !important;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(45, 212, 191, 0.08) !important;
+        }
+
+        .bento-amber {
+          background: radial-gradient(circle at 10% 10%, rgba(249, 115, 22, 0.05), transparent 70%), rgba(13,26,28,0.45);
+        }
+        .bento-amber:hover {
+          border-color: #fb923c !important;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(249, 115, 22, 0.08) !important;
+        }
+
+        .bento-blue {
+          background: radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.05), transparent 70%), rgba(13,26,28,0.45);
+        }
+        .bento-blue:hover {
+          border-color: #60a5fa !important;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(59, 130, 246, 0.08) !important;
+        }
+
         @media (max-width: 768px) {
           #achievements { padding: 4rem 0 !important; }
           .achievements-grid {
             grid-template-columns: 1fr !important;
+            gap: 1.25rem !important;
+          }
+          .bento-card {
+            grid-column: span 1 !important;
+            padding: 1.5rem !important;
           }
         }
       `}</style>

@@ -72,7 +72,7 @@ function TextOverlay({ overlay }) {
         transition: 'none',
         zIndex: 10,
         width: centered ? '90%' : 'auto',
-        maxWidth: centered ? '90%' : '42%',
+        maxWidth: centered ? '90%' : '36%',
         textAlign: centered ? 'center' : (isRightAligned ? 'right' : 'left'),
         pointerEvents: isFirst ? 'auto' : 'none',
       }}
@@ -123,7 +123,7 @@ function TextOverlay({ overlay }) {
         fontFamily: 'var(--font-display)',
         fontSize: centered
           ? 'clamp(1.2rem, 2.2vw, 2.2rem)'
-          : 'clamp(2.5rem, 6vw, 5.5rem)',
+          : 'clamp(2rem, 4.2vw, 3.5rem)',
         fontWeight: 700,
         lineHeight: 0.95,
         letterSpacing: '-0.04em',

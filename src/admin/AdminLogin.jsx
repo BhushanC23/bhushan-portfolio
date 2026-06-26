@@ -271,7 +271,7 @@ export default function AdminLogin() {
           fontSize: '0.72rem',
           letterSpacing: '0.05em',
         }}>
-          BX Studio · Portfolio Admin · Session expires in 30 min
+          BX Studio · Session expires in 30 min
         </div>
       </div>
 
@@ -287,7 +287,29 @@ export default function AdminLogin() {
         }
         .admin-shake { animation: admin-shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
         input::placeholder { color: rgba(240,244,244,0.25); }
+        .back-link { color: rgba(122,158,159,0.4); transition: color 0.2s; }
+        .back-link:hover { color: rgba(45,212,191,0.7); }
       `}</style>
+
+      {/* Back to portfolio */}
+      <a
+        href="/"
+        className="back-link"
+        style={{
+          position: 'absolute',
+          bottom: '1.75rem',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          fontFamily: 'var(--font-body)',
+          fontSize: '0.68rem',
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          textDecoration: 'none',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        ← Back to portfolio
+      </a>
     </div>
   );
 }

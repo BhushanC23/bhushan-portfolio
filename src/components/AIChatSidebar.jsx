@@ -97,6 +97,20 @@ export default function AIChatSidebar() {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      window.lenis?.stop();
+    } else {
+      document.body.style.overflow = '';
+      window.lenis?.start();
+    }
+    return () => {
+      document.body.style.overflow = '';
+      window.lenis?.start();
+    };
+  }, [isOpen]);
+
   const sendMessage = async (text) => {
     if (!text.trim()) return;
 
@@ -268,6 +282,7 @@ export default function AIChatSidebar() {
           opacity: isOpen ? 1 : 0,
           pointerEvents: isOpen ? 'auto' : 'none',
           transition: 'opacity 0.3s ease',
+          touchAction: 'none',
         }}
       />
 
@@ -275,6 +290,7 @@ export default function AIChatSidebar() {
       <div
         id="ai-chat-sidebar"
         className="ai-sidebar-panel"
+        data-lenis-prevent
         style={{
           position: 'fixed',
           top: 0,
@@ -290,6 +306,7 @@ export default function AIChatSidebar() {
           transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
           boxShadow: '-20px 0 60px rgba(0,0,0,0.5)',
           overflowY: 'hidden',
+          overscrollBehavior: 'contain',
         }}
       >
         {/* Header */}
@@ -406,9 +423,12 @@ export default function AIChatSidebar() {
         )}
 
         {/* Messages area */}
-        <div style={{
+        <div
+          data-lenis-prevent
+          style={{
           flex: 1,
           overflowY: 'auto',
+          overscrollBehavior: 'contain',
           padding: '1.25rem',
           display: 'flex',
           flexDirection: 'column',

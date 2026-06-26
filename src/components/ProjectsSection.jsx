@@ -105,7 +105,7 @@ function ProjectCard({ project, index, cardWidth, cardHeight, isMobile }) {
 
       {/* Colour band */}
       <div style={{
-        width: '100%', height: isMobile ? '75px' : '160px', flexShrink: 0,
+        width: '100%', height: isMobile ? '75px' : '125px', flexShrink: 0,
         background: `linear-gradient(135deg, ${tagStyle.bg}, var(--teal-dark))`,
         borderBottom: '1px solid var(--card-border)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -147,10 +147,10 @@ function ProjectCard({ project, index, cardWidth, cardHeight, isMobile }) {
 
       {/* Body */}
       <div style={{
-        padding: isMobile ? '0.75rem' : '1.5rem',
+        padding: isMobile ? '0.75rem' : '1.25rem',
         display: 'flex',
         flexDirection: 'column',
-        gap: isMobile ? '0.3rem' : '0.75rem',
+        gap: isMobile ? '0.3rem' : '0.55rem',
         flex: 1,
         position: 'relative',
         zIndex: 1,
@@ -239,8 +239,8 @@ export default function ProjectsSection() {
   const counterRef= useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const [cardWidth, setCardWidth] = useState(360);
-  const [cardHeight, setCardHeight] = useState(520);
+  const [cardWidth, setCardWidth] = useState(300);
+  const [cardHeight, setCardHeight] = useState(440);
   const [viewportHeight, setViewportHeight] = useState(600);
   const lastWidth = useRef(0);
 
@@ -259,8 +259,10 @@ export default function ProjectsSection() {
           setCardWidth(Math.min(270, currentWidth - 32));
           setCardHeight(window.innerHeight < 650 ? 300 : 330);
         } else {
-          setCardWidth(360);
-          setCardHeight(520);
+          // Dynamic sizing on desktop to prevent card details from overlapping with bottom scroll hint/counter
+          const height = Math.max(370, Math.min(440, window.innerHeight - 290));
+          setCardHeight(height);
+          setCardWidth(Math.round(height * 0.69));
         }
       }
     };
@@ -481,7 +483,9 @@ export default function ProjectsSection() {
           color: 'var(--text-muted)',
           letterSpacing: '0.15em',
           textTransform: 'uppercase',
-          animation: 'hint-fade 2s ease-in-out infinite alternate',
+          opacity: activeIndex > 0 ? 0 : 0.8,
+          pointerEvents: 'none',
+          transition: 'opacity 0.4s ease',
         }}>
           <svg width="16" height="8" viewBox="0 0 16 8" fill="none">
             <path d="M0 4h14M10 1l4 3-4 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>

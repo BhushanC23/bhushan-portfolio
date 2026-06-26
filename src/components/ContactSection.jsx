@@ -144,6 +144,10 @@ export default function ContactSection() {
         body: JSON.stringify(payload),
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
       if (data.success) {
         setSubmitted(true);
@@ -159,11 +163,19 @@ export default function ContactSection() {
         });
         setTimeout(() => setSubmitted(false), 5000);
       } else {
-        alert('Oops! There was an issue sending your message. Please try again.');
+        alert(data.message || 'Oops! There was an issue sending your message. Please try again.');
       }
     } catch (error) {
       console.error('Email submission error:', error);
-      alert('Failed to connect to the email server. Please check your connection and try again.');
+      if (error.message === 'Web3Forms Access Key not set in environment.') {
+        alert('Configuration Error: Web3Forms Access Key is not configured. Please define VITE_WEB3FORMS_ACCESS_KEY in your .env file.');
+      } else {
+        alert(
+          `Failed to connect to the email server.\n\n` +
+          `If you are using an ad-blocker (like Brave Shields or uBlock Origin), it might be blocking the submission. Please temporarily disable it and try again.\n\n` +
+          `Alternatively, you can email me directly at: ${BHUSHAN_DATA.social.email}`
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }

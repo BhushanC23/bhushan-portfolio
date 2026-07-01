@@ -183,7 +183,7 @@ export default function ContactSection() {
     padding: '1rem 0',
     background: 'transparent',
     border: 'none',
-    borderBottom: '1px solid rgba(45,212,191,0.2)',
+    borderBottom: '1px solid var(--line-subtle)',
     color: 'var(--text-primary)',
     fontFamily: 'var(--font-body)',
     fontSize: '1rem',
@@ -209,13 +209,30 @@ export default function ContactSection() {
         transform: 'translateX(-50%)',
         width: '700px',
         height: '350px',
-        background: 'radial-gradient(ellipse, rgba(45,212,191,0.05) 0%, transparent 70%)',
+        background: 'radial-gradient(ellipse, rgba(212,255,61,0.08) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
 
       <div className="container-xl" style={{ position: 'relative', zIndex: 1 }}>
         {/* Editorial headline — full width, centered */}
-        <div ref={headingRef} style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+        <div ref={headingRef} style={{ marginBottom: '3.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
+          <div style={{
+            fontFamily: 'monospace',
+            fontSize: '9px',
+            letterSpacing: '0.3em',
+            textTransform: 'uppercase',
+            color: 'var(--text-muted)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+            marginBottom: '0.5rem',
+          }}>
+            <span>[ SEC // 06 ]</span>
+            <span style={{ width: '16px', height: '1px', background: 'var(--line-subtle)' }} />
+            <span>DISCOVERY &amp; INQUIRY</span>
+            <span style={{ width: '16px', height: '1px', background: 'var(--line-subtle)' }} />
+            <span>CONNECT DIRECTLY</span>
+          </div>
 
           {/* Very large editorial title */}
           <div style={{
@@ -225,6 +242,7 @@ export default function ContactSection() {
             letterSpacing: '-0.04em',
             lineHeight: 0.95,
             color: 'var(--text-primary)',
+            textAlign: 'center',
           }}>
             Let's build <span style={{
               fontFamily: 'var(--font-serif)',
@@ -242,6 +260,7 @@ export default function ContactSection() {
             letterSpacing: '-0.02em',
             lineHeight: 0.95,
             color: 'var(--cream)',
+            textAlign: 'center',
           }}>
             extraordinary
           </div>
@@ -265,7 +284,7 @@ export default function ContactSection() {
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(1rem, 2vw, 1.5rem)',
               fontWeight: 600,
-              color: 'var(--teal-accent)',
+              color: 'var(--surface-dark)',
               textDecoration: 'none',
               letterSpacing: '-0.01em',
               position: 'relative',
@@ -285,7 +304,7 @@ export default function ContactSection() {
               left: 0,
               width: '100%',
               height: '1px',
-              background: 'var(--teal-accent)',
+              background: 'var(--surface-dark)',
               transformOrigin: 'left',
               transform: 'scaleX(0)',
               transition: 'transform 0.3s ease',
@@ -304,7 +323,7 @@ export default function ContactSection() {
           <div>
             <div style={{ marginBottom: '2.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <MapPin size={16} color="var(--teal-accent)" />
+                <MapPin size={16} color="var(--surface-dark)" />
                 <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                   Kopargaon, Maharashtra, India
                 </span>
@@ -325,45 +344,47 @@ export default function ContactSection() {
                     alignItems: 'center',
                     gap: '1rem',
                     padding: '0.875rem 1.25rem',
-                    background: 'var(--card-bg)',
-                    border: '1px solid var(--card-border)',
-                    borderRadius: '12px',
+                    background: '#111111',
+                    border: '1px solid #111111',
+                    borderRadius: '8px',
                     textDecoration: 'none',
-                    transition: 'all 0.3s ease',
-                    backdropFilter: 'blur(8px)',
+                    transition: 'all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1)',
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = 'rgba(45,212,191,0.25)';
+                    e.currentTarget.style.borderColor = 'var(--accent-lime)';
                     e.currentTarget.style.transform = 'translateX(6px)';
+                    e.currentTarget.querySelectorAll('.social-label').forEach(el => el.style.color = 'var(--accent-lime)');
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = 'var(--card-border)';
+                    e.currentTarget.style.borderColor = '#111111';
                     e.currentTarget.style.transform = 'translateX(0)';
+                    e.currentTarget.querySelectorAll('.social-label').forEach(el => el.style.color = '#ffffff');
                   }}
                 >
                   <div style={{
                     width: '36px',
                     height: '36px',
-                    borderRadius: '8px',
-                    background: 'rgba(45,212,191,0.08)',
+                    borderRadius: '6px',
+                    background: 'rgba(212,255,61,0.12)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}>
-                    <Icon size={16} color="var(--teal-accent)" />
+                    <Icon size={16} color="var(--accent-lime)" />
                   </div>
                   <div>
-                    <div style={{
+                    <div className="social-label" style={{
                       fontFamily: 'var(--font-body)',
                       fontSize: '0.85rem',
-                      fontWeight: 500,
-                      color: 'var(--text-primary)',
+                      fontWeight: 700,
+                      color: '#ffffff',
+                      transition: 'color 0.2s ease',
                     }}>{label}</div>
                     <div style={{
                       fontFamily: 'var(--font-body)',
                       fontSize: '0.72rem',
-                      color: 'var(--text-muted)',
+                      color: 'rgba(255,255,255,0.5)',
                     }}>{handle}</div>
                   </div>
                 </a>
@@ -404,8 +425,8 @@ export default function ContactSection() {
                       placeholder={label}
                       required={required}
                       style={underlineInputStyle}
-                      onFocus={e => e.target.style.borderBottomColor = 'var(--teal-accent)'}
-                      onBlur={e => e.target.style.borderBottomColor = 'rgba(45,212,191,0.2)'}
+                      onFocus={e => e.target.style.borderBottomColor = 'var(--surface-dark)'}
+                      onBlur={e => e.target.style.borderBottomColor = 'var(--line-subtle)'}
                     />
                   </div>
                 ))}
@@ -429,12 +450,11 @@ export default function ContactSection() {
                             fontFamily: 'var(--font-body)',
                             fontSize: '0.85rem',
                             fontWeight: 500,
-                            background: active ? 'rgba(45, 212, 191, 0.12)' : 'rgba(13, 26, 28, 0.4)',
-                            border: `1px solid ${active ? 'var(--teal-accent)' : 'var(--card-border)'}`,
-                            color: active ? 'var(--teal-accent)' : 'var(--text-muted)',
+                            background: active ? 'var(--surface-dark)' : 'rgba(0, 0, 0, 0.03)',
+                            border: `1px solid ${active ? 'var(--surface-dark)' : 'var(--line-subtle)'}`,
+                            color: active ? '#ffffff' : 'var(--text-muted)',
                             cursor: 'pointer',
-                            transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                            boxShadow: active ? '0 0 12px rgba(45, 212, 191, 0.15)' : 'none',
+                            transition: 'all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1)',
                           }}
                         >
                           {opt}
@@ -478,8 +498,8 @@ export default function ContactSection() {
                                 placeholder="Company / Organization"
                                 required={showHiring}
                                 style={underlineInputStyle}
-                                onFocus={e => e.target.style.borderBottomColor = 'var(--teal-accent)'}
-                                onBlur={e => e.target.style.borderBottomColor = 'rgba(45,212,191,0.2)'}
+                                onFocus={e => e.target.style.borderBottomColor = 'var(--surface-dark)'}
+                                onBlur={e => e.target.style.borderBottomColor = 'var(--line-subtle)'}
                               />
                             </div>
                             <div style={{ position: 'relative' }}>
@@ -492,8 +512,8 @@ export default function ContactSection() {
                                 placeholder="Target Role / Position"
                                 required={showHiring}
                                 style={underlineInputStyle}
-                                onFocus={e => e.target.style.borderBottomColor = 'var(--teal-accent)'}
-                                onBlur={e => e.target.style.borderBottomColor = 'rgba(45,212,191,0.2)'}
+                                onFocus={e => e.target.style.borderBottomColor = 'var(--surface-dark)'}
+                                onBlur={e => e.target.style.borderBottomColor = 'var(--line-subtle)'}
                               />
                             </div>
                           </div>
@@ -515,9 +535,9 @@ export default function ContactSection() {
                                       fontFamily: 'var(--font-body)',
                                       fontSize: '0.78rem',
                                       fontWeight: 500,
-                                      background: active ? 'rgba(45, 212, 191, 0.08)' : 'transparent',
-                                      border: `1px solid ${active ? 'var(--teal-accent)' : 'rgba(45, 212, 191, 0.15)'}`,
-                                      color: active ? 'var(--teal-accent)' : 'var(--text-muted)',
+                                      background: active ? 'var(--surface-dark)' : 'transparent',
+                                      border: `1px solid ${active ? 'var(--surface-dark)' : 'var(--line-subtle)'}`,
+                                      color: active ? '#ffffff' : 'var(--text-muted)',
                                       cursor: 'pointer',
                                       transition: 'all 0.2s ease',
                                     }}
@@ -529,7 +549,7 @@ export default function ContactSection() {
                             </div>
                           </div>
                           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '-0.25rem' }}>
-                            <span style={{ color: 'var(--teal-accent)', fontSize: '1.1rem', lineHeight: '0.8' }}>✦</span>
+                            <span style={{ color: 'var(--accent-lime)', background: 'var(--surface-dark)', padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700 }}>INFO</span>
                             <span>I am open to full-time remote or hybrid positions (relocation negotiable).</span>
                           </div>
                         </>
@@ -547,8 +567,8 @@ export default function ContactSection() {
                               onChange={handleChange}
                               placeholder="Company / Project Name (Optional)"
                               style={underlineInputStyle}
-                              onFocus={e => e.target.style.borderBottomColor = 'var(--teal-accent)'}
-                              onBlur={e => e.target.style.borderBottomColor = 'rgba(45,212,191,0.2)'}
+                              onFocus={e => e.target.style.borderBottomColor = 'var(--surface-dark)'}
+                              onBlur={e => e.target.style.borderBottomColor = 'var(--line-subtle)'}
                             />
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
@@ -569,9 +589,9 @@ export default function ContactSection() {
                                       fontFamily: 'var(--font-body)',
                                       fontSize: '0.78rem',
                                       fontWeight: 500,
-                                      background: active ? 'rgba(45, 212, 191, 0.08)' : 'transparent',
-                                      border: `1px solid ${active ? 'var(--teal-accent)' : 'rgba(45, 212, 191, 0.15)'}`,
-                                      color: active ? 'var(--teal-accent)' : 'var(--text-muted)',
+                                      background: active ? 'var(--surface-dark)' : 'transparent',
+                                      border: `1px solid ${active ? 'var(--surface-dark)' : 'var(--line-subtle)'}`,
+                                      color: active ? '#ffffff' : 'var(--text-muted)',
                                       cursor: 'pointer',
                                       transition: 'all 0.2s ease',
                                     }}
@@ -583,7 +603,7 @@ export default function ContactSection() {
                             </div>
                           </div>
                           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '-0.25rem' }}>
-                            <span style={{ color: 'var(--teal-accent)', fontSize: '1.1rem', lineHeight: '0.8' }}>✦</span>
+                            <span style={{ color: 'var(--accent-lime)', background: 'var(--surface-dark)', padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700 }}>INFO</span>
                             <span>Please share high-level project goals, timeline, and tech constraints.</span>
                           </div>
                         </>
@@ -602,8 +622,8 @@ export default function ContactSection() {
                     required
                     rows={5}
                     style={{ ...underlineInputStyle, resize: 'none' }}
-                    onFocus={e => e.target.style.borderBottomColor = 'var(--teal-accent)'}
-                    onBlur={e => e.target.style.borderBottomColor = 'rgba(45,212,191,0.2)'}
+                    onFocus={e => e.target.style.borderBottomColor = 'var(--surface-dark)'}
+                    onBlur={e => e.target.style.borderBottomColor = 'var(--line-subtle)'}
                   />
                 </div>
 
@@ -640,7 +660,7 @@ export default function ContactSection() {
         <div style={{
           marginTop: '6rem',
           paddingTop: '2rem',
-          borderTop: '1px solid rgba(45,212,191,0.06)',
+          borderTop: '1px solid var(--line-subtle)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -668,7 +688,7 @@ export default function ContactSection() {
                   transition: 'all 0.2s ease',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.color = 'var(--teal-accent)';
+                  e.currentTarget.style.color = 'var(--surface-dark)';
                   e.currentTarget.style.transform = 'scale(1.2)';
                 }}
                 onMouseLeave={e => {

@@ -14,19 +14,19 @@ function ExperienceContent({ item, gold, isMobile }) {
           alignItems: 'center',
           gap: '0.3rem',
           padding: '0.18rem 0.65rem',
-          background: gold ? 'rgba(201,168,76,0.1)' : 'rgba(45,212,191,0.1)',
-          border: `1px solid ${gold ? 'rgba(201,168,76,0.3)' : 'rgba(45,212,191,0.3)'}`,
+          background: gold ? 'rgba(201,168,76,0.08)' : 'rgba(212,255,61,0.08)',
+          border: `1px solid ${gold ? 'rgba(201,168,76,0.3)' : 'rgba(17,17,17,0.15)'}`,
           borderRadius: '20px',
           fontSize: '10px',
           fontWeight: 600,
-          color: gold ? 'var(--gold-accent)' : 'var(--teal-accent)',
+          color: gold ? 'var(--gold-accent)' : 'var(--surface-dark)',
           letterSpacing: '0.1em',
           textTransform: 'uppercase',
           marginBottom: '0.75rem',
         }}>
           <span style={{
             width: '5px', height: '5px', borderRadius: '50%',
-            background: gold ? 'var(--gold-accent)' : 'var(--teal-accent)',
+            background: gold ? 'var(--gold-accent)' : 'var(--surface-dark)',
             animation: 'current-pulse 2s ease-in-out infinite',
           }} />
           Current
@@ -39,7 +39,7 @@ function ExperienceContent({ item, gold, isMobile }) {
         fontSize: '11px',
         fontWeight: 600,
         letterSpacing: '0.2em',
-        color: gold ? 'var(--gold-accent)' : 'var(--teal-accent)',
+        color: gold ? 'var(--gold-accent)' : 'var(--surface-dark)',
         textTransform: 'uppercase',
         marginBottom: '0.5rem',
       }}>
@@ -60,7 +60,7 @@ function ExperienceContent({ item, gold, isMobile }) {
         fontStyle: 'italic',
         fontWeight: 300,
         fontSize: isMobile ? '0.9rem' : '1rem',
-        color: 'var(--cream)',
+        color: 'var(--text-muted)',
         marginBottom: '0.4rem',
       }}>{item.company}</p>
 
@@ -163,13 +163,12 @@ function TimelineItem({ item, index, isMobile }) {
 
   const cardStyle = {
     padding: isMobile ? '1.25rem' : '1.75rem',
-    background: 'var(--card-bg)',
-    borderRadius: '12px',
-    border: '1px solid var(--card-border)',
-    borderLeft: `2px solid ${isRight ? 'var(--gold-accent)' : 'var(--teal-accent)'}`,
-    backdropFilter: 'blur(16px)',
-    boxShadow: '0 0 0 1px var(--card-border), 0 20px 40px rgba(0,0,0,0.25)',
-    transition: 'all 0.3s ease',
+    background: 'transparent',
+    borderRadius: '8px',
+    border: '1px solid var(--line-subtle)',
+    borderLeft: '3px solid var(--surface-dark)',
+    boxShadow: 'none',
+    transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
   };
 
   return (
@@ -187,12 +186,14 @@ function TimelineItem({ item, index, isMobile }) {
           className="exp-card-left"
           style={cardStyle}
           onMouseEnter={e => {
-            e.currentTarget.style.borderColor = 'rgba(45,212,191,0.3)';
-            e.currentTarget.style.boxShadow = '0 0 0 1px rgba(45,212,191,0.15), 0 20px 40px rgba(0,0,0,0.35)';
+            e.currentTarget.style.borderColor = 'var(--accent-lime)';
+            e.currentTarget.style.boxShadow = '0 6px 20px rgba(212,255,61,0.18)';
+            e.currentTarget.style.transform = 'translateY(-2px)';
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.borderColor = 'var(--card-border)';
-            e.currentTarget.style.boxShadow = '0 0 0 1px var(--card-border), 0 20px 40px rgba(0,0,0,0.25)';
+            e.currentTarget.style.borderColor = 'var(--line-subtle)';
+            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
           <ExperienceContent item={item} gold={false} isMobile={isMobile} />
@@ -201,7 +202,6 @@ function TimelineItem({ item, index, isMobile }) {
         <div className="exp-empty-col" />
       )}
 
-      {/* Center dot */}
       <div className="exp-dot-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '1.5rem' }}>
         <div
           ref={dotRef}
@@ -209,8 +209,8 @@ function TimelineItem({ item, index, isMobile }) {
             width: '12px',
             height: '12px',
             borderRadius: '50%',
-            background: item.isCurrent ? 'var(--teal-accent)' : 'var(--bg-primary)',
-            border: `2px solid ${isRight ? 'var(--gold-accent)' : 'var(--teal-accent)'}`,
+            background: item.isCurrent ? 'var(--accent-lime)' : '#ffffff',
+            border: '2px solid var(--surface-dark)',
             flexShrink: 0,
             position: 'relative',
             zIndex: 1,
@@ -221,7 +221,7 @@ function TimelineItem({ item, index, isMobile }) {
               position: 'absolute',
               inset: '-5px',
               borderRadius: '50%',
-              border: '2px solid rgba(45,212,191,0.3)',
+              border: '2px solid var(--accent-lime)',
               animation: 'ping 2s ease-out infinite',
             }} />
           )}
@@ -233,14 +233,16 @@ function TimelineItem({ item, index, isMobile }) {
         <div
           ref={cardRef}
           className="exp-card-right"
-          style={{ ...cardStyle, borderLeft: '2px solid var(--gold-accent)' }}
+          style={cardStyle}
           onMouseEnter={e => {
-            e.currentTarget.style.borderColor = 'rgba(201,168,76,0.3)';
-            e.currentTarget.style.boxShadow = '0 0 0 1px rgba(201,168,76,0.1), 0 20px 40px rgba(0,0,0,0.35)';
+            e.currentTarget.style.borderColor = 'var(--accent-lime)';
+            e.currentTarget.style.boxShadow = '0 6px 20px rgba(212,255,61,0.18)';
+            e.currentTarget.style.transform = 'translateY(-2px)';
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.borderColor = 'var(--card-border)';
-            e.currentTarget.style.boxShadow = '0 0 0 1px var(--card-border), 0 20px 40px rgba(0,0,0,0.25)';
+            e.currentTarget.style.borderColor = 'var(--line-subtle)';
+            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
           <ExperienceContent item={item} gold={true} isMobile={isMobile} />
@@ -307,7 +309,7 @@ export default function ExperienceSection() {
 
   return (
     <section id="experience" ref={sectionRef} style={{
-      background: 'var(--bg-primary)',
+      background: '#ffffff',
       padding: '10rem 0',
       position: 'relative',
       overflow: 'hidden',
@@ -324,8 +326,24 @@ export default function ExperienceSection() {
 
       <div className="container-xl" style={{ position: 'relative', zIndex: 1 }}>
         {/* Header */}
-        <div ref={headerRef} style={{ marginBottom: '3.5rem', textAlign: 'center' }}>
-          <h2 className="heading-display">
+        <div ref={headerRef} style={{ marginBottom: '3.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
+          <div style={{
+            fontFamily: 'monospace',
+            fontSize: '9px',
+            letterSpacing: '0.3em',
+            textTransform: 'uppercase',
+            color: 'var(--text-muted)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+          }}>
+            <span>[ SEC // 03 ]</span>
+            <span style={{ width: '16px', height: '1px', background: 'var(--line-subtle)' }} />
+            <span>JOURNEY</span>
+            <span style={{ width: '16px', height: '1px', background: 'var(--line-subtle)' }} />
+            <span>TIMELINE INDEX</span>
+          </div>
+          <h2 className="heading-display" style={{ marginTop: '0.2rem', textAlign: 'center' }}>
             Experience &amp;{' '}
             <span className="serif-accent">Roles</span>
           </h2>
@@ -343,7 +361,7 @@ export default function ExperienceSection() {
               top: 0,
               bottom: 0,
               width: '1px',
-              background: 'linear-gradient(to bottom, transparent, var(--teal-accent) 10%, var(--teal-accent) 90%, transparent)',
+              background: 'linear-gradient(to bottom, transparent, rgba(17,17,17,0.18) 10%, rgba(17,17,17,0.18) 90%, transparent)',
               transform: 'translateX(-50%)',
               opacity: 0.3,
             }}

@@ -43,7 +43,7 @@ function CounterStat({ value, suffix, label }) {
         fontFamily: 'var(--font-display)',
         fontSize: 'clamp(2.5rem, 5vw, 5rem)',
         fontWeight: 800,
-        color: 'var(--teal-accent)',
+        color: '#ffffff',
         lineHeight: 1,
         letterSpacing: '-0.04em',
       }}>
@@ -55,7 +55,7 @@ function CounterStat({ value, suffix, label }) {
       <div style={{
         fontFamily: 'var(--font-body)',
         fontSize: '11px',
-        color: 'var(--text-muted)',
+        color: 'rgba(255, 255, 255, 0.6)',
         marginTop: '0.6rem',
         letterSpacing: '0.2em',
         textTransform: 'uppercase',
@@ -179,7 +179,7 @@ export default function AboutSection() {
 
   return (
     <section id="about" ref={sectionRef} style={{
-      background: 'var(--bg-secondary)',
+      background: '#111111',
       padding: '10rem 0',
       position: 'relative',
       overflow: 'hidden',
@@ -193,7 +193,7 @@ export default function AboutSection() {
         top: '-100px', right: '-100px',
         width: '500px', height: '500px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(45,212,191,0.06) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(212,255,61,0.08) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
       <div style={{
@@ -201,16 +201,32 @@ export default function AboutSection() {
         bottom: '-80px', left: '-80px',
         width: '300px', height: '300px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
 
       <div className="container-xl">
         {/* Section header */}
-        <div ref={headingRef} style={{ marginBottom: '3.5rem' }}>
-          <h2 className="heading-display">
+        <div ref={headingRef} style={{ marginBottom: '3.5rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+          <div style={{
+            fontFamily: 'monospace',
+            fontSize: '9px',
+            letterSpacing: '0.3em',
+            textTransform: 'uppercase',
+            color: 'rgba(255, 255, 255, 0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+          }}>
+            <span>[ SEC // 01 ]</span>
+            <span style={{ width: '16px', height: '1px', background: 'rgba(255, 255, 255, 0.15)' }} />
+            <span>BIOGRAPHY</span>
+            <span style={{ width: '16px', height: '1px', background: 'rgba(255, 255, 255, 0.15)' }} />
+            <span>KOPARGAON, MH</span>
+          </div>
+          <h2 className="heading-display" style={{ marginTop: '0.2rem', color: '#ffffff' }}>
             The person{' '}
-            <span className="serif-accent">behind the code</span>
+            <span className="serif-accent" style={{ color: 'var(--accent-lime)' }}>behind the code</span>
           </h2>
         </div>
 
@@ -227,7 +243,7 @@ export default function AboutSection() {
               fontFamily: 'var(--font-body)',
               fontSize: 'var(--text-body-lg)',
               lineHeight: 1.8,
-              color: 'var(--text-muted)',
+              color: 'rgba(255, 255, 255, 0.75)',
               marginBottom: '1.5rem',
             }} dangerouslySetInnerHTML={{ __html: bioParagraphs[0] || '' }} />
 
@@ -236,7 +252,7 @@ export default function AboutSection() {
                 fontFamily: 'var(--font-body)',
                 fontSize: 'var(--text-body-lg)',
                 lineHeight: 1.8,
-                color: 'var(--text-muted)',
+                color: 'rgba(255, 255, 255, 0.75)',
                 marginBottom: '2rem',
               }} dangerouslySetInnerHTML={{ __html: bioParagraphs[1] }} />
             )}
@@ -244,7 +260,7 @@ export default function AboutSection() {
             {/* Blockquote highlight */}
             {bioParagraphs[2] && (
               <blockquote style={{
-                borderLeft: '2px solid var(--teal-accent)',
+                borderLeft: '2px solid var(--accent-lime)',
                 paddingLeft: '1.5rem',
                 marginBottom: '2.5rem',
                 fontFamily: 'var(--font-serif)',
@@ -252,7 +268,7 @@ export default function AboutSection() {
                 fontWeight: 300,
                 fontSize: '1.2rem',
                 lineHeight: 1.7,
-                color: 'var(--cream)',
+                color: 'rgba(255, 255, 255, 0.85)',
               }} dangerouslySetInnerHTML={{ __html: bioParagraphs[2] }} />
             )}
 
@@ -304,7 +320,7 @@ export default function AboutSection() {
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  border: '1px solid var(--teal-accent)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
                   borderRadius: '20px',
                   transform: 'translate(12px, 12px)',
                   opacity: 0.3,
@@ -313,12 +329,12 @@ export default function AboutSection() {
                 }}
               />
 
-              {/* Glow */}
+              {/* Soft shadow depth */}
               <div style={{
                 position: 'absolute',
                 inset: '-12px',
                 borderRadius: '24px',
-                background: 'linear-gradient(135deg, rgba(45,212,191,0.2), rgba(201,168,76,0.1), transparent)',
+                background: 'linear-gradient(135deg, rgba(212,255,61,0.12), rgba(201,168,76,0.06), transparent)',
                 filter: 'blur(20px)',
                 zIndex: 0,
               }} />
@@ -330,11 +346,11 @@ export default function AboutSection() {
                 style={{
                   position: 'relative',
                   zIndex: 1,
-                  border: '1px solid var(--card-border)',
+                  border: '1px solid var(--line-subtle)',
                   borderRadius: '20px',
                   overflow: 'hidden',
                   aspectRatio: '3/4',
-                  background: 'var(--teal-dark)',
+                  background: 'var(--bg-secondary)',
                   transformStyle: 'preserve-3d',
                 }}
                 onMouseEnter={() => {
@@ -344,25 +360,25 @@ export default function AboutSection() {
                   gsap.to(photoContainerRef.current, { scale: 1, z: 0, duration: 0.4, overwrite: 'auto' });
                 }}
               >
-                {/* Curtain 1: Teal Accent */}
+                {/* Curtain 1: Lime Accent */}
                 <div
                   ref={curtain1Ref}
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    background: 'var(--teal-accent)',
+                    background: 'var(--accent-lime)',
                     zIndex: 2,
                     pointerEvents: 'none',
                     borderRadius: '20px',
                   }}
                 />
-                {/* Curtain 2: Dark Background */}
+                {/* Curtain 2: Dark Surface */}
                 <div
                   ref={curtain2Ref}
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    background: 'var(--teal-dark)',
+                    background: 'var(--surface-dark)',
                     zIndex: 3,
                     pointerEvents: 'none',
                     borderRadius: '20px',
@@ -393,17 +409,17 @@ export default function AboutSection() {
                   bottom: '1rem',
                   right: '1rem',
                   padding: '0.4rem 0.9rem',
-                  background: 'rgba(7,13,14,0.85)',
+                  background: 'rgba(17,17,17,0.92)',
                   backdropFilter: 'blur(8px)',
                   borderRadius: '8px',
-                  border: '1px solid rgba(45,212,191,0.2)',
+                  border: '1px solid rgba(212,255,61,0.3)',
                   zIndex: 1,
                 }}>
                   <span style={{
                     fontFamily: 'var(--font-body)',
                     fontSize: '0.72rem',
-                    color: 'var(--teal-accent)',
-                    fontWeight: 500,
+                    color: 'var(--accent-lime)',
+                    fontWeight: 600,
                     letterSpacing: '0.05em',
                   }}>
                     Available for work ✦
@@ -420,7 +436,7 @@ export default function AboutSection() {
           gridTemplateColumns: 'repeat(4, 1fr)',
           marginTop: '6rem',
           paddingTop: '3rem',
-          borderTop: '1px solid rgba(45,212,191,0.08)',
+          borderTop: '1px solid rgba(255, 255, 255, 0.12)',
           position: 'relative',
         }}>
           {/* Vertical dividers */}
@@ -431,7 +447,7 @@ export default function AboutSection() {
               top: '3rem',
               bottom: 0,
               width: '1px',
-              background: 'rgba(45,212,191,0.08)',
+              background: 'rgba(255,255,255,0.08)',
             }} />
           ))}
           {BHUSHAN_DATA.stats.map((stat, i) => (

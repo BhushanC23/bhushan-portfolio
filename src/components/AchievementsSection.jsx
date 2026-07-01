@@ -64,7 +64,7 @@ export default function AchievementsSection() {
 
   return (
     <section id="achievements" ref={sectionRef} style={{
-      background: 'var(--teal-dark)',
+      background: '#ffffff',
       padding: isMobile ? '4rem 0' : '10rem 0',
       position: 'relative',
       overflow: 'hidden',
@@ -79,8 +79,24 @@ export default function AchievementsSection() {
 
       <div className="container-xl" style={{ position: 'relative', zIndex: 1 }}>
         {/* Header */}
-        <div ref={headerRef} style={{ marginBottom: isMobile ? '2.25rem' : '3.5rem', textAlign: 'center' }}>
-          <h2 className="heading-display">
+        <div ref={headerRef} style={{ marginBottom: isMobile ? '2.25rem' : '3.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
+          <div style={{
+            fontFamily: 'monospace',
+            fontSize: '9px',
+            letterSpacing: '0.3em',
+            textTransform: 'uppercase',
+            color: 'var(--text-muted)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+          }}>
+            <span>[ SEC // 05 ]</span>
+            <span style={{ width: '16px', height: '1px', background: 'var(--line-subtle)' }} />
+            <span>ACCOLADES</span>
+            <span style={{ width: '16px', height: '1px', background: 'var(--line-subtle)' }} />
+            <span>HONORS &amp; METRICS</span>
+          </div>
+          <h2 className="heading-display" style={{ marginTop: '0.2rem', textAlign: 'center' }}>
             Achievements &amp;{' '}
             <span className="serif-accent">Recognition</span>
           </h2>
@@ -105,7 +121,7 @@ export default function AchievementsSection() {
             <div style={{
               position: 'absolute', right: '1.5rem', top: '50%', transform: 'translateY(-50%)',
               fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: isMobile ? '6rem' : '8.5rem',
-              color: 'var(--gold-accent)', opacity: 0.05, lineHeight: 1, pointerEvents: 'none', userSelect: 'none',
+              color: 'var(--accent-lime)', opacity: 0.18, lineHeight: 1, pointerEvents: 'none', userSelect: 'none',
             }}>
               52
             </div>
@@ -115,9 +131,9 @@ export default function AchievementsSection() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
                   <span style={{ fontSize: '1.3rem' }}>{featuredAchievement.icon || "🥇"}</span>
                   <span style={{
-                    padding: '0.2rem 0.75rem', background: 'rgba(201,168,76,0.1)',
-                    border: '1px solid rgba(201,168,76,0.25)', borderRadius: '20px',
-                    fontSize: '10px', fontWeight: 700, color: 'var(--gold-accent)',
+                    padding: '0.2rem 0.75rem', background: 'rgba(212,255,61,0.15)',
+                    border: '1px solid rgba(17,17,17,0.15)', borderRadius: '20px',
+                    fontSize: '10px', fontWeight: 700, color: 'var(--surface-dark)',
                     letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
                   }}>
                     NATIONAL RANK
@@ -152,9 +168,9 @@ export default function AchievementsSection() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
                   <span style={{ fontSize: '1.3rem' }}>{otherAchievements[0].icon || "🎓"}</span>
                   <span style={{
-                    padding: '0.2rem 0.75rem', background: 'rgba(45,212,191,0.08)',
-                    border: '1px solid rgba(45,212,191,0.2)', borderRadius: '20px',
-                    fontSize: '10px', fontWeight: 700, color: 'var(--teal-accent)',
+                    padding: '0.2rem 0.75rem', background: 'rgba(212,255,61,0.15)',
+                    border: '1px solid rgba(17,17,17,0.15)', borderRadius: '20px',
+                    fontSize: '10px', fontWeight: 700, color: 'var(--surface-dark)',
                     letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
                   }}>
                     SWE CERTIFIED
@@ -188,9 +204,9 @@ export default function AchievementsSection() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
                   <span style={{ fontSize: '1.3rem' }}>{otherAchievements[1].icon || "🤖"}</span>
                   <span style={{
-                    padding: '0.2rem 0.75rem', background: 'rgba(45,212,191,0.08)',
-                    border: '1px solid rgba(45,212,191,0.2)', borderRadius: '20px',
-                    fontSize: '10px', fontWeight: 700, color: 'var(--teal-accent)',
+                    padding: '0.2rem 0.75rem', background: 'rgba(212,255,61,0.15)',
+                    border: '1px solid rgba(17,17,17,0.15)', borderRadius: '20px',
+                    fontSize: '10px', fontWeight: 700, color: 'var(--surface-dark)',
                     letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
                   }}>
                     GENERATIVE AI
@@ -224,9 +240,9 @@ export default function AchievementsSection() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
                   <span style={{ fontSize: '1.3rem' }}>{otherAchievements[2].icon || "🏢"}</span>
                   <span style={{
-                    padding: '0.2rem 0.75rem', background: 'rgba(249,115,22,0.08)',
-                    border: '1px solid rgba(249,115,22,0.2)', borderRadius: '20px',
-                    fontSize: '10px', fontWeight: 700, color: '#fb923c',
+                    padding: '0.2rem 0.75rem', background: 'rgba(212,255,61,0.15)',
+                    border: '1px solid rgba(17,17,17,0.15)', borderRadius: '20px',
+                    fontSize: '10px', fontWeight: 700, color: 'var(--surface-dark)',
                     letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
                   }}>
                     GOVERNMENT MSME
@@ -260,12 +276,12 @@ export default function AchievementsSection() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
                   <span style={{ fontSize: '1.3rem' }}>{otherAchievements[3].icon || "☁️"}</span>
                   <span style={{
-                    padding: '0.2rem 0.75rem', background: 'rgba(59,130,246,0.08)',
-                    border: '1px solid rgba(59,130,246,0.2)', borderRadius: '20px',
-                    fontSize: '10px', fontWeight: 700, color: '#60a5fa',
+                    padding: '0.2rem 0.75rem', background: 'rgba(212,255,61,0.15)',
+                    border: '1px solid rgba(17,17,17,0.15)', borderRadius: '20px',
+                    fontSize: '10px', fontWeight: 700, color: 'var(--surface-dark)',
                     letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
                   }}>
-                    CLOUD ARCH
+                    CLOUD CERTIFIED
                   </span>
                 </div>
                 <h3 style={{
@@ -289,51 +305,52 @@ export default function AchievementsSection() {
 
       <style>{`
         .bento-card {
-          background: rgba(13,26,28,0.45);
-          border: 1px solid var(--card-border);
+          background: rgba(255,255,255,0.90);
+          border: 1px solid var(--line-subtle);
           border-radius: 16px;
           padding: 1.75rem;
           position: relative;
           overflow: hidden;
           transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), border-color 0.4s ease, box-shadow 0.4s ease;
           will-change: transform;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.04);
         }
 
         .bento-card:hover {
           transform: translateY(-6px);
-          background: rgba(13,26,28,0.65);
+          box-shadow: 0 20px 48px rgba(0,0,0,0.09);
         }
 
         .bento-gold {
-          background: radial-gradient(circle at 10% 10%, rgba(201, 168, 76, 0.06), transparent 70%), rgba(13,26,28,0.45);
+          background: #ffffff;
         }
         .bento-gold:hover {
-          border-color: var(--gold-accent) !important;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(201, 168, 76, 0.08) !important;
+          border-color: var(--surface-dark) !important;
+          box-shadow: 0 12px 36px rgba(212, 255, 61, 0.16) !important;
         }
 
         .bento-teal {
-          background: radial-gradient(circle at 10% 10%, rgba(45, 212, 191, 0.06), transparent 70%), rgba(13,26,28,0.45);
+          background: #ffffff;
         }
         .bento-teal:hover {
-          border-color: var(--teal-accent) !important;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(45, 212, 191, 0.08) !important;
+          border-color: var(--surface-dark) !important;
+          box-shadow: 0 12px 36px rgba(212, 255, 61, 0.16) !important;
         }
 
         .bento-amber {
-          background: radial-gradient(circle at 10% 10%, rgba(249, 115, 22, 0.05), transparent 70%), rgba(13,26,28,0.45);
+          background: #ffffff;
         }
         .bento-amber:hover {
-          border-color: #fb923c !important;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(249, 115, 22, 0.08) !important;
+          border-color: var(--surface-dark) !important;
+          box-shadow: 0 12px 36px rgba(212, 255, 61, 0.16) !important;
         }
 
         .bento-blue {
-          background: radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.05), transparent 70%), rgba(13,26,28,0.45);
+          background: #ffffff;
         }
         .bento-blue:hover {
-          border-color: #60a5fa !important;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(59, 130, 246, 0.08) !important;
+          border-color: var(--surface-dark) !important;
+          box-shadow: 0 12px 36px rgba(212, 255, 61, 0.16) !important;
         }
 
         @media (max-width: 768px) {

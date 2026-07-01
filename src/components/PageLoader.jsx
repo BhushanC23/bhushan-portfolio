@@ -125,7 +125,7 @@ export default function PageLoader({ progress, onComplete }) {
       {/* accent panel — sweeps up just before main */}
       <div
         ref={panelRef}
-        style={{ position: "fixed", inset: 0, zIndex: 9998, background: "var(--teal-dark)", pointerEvents: "none" }}
+        style={{ position: "fixed", inset: 0, zIndex: 9998, background: "var(--accent-lime)", pointerEvents: "none" }}
       />
 
       {/* main loader overlay */}
@@ -133,7 +133,7 @@ export default function PageLoader({ progress, onComplete }) {
         ref={overlayRef}
         style={{
           position: "fixed", inset: 0, zIndex: 9999,
-          background: "var(--bg-primary)",
+          background: "#000000",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -147,7 +147,7 @@ export default function PageLoader({ progress, onComplete }) {
           width: "60vw", height: "60vw", maxWidth: 600, maxHeight: 600,
           top: "50%", left: "50%",
           transform: "translate(-50%, -50%)",
-          background: "radial-gradient(circle, rgba(45,212,191,0.055) 0%, transparent 68%)",
+          background: "radial-gradient(circle, rgba(212,255,61,0.12) 0%, transparent 68%)",
           borderRadius: "50%",
           pointerEvents: "none",
         }} />
@@ -169,7 +169,7 @@ export default function PageLoader({ progress, onComplete }) {
               fontStyle: "italic",
               lineHeight: 1.2,
               letterSpacing: "0.02em",
-              color: "var(--text-primary)",
+              color: "#ffffff",
               opacity: 0,
               userSelect: "none",
               whiteSpace: "nowrap",
@@ -186,7 +186,7 @@ export default function PageLoader({ progress, onComplete }) {
               fontWeight: 400,
               letterSpacing: "0.25em",
               textTransform: "uppercase",
-              color: "var(--teal-accent)",
+              color: "var(--accent-lime)",
               opacity: 0,
               userSelect: "none",
             }}
@@ -201,7 +201,7 @@ export default function PageLoader({ progress, onComplete }) {
           style={{
             width: "clamp(200px, 36vw, 420px)",
             height: "1px",
-            background: "rgba(240,244,244,0.08)",
+            background: "rgba(255,255,255,0.1)",
             position: "relative",
             opacity: 0,
           }}
@@ -211,7 +211,7 @@ export default function PageLoader({ progress, onComplete }) {
             style={{
               position: "absolute", left: 0, top: 0,
               height: "100%", width: "0%",
-              background: "var(--teal-accent)",
+              background: "var(--accent-lime)",
               transition: "width 0.14s ease-out",
             }}
           />
@@ -234,7 +234,7 @@ export default function PageLoader({ progress, onComplete }) {
             fontSize: "clamp(0.7rem, 1.3vw, 0.88rem)",
             fontWeight: 600,
             letterSpacing: "0.1em",
-            color: "var(--teal-accent)",
+            color: "#ffffff",
           }}>
             {padded}
           </span>
@@ -244,7 +244,7 @@ export default function PageLoader({ progress, onComplete }) {
             fontWeight: 400,
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: "rgba(122,158,159,0.45)",
+            color: "rgba(255,255,255,0.5)",
           }}>
             Loading
           </span>

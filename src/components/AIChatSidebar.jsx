@@ -10,9 +10,9 @@ function TypingIndicator() {
       display: 'flex',
       gap: '4px',
       padding: '0.85rem 1rem',
-      background: 'rgba(45,212,191,0.06)',
+      background: '#111111',
       borderRadius: '14px 14px 14px 4px',
-      border: '1px solid rgba(45,212,191,0.1)',
+      border: 'none',
       width: 'fit-content',
     }}>
       {[0, 1, 2].map(i => (
@@ -20,7 +20,7 @@ function TypingIndicator() {
           width: '7px',
           height: '7px',
           borderRadius: '50%',
-          background: 'var(--teal-accent)',
+          background: '#ffffff',
           animation: `dot-bounce 1.2s ease-in-out ${i * 0.2}s infinite`,
         }} />
       ))}
@@ -41,8 +41,8 @@ function ChatMessage({ msg }) {
           width: '28px',
           height: '28px',
           borderRadius: '50%',
-          background: 'rgba(45,212,191,0.12)',
-          border: '1px solid rgba(45,212,191,0.2)',
+          background: '#111111',
+          border: 'none',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -50,7 +50,7 @@ function ChatMessage({ msg }) {
           marginRight: '0.5rem',
           marginTop: '2px',
         }}>
-          <Bot size={14} color="var(--teal-accent)" />
+          <Bot size={14} color="var(--accent-lime)" />
         </div>
       )}
       <div style={{
@@ -58,10 +58,10 @@ function ChatMessage({ msg }) {
         padding: '0.75rem 1rem',
         borderRadius: isUser ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
         background: isUser
-          ? 'linear-gradient(135deg, #2dd4bf, #0d9488)'
-          : 'rgba(45,212,191,0.06)',
-        border: isUser ? 'none' : '1px solid rgba(45,212,191,0.1)',
-        color: isUser ? '#070d0e' : 'var(--text-primary)',
+          ? '#ffffff'
+          : '#111111',
+        border: isUser ? '1px solid rgba(17,17,17,0.15)' : 'none',
+        color: isUser ? '#111111' : '#ffffff',
         fontFamily: 'var(--font-body)',
         fontSize: '0.875rem',
         lineHeight: 1.65,
@@ -192,12 +192,12 @@ export default function AIChatSidebar() {
             bottom: '5.2rem',
             right: '1.5rem',
             zIndex: 1100,
-            background: 'rgba(13,26,28,0.92)',
+            background: '#111111',
             backdropFilter: 'blur(12px)',
-            border: '1px solid rgba(45,212,191,0.3)',
+            border: '1px solid var(--accent-lime)',
             borderRadius: '16px 16px 4px 16px',
             padding: '0.5rem 1rem',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 15px rgba(45,212,191,0.1)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 15px rgba(212,255,61,0.2)',
             pointerEvents: 'none',
             whiteSpace: 'nowrap',
             display: 'flex',
@@ -209,7 +209,7 @@ export default function AIChatSidebar() {
             width: '6px',
             height: '6px',
             borderRadius: '50%',
-            background: 'var(--teal-accent)',
+            background: 'var(--accent-lime)',
             display: 'inline-block',
             animation: 'pulse 1.5s infinite',
           }} />
@@ -217,7 +217,7 @@ export default function AIChatSidebar() {
             fontFamily: 'var(--font-body)',
             fontSize: '0.78rem',
             fontWeight: 600,
-            color: 'rgba(240,244,244,0.9)',
+            color: '#ffffff',
             letterSpacing: '0.01em',
           }}>
             Got questions? Ask my AI! ⚡
@@ -241,13 +241,13 @@ export default function AIChatSidebar() {
           padding: '0.9rem 1.6rem',
           background: 'linear-gradient(135deg, #1e293b, #0f172a)',
           color: '#ffffff',
-          border: '1px solid rgba(45,212,191,0.4)',
+          border: '1px solid var(--accent-lime)',
           borderRadius: '50px',
           cursor: 'pointer',
           fontFamily: 'var(--font-body)',
           fontWeight: 700,
           fontSize: '0.9rem',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 15px rgba(45,212,191,0.25)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 15px rgba(212,255,61,0.25)',
           transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
           overflow: 'hidden',
         }}
@@ -258,8 +258,8 @@ export default function AIChatSidebar() {
 
         {/* Bot Icon with floating sparks */}
         <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-          <Bot size={18} color="var(--teal-accent)" className="ai-icon" style={{ transition: 'transform 0.3s ease' }} />
-          <Sparkles size={10} color="var(--gold-accent)" style={{ position: 'absolute', top: '-4px', right: '-4px', transition: 'all 0.3s ease' }} className="spark-micro" />
+          <Bot size={18} color="var(--accent-lime)" className="ai-icon" style={{ transition: 'transform 0.3s ease' }} />
+          <Sparkles size={10} color="var(--accent-lime)" style={{ position: 'absolute', top: '-4px', right: '-4px', transition: 'all 0.3s ease' }} className="spark-micro" />
         </div>
         
         <span style={{ 
@@ -297,14 +297,14 @@ export default function AIChatSidebar() {
           bottom: 0,
           right: 0,
           width: 'min(420px, 100vw)',
-          background: 'var(--bg-secondary)',
-          borderLeft: '1px solid rgba(45,212,191,0.15)',
+          background: 'var(--accent-lime)',
+          borderLeft: '1px solid #111111',
           zIndex: 1200,
           display: 'flex',
           flexDirection: 'column',
           transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
           transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-          boxShadow: '-20px 0 60px rgba(0,0,0,0.5)',
+          boxShadow: '-20px 0 60px rgba(0,0,0,0.25)',
           overflowY: 'hidden',
           overscrollBehavior: 'contain',
         }}
@@ -312,45 +312,44 @@ export default function AIChatSidebar() {
         {/* Header */}
         <div style={{
           padding: '1.25rem 1.5rem',
-          borderBottom: '1px solid rgba(45,212,191,0.1)',
+          borderBottom: '1px solid rgba(17,17,17,0.1)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: 'rgba(13,26,28,0.8)',
-          backdropFilter: 'blur(12px)',
+          background: 'var(--accent-lime)',
           flexShrink: 0,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div style={{
               width: '36px',
               height: '36px',
-              borderRadius: '10px',
-              background: 'linear-gradient(135deg, rgba(45,212,191,0.2), rgba(45,212,191,0.05))',
-              border: '1px solid rgba(45,212,191,0.3)',
+              borderRadius: '8px',
+              background: 'rgba(17,17,17,0.06)',
+              border: '1px solid rgba(17,17,17,0.15)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <Bot size={18} color="var(--teal-accent)" />
+              <Bot size={18} color="#111111" />
             </div>
             <div>
               <div style={{
                 fontFamily: 'var(--font-display)',
                 fontWeight: 700,
                 fontSize: '0.95rem',
-                color: 'var(--text-primary)',
+                color: '#111111',
               }}>Bhushan's AI</div>
               <div style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: '0.72rem',
-                color: 'var(--teal-accent)',
+                color: '#111111',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '4px',
               }}>
                 <span style={{
                   width: '6px', height: '6px', borderRadius: '50%',
-                  background: 'var(--teal-accent)',
+                  background: '#111111',
                   animation: 'pulse 2s infinite',
                 }} />
                 Powered by Gemini
@@ -359,20 +358,20 @@ export default function AIChatSidebar() {
           </div>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <button onClick={clearChat} title="Clear chat" style={{
-              background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)',
+              background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(17,17,17,0.6)',
               padding: '0.4rem', borderRadius: '6px', transition: 'color 0.2s ease',
             }}
-              onMouseEnter={e => e.currentTarget.style.color = 'var(--teal-accent)'}
-              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
+              onMouseEnter={e => e.currentTarget.style.color = '#111111'}
+              onMouseLeave={e => e.currentTarget.style.color = 'rgba(17,17,17,0.6)'}
             >
               <Trash2 size={16} />
             </button>
             <button onClick={() => setIsOpen(false)} title="Close" style={{
-              background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)',
+              background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(17,17,17,0.6)',
               padding: '0.4rem', borderRadius: '6px', transition: 'color 0.2s ease',
             }}
-              onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'}
-              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
+              onMouseEnter={e => e.currentTarget.style.color = '#111111'}
+              onMouseLeave={e => e.currentTarget.style.color = 'rgba(17,17,17,0.6)'}
             >
               <X size={18} />
             </button>
@@ -385,7 +384,7 @@ export default function AIChatSidebar() {
             <p style={{
               fontFamily: 'var(--font-body)',
               fontSize: '0.75rem',
-              color: 'var(--text-muted)',
+              color: 'rgba(17,17,17,0.7)',
               marginBottom: '0.6rem',
               letterSpacing: '0.05em',
               textTransform: 'uppercase',
@@ -397,22 +396,22 @@ export default function AIChatSidebar() {
                   onClick={() => sendMessage(q)}
                   style={{
                     padding: '0.35rem 0.85rem',
-                    background: 'rgba(45,212,191,0.07)',
-                    border: '1px solid rgba(45,212,191,0.2)',
+                    background: 'rgba(255,255,255,0.7)',
+                    border: '1px solid rgba(17,17,17,0.15)',
                     borderRadius: '20px',
-                    color: 'var(--teal-accent)',
+                    color: '#111111',
                     fontFamily: 'var(--font-body)',
                     fontSize: '0.8rem',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.background = 'rgba(45,212,191,0.14)';
-                    e.currentTarget.style.borderColor = 'rgba(45,212,191,0.4)';
+                    e.currentTarget.style.background = '#ffffff';
+                    e.currentTarget.style.borderColor = '#111111';
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.background = 'rgba(45,212,191,0.07)';
-                    e.currentTarget.style.borderColor = 'rgba(45,212,191,0.2)';
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.7)';
+                    e.currentTarget.style.borderColor = 'rgba(17,17,17,0.15)';
                   }}
                 >
                   {q}
@@ -440,11 +439,11 @@ export default function AIChatSidebar() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
               <div style={{
                 width: '28px', height: '28px', borderRadius: '50%',
-                background: 'rgba(45,212,191,0.12)',
-                border: '1px solid rgba(45,212,191,0.2)',
+                background: '#111111',
+                border: 'none',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <Bot size={14} color="var(--teal-accent)" />
+                <Bot size={14} color="var(--accent-lime)" />
               </div>
               <TypingIndicator />
             </div>
@@ -455,23 +454,20 @@ export default function AIChatSidebar() {
         {/* Input area */}
         <div style={{
           padding: '1rem 1.25rem',
-          borderTop: '1px solid rgba(45,212,191,0.1)',
-          background: 'rgba(13,26,28,0.6)',
-          backdropFilter: 'blur(8px)',
+          borderTop: '1px solid rgba(17,17,17,0.1)',
+          background: 'var(--accent-lime)',
           flexShrink: 0,
         }}>
           <div style={{
             display: 'flex',
             gap: '0.75rem',
             alignItems: 'flex-end',
-            background: 'rgba(7,13,14,0.8)',
-            border: '1px solid rgba(45,212,191,0.15)',
-            borderRadius: '14px',
+            background: '#ffffff',
+            border: '1px solid #111111',
+            borderRadius: '8px',
             padding: '0.6rem 0.6rem 0.6rem 1rem',
             transition: 'border-color 0.3s ease',
           }}
-            onFocusCapture={e => e.currentTarget.style.borderColor = 'rgba(45,212,191,0.4)'}
-            onBlurCapture={e => e.currentTarget.style.borderColor = 'rgba(45,212,191,0.15)'}
           >
             <textarea
               ref={inputRef}
@@ -486,7 +482,7 @@ export default function AIChatSidebar() {
                 background: 'none',
                 border: 'none',
                 outline: 'none',
-                color: 'var(--text-primary)',
+                color: '#111111',
                 fontFamily: 'var(--font-body)',
                 fontSize: '0.9rem',
                 resize: 'none',
@@ -502,10 +498,10 @@ export default function AIChatSidebar() {
               style={{
                 width: '36px',
                 height: '36px',
-                borderRadius: '10px',
+                borderRadius: '6px',
                 background: input.trim() && !isTyping
-                  ? 'linear-gradient(135deg, #2dd4bf, #0d9488)'
-                  : 'rgba(45,212,191,0.1)',
+                  ? '#111111'
+                  : 'rgba(17,17,17,0.1)',
                 border: 'none',
                 cursor: input.trim() && !isTyping ? 'pointer' : 'not-allowed',
                 display: 'flex',
@@ -516,7 +512,7 @@ export default function AIChatSidebar() {
               }}
               aria-label="Send message"
             >
-              <Send size={15} color={input.trim() && !isTyping ? '#070d0e' : 'var(--text-muted)'} />
+              <Send size={15} color={input.trim() && !isTyping ? '#ffffff' : 'rgba(17,17,17,0.4)'} />
             </button>
           </div>
           <p style={{
@@ -554,8 +550,8 @@ export default function AIChatSidebar() {
 
         /* Hover glows & scale-up */
         .glowing-ai-btn:hover {
-          border-color: var(--teal-accent) !important;
-          box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 25px rgba(45,212,191,0.5) !important;
+          border-color: var(--accent-lime) !important;
+          box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 25px rgba(212,255,61,0.4) !important;
         }
 
         .glowing-ai-btn:hover .ai-icon {
@@ -564,7 +560,7 @@ export default function AIChatSidebar() {
 
         .glowing-ai-btn:hover .spark-micro {
           transform: rotate(-30deg) scale(1.3);
-          filter: drop-shadow(0 0 4px var(--gold-accent));
+          filter: drop-shadow(0 0 4px var(--accent-lime));
         }
 
         /* Shimmer sweep effect */
@@ -577,7 +573,7 @@ export default function AIChatSidebar() {
           background: linear-gradient(
             90deg,
             transparent,
-            rgba(45,212,191,0.25),
+            rgba(212,255,61,0.2),
             transparent
           );
           transform: skewX(-25deg);

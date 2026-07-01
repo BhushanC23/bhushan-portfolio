@@ -74,14 +74,14 @@ export default function Navbar() {
           display: 'flex',
           alignItems: 'center',
           background: isScrolled
-            ? 'rgba(7, 13, 14, 0.88)'
-            : 'rgba(7, 13, 14, 0.55)',
+            ? 'rgba(17, 17, 17, 0.92)'
+            : 'rgba(17, 17, 17, 0.65)',
           backdropFilter: 'blur(24px) saturate(160%)',
           WebkitBackdropFilter: 'blur(24px) saturate(160%)',
-          border: `1px solid ${isScrolled ? 'rgba(45,212,191,0.20)' : 'rgba(45,212,191,0.10)'}`,
+          border: `1px solid ${isScrolled ? 'rgba(212,255,61,0.25)' : 'rgba(212,255,61,0.12)'}`,
           boxShadow: isScrolled
-            ? '0 8px 40px rgba(0,0,0,0.5), inset 0 0 24px rgba(45,212,191,0.04)'
-            : '0 4px 20px rgba(0,0,0,0.25)',
+            ? '0 8px 40px rgba(0,0,0,0.35), inset 0 0 24px rgba(212,255,61,0.04)'
+            : '0 4px 20px rgba(0,0,0,0.2)',
           transition: 'top 0.4s ease, background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease',
           whiteSpace: 'nowrap',
         }}
@@ -92,8 +92,8 @@ export default function Navbar() {
           top: '6px',
           height: 'calc(100% - 12px)',
           borderRadius: '100px',
-          background: 'rgba(45,212,191,0.10)',
-          border: '1px solid rgba(45,212,191,0.18)',
+          background: 'rgba(212,255,61,0.12)',
+          border: '1px solid rgba(212,255,61,0.25)',
           transition: 'left 0.35s cubic-bezier(0.4,0,0.2,1), width 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.2s',
           pointerEvents: 'none',
           zIndex: 0,
@@ -115,7 +115,7 @@ export default function Navbar() {
                 fontFamily: 'var(--font-body)',
                 fontSize: '12px', fontWeight: isActive ? 600 : 400,
                 letterSpacing: '0.08em', textTransform: 'uppercase',
-                color: isActive ? 'var(--teal-accent)' : 'rgba(240,244,244,0.60)',
+                color: isActive ? 'var(--accent-lime)' : 'rgba(240,244,244,0.60)',
                 transition: 'color 0.2s ease',
                 borderRadius: '100px',
               }}
@@ -127,30 +127,28 @@ export default function Navbar() {
           );
         })}
 
-        <div style={{ width: '1px', height: '18px', background: 'rgba(45,212,191,0.15)', margin: '0 4px', flexShrink: 0 }} />
+        <div style={{ width: '1px', height: '18px', background: 'rgba(212,255,61,0.2)', margin: '0 4px', flexShrink: 0 }} />
 
         <a
           href="mailto:bhushan.chaturbhuj_25pca@sanjivani.edu.in"
           style={{
             position: 'relative', zIndex: 1,
             display: 'inline-flex', alignItems: 'center',
-            padding: '0 1.1rem', height: '38px', marginRight: '2px',
-            background: 'linear-gradient(135deg, rgba(45,212,191,0.18), rgba(45,212,191,0.08))',
-            border: '1px solid rgba(45,212,191,0.30)',
+            padding: '0 1.25rem', height: '38px', marginRight: '2px',
+            background: 'var(--accent-lime)',
+            border: 'none',
             borderRadius: '100px',
-            fontFamily: 'var(--font-body)', fontWeight: 600,
+            fontFamily: 'var(--font-body)', fontWeight: 800,
             fontSize: '11.5px', letterSpacing: '0.08em', textTransform: 'uppercase',
-            color: 'var(--teal-accent)', textDecoration: 'none', flexShrink: 0,
-            transition: 'all 0.25s ease',
+            color: '#111111', textDecoration: 'none', flexShrink: 0,
+            transition: 'all 0.25s cubic-bezier(0.25,1,0.5,1)',
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.background = 'var(--teal-accent)';
-            e.currentTarget.style.color = '#070d0e';
-            e.currentTarget.style.boxShadow = '0 4px 20px rgba(45,212,191,0.30)';
+            e.currentTarget.style.transform = 'scale(1.05)';
+            e.currentTarget.style.boxShadow = '0 6px 24px rgba(212,255,61,0.40)';
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(45,212,191,0.18), rgba(45,212,191,0.08))';
-            e.currentTarget.style.color = 'var(--teal-accent)';
+            e.currentTarget.style.transform = 'scale(1)';
             e.currentTarget.style.boxShadow = 'none';
           }}
         >
@@ -171,11 +169,11 @@ export default function Navbar() {
           zIndex: 1000,
           borderRadius: '18px',
           overflow: 'hidden',
-          background: 'rgba(7,13,14,0.92)',
+          background: 'rgba(17,17,17,0.95)',
           backdropFilter: 'blur(24px)',
           WebkitBackdropFilter: 'blur(24px)',
-          border: '1px solid rgba(45,212,191,0.14)',
-          boxShadow: '0 4px 30px rgba(0,0,0,0.4)',
+          border: '1px solid rgba(212,255,61,0.16)',
+          boxShadow: '0 4px 30px rgba(0,0,0,0.3)',
           transition: 'box-shadow 0.3s ease',
         }}
       >
@@ -189,7 +187,7 @@ export default function Navbar() {
           <span style={{
             fontFamily: 'var(--font-display)',
             fontSize: '13px', fontWeight: 700,
-            color: 'var(--teal-accent)',
+            color: 'var(--accent-lime)',
             letterSpacing: '0.15em', textTransform: 'uppercase',
           }}>
             Bhushan
@@ -198,10 +196,10 @@ export default function Navbar() {
           <button
             onClick={() => setIsMenuOpen(v => !v)}
             style={{
-              background: 'rgba(45,212,191,0.06)',
-              border: '1px solid rgba(45,212,191,0.12)',
+              background: 'rgba(212,255,61,0.08)',
+              border: '1px solid rgba(212,255,61,0.15)',
               borderRadius: '10px',
-              color: 'var(--teal-accent)',
+              color: 'var(--accent-lime)',
               cursor: 'pointer',
               width: '36px', height: '36px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -227,10 +225,10 @@ export default function Navbar() {
                   key={link.href}
                   onClick={() => handleNavClick(link.href)}
                   style={{
-                    background: isActive ? 'rgba(45,212,191,0.10)' : 'transparent',
+                    background: isActive ? 'rgba(212,255,61,0.10)' : 'transparent',
                     border: 'none',
                     cursor: 'pointer',
-                    color: isActive ? 'var(--teal-accent)' : 'rgba(240,244,244,0.65)',
+                    color: isActive ? 'var(--accent-lime)' : 'rgba(240,244,244,0.65)',
                     fontFamily: 'var(--font-body)', fontWeight: isActive ? 600 : 400,
                     fontSize: '13px', letterSpacing: '0.07em', textTransform: 'uppercase',
                     textAlign: 'left',
@@ -258,10 +256,10 @@ export default function Navbar() {
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 minHeight: '44px', marginTop: '0.4rem',
-                background: 'rgba(45,212,191,0.10)',
-                border: '1px solid rgba(45,212,191,0.22)',
+                background: 'var(--accent-lime)',
+                border: 'none',
                 borderRadius: '12px',
-                color: 'var(--teal-accent)',
+                color: '#111',
                 fontFamily: 'var(--font-body)', fontWeight: 600,
                 fontSize: '12.5px', letterSpacing: '0.08em', textTransform: 'uppercase',
                 textDecoration: 'none',

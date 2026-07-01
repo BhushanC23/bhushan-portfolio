@@ -8,12 +8,12 @@ gsap.registerPlugin(ScrollTrigger);
 
 // Category dot colors
 const CATEGORY_DOT_COLORS = {
-  frontend: '#2dd4bf',
-  backend: '#5eead4',
+  frontend: '#111111',
+  backend: '#6b6b6b',
   database: '#c9a84c',
-  aiml: '#fb923c',
-  tools: '#a78bfa',
-  specialties: '#f9a8d4',
+  aiml: '#d4ff3d',
+  tools: '#9b8ec4',
+  specialties: '#e8a0b0',
 };
 
 export default function SkillsSection() {
@@ -62,29 +62,45 @@ export default function SkillsSection() {
 
   return (
     <section id="skills" ref={sectionRef} style={{
-      background: 'var(--teal-dark)',
+      background: 'var(--accent-lime)',
       padding: '10rem 0',
       position: 'relative',
       overflow: 'hidden',
     }}>
       {/* Decorative number */}
-      <div className="section-deco-number" style={{ left: '-2%', top: '-5%' }}>02</div>
+      <div className="section-deco-number" style={{ left: '-2%', top: '-5%', color: 'rgba(17,17,17,0.06)' }}>02</div>
 
       <div className="grid-texture" style={{
-        position: 'absolute', inset: 0, opacity: 0.2, pointerEvents: 'none',
+        position: 'absolute', inset: 0, opacity: 0.1, pointerEvents: 'none',
       }} />
 
       <div className="container-xl" style={{ position: 'relative', zIndex: 1, marginBottom: '4rem' }}>
         {/* Section header */}
-        <div ref={headerRef} style={{ marginBottom: '2rem' }}>
-          <h2 className="heading-display">
+        <div ref={headerRef} style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+          <div style={{
+            fontFamily: 'monospace',
+            fontSize: '9px',
+            letterSpacing: '0.3em',
+            textTransform: 'uppercase',
+            color: 'rgba(17,17,17,0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+          }}>
+            <span>[ SEC // 02 ]</span>
+            <span style={{ width: '16px', height: '1px', background: 'rgba(17,17,17,0.25)' }} />
+            <span>CAPABILITIES</span>
+            <span style={{ width: '16px', height: '1px', background: 'rgba(17,17,17,0.25)' }} />
+            <span>STACK INTERNALS</span>
+          </div>
+          <h2 className="heading-display" style={{ marginTop: '0.2rem', color: '#111111' }}>
             Skills &amp;{' '}
-            <span className="serif-accent">Technologies</span>
+            <span className="serif-accent" style={{ color: '#111111' }}>Technologies</span>
           </h2>
           <p style={{
             fontFamily: 'var(--font-body)',
             fontSize: '1rem',
-            color: 'var(--text-muted)',
+            color: 'rgba(17,17,17,0.75)',
             marginTop: '1rem',
             maxWidth: '480px',
           }}>

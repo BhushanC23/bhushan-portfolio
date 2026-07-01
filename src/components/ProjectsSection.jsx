@@ -10,14 +10,14 @@ gsap.registerPlugin(ScrollTrigger);
 const CARD_GAP = 24;    // px gap between cards
 
 const TAG_COLORS = {
-  'Full Stack':          { bg: 'rgba(45,212,191,0.10)', border: 'rgba(45,212,191,0.25)', color: '#2dd4bf' },
-  'Full Stack + CMS':    { bg: 'rgba(45,212,191,0.10)', border: 'rgba(45,212,191,0.25)', color: '#2dd4bf' },
-  'Utility Tool':        { bg: 'rgba(201,168,76,0.10)',  border: 'rgba(201,168,76,0.25)',  color: '#c9a84c' },
-  'AR / Web XR':         { bg: 'rgba(139,92,246,0.10)',  border: 'rgba(139,92,246,0.25)',  color: '#a78bfa' },
-  'AR':                  { bg: 'rgba(139,92,246,0.10)',  border: 'rgba(139,92,246,0.25)',  color: '#a78bfa' },
-  'AI/ML':               { bg: 'rgba(249,115,22,0.10)',  border: 'rgba(249,115,22,0.25)',  color: '#fb923c' },
+  'Full Stack':          { bg: 'rgba(212,255,61,0.1)', border: 'rgba(212,255,61,0.3)', color: 'var(--accent-lime)' },
+  'Full Stack + CMS':    { bg: 'rgba(212,255,61,0.1)', border: 'rgba(212,255,61,0.3)', color: 'var(--accent-lime)' },
+  'Utility Tool':        { bg: 'rgba(201,168,76,0.1)',  border: 'rgba(201,168,76,0.3)',  color: 'var(--accent-gold)' },
+  'AR / Web XR':         { bg: 'rgba(139,92,246,0.1)',  border: 'rgba(139,92,246,0.3)',  color: '#a78bfa' },
+  'AR':                  { bg: 'rgba(139,92,246,0.1)',  border: 'rgba(139,92,246,0.3)',  color: '#a78bfa' },
+  'AI/ML':               { bg: 'rgba(212,255,61,0.1)',  border: 'rgba(212,255,61,0.3)',  color: 'var(--accent-lime)' },
 };
-const DEFAULT_TAG = { bg: 'rgba(45,212,191,0.10)', border: 'rgba(45,212,191,0.25)', color: '#2dd4bf' };
+const DEFAULT_TAG = { bg: 'rgba(212,255,61,0.1)', border: 'rgba(212,255,61,0.3)', color: 'var(--accent-lime)' };
 
 /* ──────────────────────────────────────────────
    Single project card — 3‑D tilt + glow on hover
@@ -43,7 +43,7 @@ function ProjectCard({ project, index, cardWidth, cardHeight, isMobile }) {
     const rotY  = -(x - 0.5) * 10;
     card.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
     if (glow) glow.style.background =
-      `radial-gradient(circle at ${x*100}% ${y*100}%, rgba(45,212,191,0.10), transparent 60%)`;
+      `radial-gradient(circle at ${x*100}% ${y*100}%, rgba(212,255,61,0.15), transparent 60%)`;
   };
 
   const handleMouseLeave = () => {
@@ -64,17 +64,16 @@ function ProjectCard({ project, index, cardWidth, cardHeight, isMobile }) {
         width: `${cardWidth}px`,
         flexShrink: 0,
         height: `${cardHeight}px`,
-        borderRadius: '16px',
-        background: 'var(--card-bg)',
-        border: `1px solid ${hovered ? 'rgba(45,212,191,0.25)' : 'var(--card-border)'}`,
-        backdropFilter: 'blur(12px)',
+        borderRadius: '12px',
+        background: '#111111',
+        border: `1px solid ${hovered ? 'var(--accent-lime)' : 'rgba(212, 255, 61, 0.18)'}`,
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
         position: 'relative',
         transition: 'border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease',
         transform: (isMobile && hovered) ? 'translateY(-4px)' : 'none',
-        boxShadow: hovered ? '0 12px 32px rgba(0, 0, 0, 0.4), 0 0 15px rgba(45,212,191,0.05)' : 'none',
+        boxShadow: hovered ? '0 8px 30px rgba(212,255,61,0.08)' : 'none',
         willChange: 'transform',
         cursor: 'default',
       }}
@@ -106,15 +105,15 @@ function ProjectCard({ project, index, cardWidth, cardHeight, isMobile }) {
       {/* Colour band */}
       <div style={{
         width: '100%', height: isMobile ? '75px' : '125px', flexShrink: 0,
-        background: `linear-gradient(135deg, ${tagStyle.bg}, var(--teal-dark))`,
-        borderBottom: '1px solid var(--card-border)',
+        background: `linear-gradient(135deg, ${tagStyle.bg}, #1d1d1d)`,
+        borderBottom: '1px solid rgba(255,255,255,0.1)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         position: 'relative', overflow: 'hidden',
       }}>
         <span style={{
           fontFamily: 'var(--font-display)', fontWeight: 800,
           fontSize: isMobile ? '2.5rem' : '5.5rem', color: tagStyle.color,
-          opacity: 0.15, letterSpacing: '-0.06em', userSelect: 'none', lineHeight: 1,
+          opacity: 0.12, letterSpacing: '-0.06em', userSelect: 'none', lineHeight: 1,
         }}>
           {title.charAt(0)}
         </span>
@@ -124,7 +123,7 @@ function ProjectCard({ project, index, cardWidth, cardHeight, isMobile }) {
           bottom: isMobile ? '0.3rem' : '0.6rem',
           left: isMobile ? '0.8rem' : '1.25rem',
           fontFamily: 'var(--font-display)', fontSize: '10px', fontWeight: 700,
-          letterSpacing: '0.2em', color: 'rgba(255,255,255,0.25)',
+          letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)',
           textTransform: 'uppercase',
         }}>
           {String(index + 1).padStart(2, '0')}
@@ -159,7 +158,7 @@ function ProjectCard({ project, index, cardWidth, cardHeight, isMobile }) {
           fontFamily: 'var(--font-display)',
           fontSize: isMobile ? '0.9rem' : '1.1rem',
           fontWeight: 700,
-          color: 'var(--text-primary)',
+          color: '#ffffff',
           letterSpacing: '-0.01em',
           lineHeight: 1.25,
           margin: 0,
@@ -170,7 +169,7 @@ function ProjectCard({ project, index, cardWidth, cardHeight, isMobile }) {
         <p style={{
           fontFamily: 'var(--font-body)',
           fontSize: isMobile ? '0.75rem' : '0.85rem',
-          color: 'var(--text-muted)',
+          color: 'rgba(255,255,255,0.65)',
           lineHeight: isMobile ? 1.4 : 1.6,
           flex: 1,
           margin: 0,
@@ -189,11 +188,11 @@ function ProjectCard({ project, index, cardWidth, cardHeight, isMobile }) {
             {stack.map((tech, i) => (
               <span key={i} style={{
                 padding: isMobile ? '0.08rem 0.35rem' : '0.18rem 0.5rem',
-                background: 'rgba(7,13,14,0.6)',
-                border: '1px solid rgba(45,212,191,0.08)',
-                borderRadius: '6px',
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                borderRadius: '4px',
                 fontSize: isMobile ? '0.58rem' : '0.68rem',
-                color: 'var(--text-dim)', fontFamily: 'var(--font-body)',
+                color: 'rgba(255,255,255,0.7)', fontFamily: 'var(--font-body)',
               }}>
                 {tech}
               </span>
@@ -208,14 +207,14 @@ function ProjectCard({ project, index, cardWidth, cardHeight, isMobile }) {
           rel="noopener noreferrer"
           style={{
             display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
-            color: 'var(--teal-accent)',
+            color: 'rgba(255,255,255,0.6)',
             fontSize: isMobile ? '0.7rem' : '0.78rem',
             fontFamily: 'var(--font-body)', textDecoration: 'none',
             transition: 'color 0.2s ease', marginTop: '0.25rem',
             alignSelf: 'flex-start',
           }}
-          onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'}
-          onMouseLeave={e => e.currentTarget.style.color = 'var(--teal-accent)'}
+          onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-lime)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}
         >
           <GitBranch size={13} />
           GitHub →
@@ -337,7 +336,7 @@ export default function ProjectsSection() {
       style={{
         position: 'relative',
         height: `${viewportHeight + slideAmount}px`,
-        background: 'var(--bg-secondary)',
+        background: '#0a0a0a',
       }}
     >
       {/* Decorative number */}
@@ -363,16 +362,35 @@ export default function ProjectsSection() {
             flexShrink: 0,
             position: 'relative',
             zIndex: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.4rem',
           }}
         >
-          <h2 className="heading-display" style={{ fontSize: isMobile ? 'clamp(1.8rem, 6vw, 2.5rem)' : 'clamp(2.5rem, 5vw, 5rem)' }}>
+          <div style={{
+            fontFamily: 'monospace',
+            fontSize: '9px',
+            letterSpacing: '0.3em',
+            textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+          }}>
+            <span>[ SEC // 04 ]</span>
+            <span style={{ width: '16px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
+            <span>PORTFOLIO WORK</span>
+            <span style={{ width: '16px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
+            <span>INTERNALS &amp; APPS</span>
+          </div>
+          <h2 className="heading-display" style={{ fontSize: isMobile ? 'clamp(1.8rem, 6vw, 2.5rem)' : 'clamp(2.5rem, 5vw, 5rem)', marginTop: '0.2rem', color: '#ffffff' }}>
             Projects I've{' '}
-            <span className="serif-accent">Built</span>
+            <span className="serif-accent" style={{ color: 'var(--accent-lime)' }}>Built</span>
           </h2>
           <p style={{
             fontFamily: 'var(--font-body)',
             fontSize: isMobile ? '0.85rem' : '0.95rem',
-            color: 'var(--text-muted)',
+            color: 'rgba(255,255,255,0.5)',
             marginTop: '0.6rem',
           }}>
             {isMobile ? 'Scroll down to explore horizontally →' : 'Scroll down to explore → full-stack · AI · Web AR'}
@@ -419,7 +437,7 @@ export default function ProjectsSection() {
                 flexShrink: 0,
                 borderRadius: '16px',
                 background: 'transparent',
-                border: '1px dashed rgba(45,212,191,0.2)',
+                border: '1px dashed rgba(17,17,17,0.18)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -434,11 +452,11 @@ export default function ProjectsSection() {
                 textTransform: 'uppercase',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.borderColor = 'rgba(45,212,191,0.5)';
-                e.currentTarget.style.color = 'var(--teal-accent)';
+                e.currentTarget.style.borderColor = 'rgba(17,17,17,0.4)';
+                e.currentTarget.style.color = 'var(--surface-dark)';
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'rgba(45,212,191,0.2)';
+                e.currentTarget.style.borderColor = 'rgba(17,17,17,0.18)';
                 e.currentTarget.style.color = 'var(--text-muted)';
               }}
             >

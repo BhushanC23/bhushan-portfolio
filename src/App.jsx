@@ -16,6 +16,7 @@ import AdminLogin from './admin/AdminLogin';
 import AdminGuard from './admin/AdminGuard';
 import AdminDashboard from './admin/AdminDashboard';
 import { useScrollProgress } from './hooks/useScrollVideo';
+import GridOverlay from './components/GridOverlay';
 
 /* ─────────── Magnetic Morphing Cursor ─────────── */
 function CustomCursor() {
@@ -55,22 +56,22 @@ function CustomCursor() {
 
       if (projectCard) {
         currentHoverType = 'project';
-        dot.style.width = '32px';
-        dot.style.height = '32px';
+        dot.style.width = '12px';
+        dot.style.height = '12px';
         ring.style.opacity = '1';
-        ring.style.width = '90px';
-        ring.style.height = '90px';
-        ring.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+        ring.style.width = '80px';
+        ring.style.height = '80px';
+        ring.style.borderColor = 'rgba(255, 255, 255, 0.8)';
         ring.style.background = 'transparent';
         if (label) { label.style.opacity = '1'; label.textContent = 'View →'; }
       } else if (target) {
         currentHoverType = 'interactive';
-        dot.style.width = '24px';
-        dot.style.height = '24px';
+        dot.style.width = '0px'; // hide dot on interactive elements
+        dot.style.height = '0px';
         ring.style.opacity = '1';
-        ring.style.width = '70px';
-        ring.style.height = '70px';
-        ring.style.borderColor = 'rgba(255, 255, 255, 0.4)';
+        ring.style.width = '52px';
+        ring.style.height = '52px';
+        ring.style.borderColor = 'rgba(255, 255, 255, 0.8)';
         ring.style.background = 'transparent';
         if (label) label.style.opacity = '0';
       }
@@ -80,27 +81,27 @@ function CustomCursor() {
       const target = e.target.closest('a, button, .magnetic, .project-card');
       if (target) {
         currentHoverType = null;
-        dot.style.width = '20px';
-        dot.style.height = '20px';
-        ring.style.opacity = '0';
-        ring.style.width = '30px';
-        ring.style.height = '30px';
-        ring.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+        dot.style.width = '8px';
+        dot.style.height = '8px';
+        ring.style.opacity = '1'; // keep always visible but small/subtle
+        ring.style.width = '36px';
+        ring.style.height = '36px';
+        ring.style.borderColor = 'rgba(255, 255, 255, 0.35)';
         ring.style.background = 'transparent';
         if (label) label.style.opacity = '0';
       }
     };
 
     const handleMouseDown = () => {
-      const targetWidth = currentHoverType === 'project' ? 45 : (currentHoverType === 'interactive' ? 35 : 15);
+      const targetWidth = currentHoverType === 'project' ? 50 : (currentHoverType === 'interactive' ? 36 : 20);
       gsap.to(ring, { width: targetWidth, height: targetWidth, duration: 0.15, ease: 'power2.inOut' });
-      const dotWidth = currentHoverType === 'project' ? 16 : (currentHoverType === 'interactive' ? 12 : 10);
+      const dotWidth = currentHoverType === 'project' ? 8 : (currentHoverType === 'interactive' ? 0 : 4);
       gsap.to(dot, { width: dotWidth, height: dotWidth, duration: 0.15 });
     };
     const handleMouseUp = () => {
-      const targetWidth = currentHoverType === 'project' ? 90 : (currentHoverType === 'interactive' ? 70 : 30);
+      const targetWidth = currentHoverType === 'project' ? 80 : (currentHoverType === 'interactive' ? 52 : 36);
       gsap.to(ring, { width: targetWidth, height: targetWidth, duration: 0.4, ease: 'elastic.out(1, 0.5)' });
-      const dotWidth = currentHoverType === 'project' ? 32 : (currentHoverType === 'interactive' ? 24 : 20);
+      const dotWidth = currentHoverType === 'project' ? 12 : (currentHoverType === 'interactive' ? 0 : 8);
       gsap.to(dot, { width: dotWidth, height: dotWidth, duration: 0.4 });
     };
 
@@ -213,7 +214,7 @@ function PortfolioLayout() {
 
   // Preload image sequence for Hero scroll-scrub video
   useEffect(() => {
-    const FRAME_COUNT = 94;
+    const FRAME_COUNT = 240;
     const slots = new Array(FRAME_COUNT).fill(null);
     let loadedCount = 0;
     let firstFrameShown = false;
@@ -233,7 +234,7 @@ function PortfolioLayout() {
         } else {
           const progress = Math.round((loadedCount / FRAME_COUNT) * 100);
           setLoadingProgress(progress);
-          if (loadedCount % 10 === 0 || loadedCount === FRAME_COUNT) {
+          if (loadedCount % 20 === 0 || loadedCount === FRAME_COUNT) {
             setImages([...slots]);
           }
         }
@@ -309,6 +310,9 @@ function PortfolioLayout() {
 
       {/* Film Grain */}
       <GrainOverlay />
+
+      {/* Grid Guidelines Overlay */}
+      <GridOverlay />
 
       <style>{`
         @media (max-width: 768px) {

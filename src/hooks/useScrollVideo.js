@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 
-const frameCount = 94;
+const frameCount = 240;
 
 export function useScrollVideo(onProgressUpdate, images) {
   const canvasRef = useRef(null);

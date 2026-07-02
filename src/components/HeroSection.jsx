@@ -36,8 +36,8 @@ const ALL_DOTS = [
   ...TEXT_PHASES,
 ];
 
-const IN_DUR  = 0.04;
-const OUT_DUR = 0.04;
+const IN_DUR  = 0.025;
+const OUT_DUR = 0.025;
 
 function phaseOpacity(progress, showAt, hideAt) {
   if (progress < showAt || progress >= hideAt) return 0;
@@ -177,6 +177,10 @@ export default function HeroSection({ images = [] }) {
           line-height: 0.9;
           letter-spacing: -0.04em;
           color: #ffffff;
+          text-shadow:
+            0 0 60px rgba(0,0,0,0.9),
+            0 2px 8px rgba(0,0,0,0.8),
+            0 0 120px rgba(0,0,0,0.6);
           transition: none;
         }
         .tp-sub {
@@ -184,7 +188,8 @@ export default function HeroSection({ images = [] }) {
           font-size: 11px;
           letter-spacing: 0.12em;
           text-transform: uppercase;
-          color: rgba(255,255,255,0.45);
+          color: rgba(255,255,255,0.75);
+          text-shadow: 0 1px 6px rgba(0,0,0,0.9);
           margin-top: 0.75rem;
           transition: none;
         }
@@ -193,7 +198,11 @@ export default function HeroSection({ images = [] }) {
           font-style: italic;
           font-weight: 300;
           letter-spacing: -0.02em;
-          color: #d4e84a;
+          color: #e8f56a;
+          text-shadow:
+            0 0 40px rgba(212,232,74,0.6),
+            0 0 80px rgba(212,232,74,0.3),
+            0 2px 8px rgba(0,0,0,0.8);
         }
         .tp-tag {
           display: inline-flex;
@@ -205,17 +214,19 @@ export default function HeroSection({ images = [] }) {
           letter-spacing: 0.22em;
           text-transform: uppercase;
           color: #d4e84a;
-          border: 1px solid rgba(212,232,74,0.35);
-          background: rgba(212,232,74,0.08);
+          border: 1px solid rgba(212,232,74,0.5);
+          background: rgba(10,10,10,0.6);
           padding: 0.25rem 0.8rem;
           border-radius: 100px;
           margin-bottom: 0.85rem;
+          backdrop-filter: blur(4px);
         }
         .tp-divider {
           width: 32px;
           height: 1px;
-          background: rgba(212,232,74,0.4);
+          background: rgba(212,232,74,0.5);
           margin: 1rem 0;
+          box-shadow: 0 0 8px rgba(212,232,74,0.4);
         }
         .tp-cta-btn {
           display: inline-flex;
@@ -235,12 +246,14 @@ export default function HeroSection({ images = [] }) {
         .tp-cta-primary {
           background: #d4e84a;
           color: #111;
-          box-shadow: 0 0 20px rgba(212,232,74,0.25);
+          box-shadow: 0 0 24px rgba(212,232,74,0.45);
         }
-        .tp-cta-primary:hover { box-shadow: 0 0 32px rgba(212,232,74,0.5); }
+        .tp-cta-primary:hover { box-shadow: 0 0 40px rgba(212,232,74,0.7); }
         .tp-cta-ghost {
-          border: 1px solid rgba(255,255,255,0.25);
+          border: 1px solid rgba(255,255,255,0.35);
           color: #fff;
+          background: rgba(0,0,0,0.3);
+          backdrop-filter: blur(4px);
         }
       `}</style>
 
@@ -304,6 +317,9 @@ export default function HeroSection({ images = [] }) {
           opacity: 0, pointerEvents: 'none',
           zIndex: 10,
           transition: 'none',
+          padding: '1.5rem 2rem 2rem 2rem',
+          background: 'radial-gradient(ellipse 120% 100% at 0% 0%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.5) 55%, transparent 100%)',
+          borderRadius: '12px',
         }}>
           <div className="tp-tag">
             <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#d4e84a', display: 'inline-block' }} />
@@ -329,6 +345,9 @@ export default function HeroSection({ images = [] }) {
           opacity: 0, pointerEvents: 'none',
           zIndex: 10,
           transition: 'none',
+          padding: '1.5rem 2rem 2rem 2rem',
+          background: 'radial-gradient(ellipse 120% 100% at 0% 0%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.5) 55%, transparent 100%)',
+          borderRadius: '12px',
         }}>
           <div className="tp-tag">Stack</div>
           <div className="tp-headline" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 6rem)' }}>
@@ -351,6 +370,9 @@ export default function HeroSection({ images = [] }) {
           opacity: 0, pointerEvents: 'none',
           zIndex: 10,
           transition: 'none',
+          padding: '1.5rem 2rem 2rem 2rem',
+          background: 'radial-gradient(ellipse 120% 100% at 0% 0%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.5) 55%, transparent 100%)',
+          borderRadius: '12px',
         }}>
           <div className="tp-tag">Vision</div>
           <div className="tp-headline" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 6rem)' }}>
@@ -374,6 +396,9 @@ export default function HeroSection({ images = [] }) {
           opacity: 0, pointerEvents: 'none',
           zIndex: 10,
           transition: 'none',
+          padding: '1.5rem 2rem 2rem 2rem',
+          background: 'radial-gradient(ellipse 120% 100% at 0% 0%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.5) 55%, transparent 100%)',
+          borderRadius: '12px',
         }}>
           <div className="tp-tag">
             <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', display: 'inline-block', boxShadow: '0 0 8px rgba(34,197,94,0.8)' }} />

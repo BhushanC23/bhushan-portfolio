@@ -236,7 +236,7 @@ export default function HeroSection({ images = [] }) {
           pointerEvents: 'auto',
           zIndex: 5,
         }}>
-          {/* Top-right role tag — sits in dark negative space */}
+          {/*
           <div style={{
             position: 'absolute',
             top: '18%', right: '4%',
@@ -261,13 +261,11 @@ export default function HeroSection({ images = [] }) {
             }}>LLM AI Intern</span>
           </div>
 
-          {/* Huge editorial name — bottom-left, face is upper-right */}
           <div style={{
             position: 'absolute',
             bottom: '10%', left: '4%',
             zIndex: 5,
           }}>
-            {/* Eyebrow */}
             <div id="ph-1-sub" style={{
               fontFamily: 'var(--font-body)', fontSize: '11px',
               letterSpacing: '0.28em', textTransform: 'uppercase',
@@ -276,7 +274,6 @@ export default function HeroSection({ images = [] }) {
               transition: 'none',
             }}>Full Stack Developer</div>
 
-            {/* BHUSHAN — giant display outline */}
             <div id="ph-1-name" style={{
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(3rem, 9.5vw, 8.5rem)',
@@ -289,7 +286,6 @@ export default function HeroSection({ images = [] }) {
               BHUSHAN
             </div>
 
-            {/* CHATURBHUJ in italic serif — offset right */}
             <div id="ph-1-role" style={{
               fontFamily: 'var(--font-serif)',
               fontStyle: 'italic', fontWeight: 300,
@@ -303,7 +299,6 @@ export default function HeroSection({ images = [] }) {
               Chaturbhuj.
             </div>
 
-            {/* Bottom rule + year */}
             <div style={{
               display: 'flex', alignItems: 'center', gap: '1rem',
               marginTop: '1.5rem',
@@ -316,6 +311,7 @@ export default function HeroSection({ images = [] }) {
               <div style={{ width: '40px', height: '1px', background: 'rgba(255,255,255,0.3)' }} />
             </div>
           </div>
+          */}
         </div>
 
         {/* ══════════════════════════════════════════════════
@@ -331,6 +327,7 @@ export default function HeroSection({ images = [] }) {
           pointerEvents: 'none',
           zIndex: 5,
         }}>
+          {/*
           <div style={{ textAlign: 'center' }}>
             <div id="ph-2-sub" style={{
               fontFamily: 'var(--font-body)', fontSize: '11px',
@@ -372,6 +369,7 @@ export default function HeroSection({ images = [] }) {
               ))}
             </div>
           </div>
+          */}
         </div>
 
         {/* ══════════════════════════════════════════════════
@@ -384,7 +382,7 @@ export default function HeroSection({ images = [] }) {
           pointerEvents: 'none',
           zIndex: 5,
         }}>
-          {/* Top-left precision block */}
+          {/*
           <div style={{
             position: 'absolute',
             top: '18%', left: '4%',
@@ -413,7 +411,6 @@ export default function HeroSection({ images = [] }) {
             </div>
           </div>
 
-          {/* Right edge — vertical editorial label */}
           <div style={{
             position: 'absolute',
             right: '3%', top: '50%',
@@ -430,6 +427,7 @@ export default function HeroSection({ images = [] }) {
             }}>Portfolio 2025</span>
             <div style={{ width: '1px', height: '60px', background: 'rgba(17,17,17,0.2)' }} />
           </div>
+          */}
         </div>
 
         {/* ══════════════════════════════════════════════════
@@ -442,13 +440,12 @@ export default function HeroSection({ images = [] }) {
           pointerEvents: 'none',
           zIndex: 5,
         }}>
-          {/* Left column — open negative space to the left of face */}
+          {/*
           <div style={{
             position: 'absolute',
             bottom: '10%', left: '4%',
             maxWidth: '42%',
           }}>
-            {/* Available chip */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
               <span style={{
                 width: '7px', height: '7px', borderRadius: '50%',
@@ -467,7 +464,6 @@ export default function HeroSection({ images = [] }) {
               }}>Available for Work</span>
             </div>
 
-            {/* Main CTA heading */}
             <div id="ph-4-cta-head" style={{
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(1.8rem, 4.5vw, 4.5rem)',
@@ -484,7 +480,6 @@ export default function HeroSection({ images = [] }) {
               }}>Something Amazing.</span>
             </div>
 
-            {/* Sub */}
             <div id="ph-4-sub" style={{
               fontFamily: 'var(--font-body)', fontSize: '13px',
               color: 'rgba(17,17,17,0.5)', marginTop: '1rem',
@@ -494,7 +489,6 @@ export default function HeroSection({ images = [] }) {
               Open to exciting opportunities
             </div>
 
-            {/* CTA buttons */}
             <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.75rem', flexWrap: 'wrap' }}>
               <a href="mailto:bhushan.chaturbhuj_25pca@sanjivani.edu.in" style={{
                 display: 'inline-flex', alignItems: 'center',
@@ -524,6 +518,7 @@ export default function HeroSection({ images = [] }) {
               >Resume ↗</a>
             </div>
           </div>
+          */}
         </div>
 
         {/* ══════════════════════════════════════════════════

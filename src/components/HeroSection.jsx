@@ -188,13 +188,8 @@ export default function HeroSection({ images = [] }) {
           right: 3%;
           left: auto;
           max-width: 40%;
-          padding: 2rem 2rem 2rem 2.5rem;
-          background: rgba(0, 0, 0, 0.72);
-          border-right: 2px solid rgba(212,232,74,0.5);
-          border-left: none;
-          border-radius: 8px 0 0 8px;
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
+          padding: 2rem 0;
+          background: transparent;
           will-change: opacity, transform;
           text-align: right;
         }
@@ -253,6 +248,7 @@ export default function HeroSection({ images = [] }) {
           background: #d4e84a;
           margin: 1.1rem 0 0.9rem;
           opacity: 0.7;
+          margin-left: auto;
         }
 
         /* ── CTA BUTTONS ── */
@@ -288,16 +284,10 @@ export default function HeroSection({ images = [] }) {
           right: 3%;
           left: auto;
           max-width: 40%;
-          padding: 2rem 2rem 2rem 2.5rem;
-          background: rgba(255, 255, 255, 0.82);
-          border-right: 2px solid #111111;
-          border-left: none;
-          border-radius: 8px 0 0 8px;
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
+          padding: 2rem 0;
+          background: transparent;
           will-change: opacity, transform;
           text-align: right;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
         .tp-headline-light {
           font-family: var(--font-display, 'Inter', sans-serif);

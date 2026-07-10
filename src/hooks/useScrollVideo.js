@@ -144,10 +144,12 @@ export function useScrollVideo(onProgressUpdate, images) {
       if (lastRenderedFrame.current !== frameIndex) {
         renderFrame(frameIndex);
         lastRenderedFrame.current = frameIndex;
+      }
 
-        if (onProgressUpdateRef.current) {
-          onProgressUpdateRef.current(currentProgress.current);
-        }
+      // Always fire progress callback so text-phase opacity updates
+      // even when the canvas frame hasn't changed (lock zone)
+      if (onProgressUpdateRef.current) {
+        onProgressUpdateRef.current(currentProgress.current);
       }
 
       loopRef.current = requestAnimationFrame(updateLoop);

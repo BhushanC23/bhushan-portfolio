@@ -157,10 +157,6 @@ export default function HeroSection({ images = [] }) {
           0%,100% { opacity:0.3; transform:scaleY(0.5); }
           50%      { opacity:1;   transform:scaleY(1);   }
         }
-        @keyframes tp-glow-pulse {
-          0%,100% { text-shadow: 0 0 40px rgba(212,232,74,0.0); }
-          50%      { text-shadow: 0 0 40px rgba(212,232,74,0.25); }
-        }
         @keyframes lock-badge-pulse {
           0%,100% { opacity:0.7; }
           50%      { opacity:1; }
@@ -171,39 +167,53 @@ export default function HeroSection({ images = [] }) {
         @media (max-width:640px){
           #tp-2,#tp-3 { display:none !important; }
         }
+
+        /* ── TEXT PHASE BASE CONTAINER ── */
+        .tp-box {
+          position: absolute;
+          right: 3%;
+          left: auto;
+          max-width: 40%;
+          padding: 2rem 2rem 2rem 2.5rem;
+          background: rgba(0, 0, 0, 0.72);
+          border-right: 2px solid rgba(212,232,74,0.5);
+          border-left: none;
+          border-radius: 8px 0 0 8px;
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          will-change: opacity, transform;
+          text-align: right;
+        }
+
+        /* ── HEADLINE ── */
         .tp-headline {
-          font-family: 'Syne', 'Clash Display', var(--font-display, sans-serif);
+          font-family: var(--font-display, 'Inter', sans-serif);
           font-weight: 800;
-          line-height: 0.9;
+          line-height: 0.92;
           letter-spacing: -0.04em;
           color: #ffffff;
-          text-shadow:
-            0 0 60px rgba(0,0,0,0.9),
-            0 2px 8px rgba(0,0,0,0.8),
-            0 0 120px rgba(0,0,0,0.6);
-          transition: none;
+          margin: 0;
         }
+
+        /* ── ITALIC ACCENT ── */
+        .tp-italic {
+          font-style: italic;
+          font-weight: 300;
+          color: #d4e84a;
+          letter-spacing: -0.02em;
+        }
+
+        /* ── SUBTEXT ── */
         .tp-sub {
           font-family: var(--font-body, sans-serif);
           font-size: 11px;
-          letter-spacing: 0.12em;
+          letter-spacing: 0.14em;
           text-transform: uppercase;
-          color: rgba(255,255,255,0.75);
-          text-shadow: 0 1px 6px rgba(0,0,0,0.9);
-          margin-top: 0.75rem;
-          transition: none;
+          color: rgba(255,255,255,0.6);
+          margin-top: 0.9rem;
         }
-        .tp-italic {
-          font-family: 'DM Serif Display', Georgia, serif;
-          font-style: italic;
-          font-weight: 300;
-          letter-spacing: -0.02em;
-          color: #e8f56a;
-          text-shadow:
-            0 0 40px rgba(212,232,74,0.6),
-            0 0 80px rgba(212,232,74,0.3),
-            0 2px 8px rgba(0,0,0,0.8);
-        }
+
+        /* ── TAG PILL ── */
         .tp-tag {
           display: inline-flex;
           align-items: center;
@@ -214,25 +224,28 @@ export default function HeroSection({ images = [] }) {
           letter-spacing: 0.22em;
           text-transform: uppercase;
           color: #d4e84a;
-          border: 1px solid rgba(212,232,74,0.5);
-          background: rgba(10,10,10,0.6);
-          padding: 0.25rem 0.8rem;
+          border: 1px solid rgba(212,232,74,0.6);
+          background: rgba(212,232,74,0.1);
+          padding: 0.22rem 0.75rem;
           border-radius: 100px;
-          margin-bottom: 0.85rem;
-          backdrop-filter: blur(4px);
+          margin-bottom: 1rem;
+          margin-left: auto;
         }
+
+        /* ── DIVIDER ── */
         .tp-divider {
-          width: 32px;
-          height: 1px;
-          background: rgba(212,232,74,0.5);
-          margin: 1rem 0;
-          box-shadow: 0 0 8px rgba(212,232,74,0.4);
+          width: 36px;
+          height: 2px;
+          background: #d4e84a;
+          margin: 1.1rem 0 0.9rem;
+          opacity: 0.7;
         }
+
+        /* ── CTA BUTTONS ── */
         .tp-cta-btn {
           display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
-          padding: 0.6rem 1.5rem;
+          padding: 0.55rem 1.4rem;
           border-radius: 100px;
           font-family: var(--font-body, sans-serif);
           font-size: 11px;
@@ -240,20 +253,19 @@ export default function HeroSection({ images = [] }) {
           letter-spacing: 0.1em;
           text-transform: uppercase;
           text-decoration: none;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
         .tp-cta-btn:hover { transform: scale(1.05); }
         .tp-cta-primary {
           background: #d4e84a;
-          color: #111;
-          box-shadow: 0 0 24px rgba(212,232,74,0.45);
+          color: #000;
+          box-shadow: 0 0 20px rgba(212,232,74,0.4);
         }
-        .tp-cta-primary:hover { box-shadow: 0 0 40px rgba(212,232,74,0.7); }
+        .tp-cta-primary:hover { box-shadow: 0 0 36px rgba(212,232,74,0.7); }
         .tp-cta-ghost {
-          border: 1px solid rgba(255,255,255,0.35);
+          border: 1px solid rgba(255,255,255,0.4);
           color: #fff;
-          background: rgba(0,0,0,0.3);
-          backdrop-filter: blur(4px);
+          background: rgba(255,255,255,0.05);
         }
       `}</style>
 
@@ -305,27 +317,15 @@ export default function HeroSection({ images = [] }) {
           transition: 'opacity 0.4s ease',
         }} />
 
-        {/* ══════════════════════════════════════════════════════════════
-            TEXT PHASE 1 — "BHUSHAN" — the name reveal
-            Scroll: 0.30 → 0.4375
-            Position: above eyes (top 6%), left safe zone
-        ══════════════════════════════════════════════════════════════ */}
-        <div id="tp-1" style={{
-          position: 'absolute',
-          top: TEXT_TOP, left: TEXT_LEFT,
-          maxWidth: TEXT_WIDTH,
-          opacity: 0, pointerEvents: 'none',
-          zIndex: 10,
-          transition: 'none',
-          padding: '1.5rem 2rem 2rem 2rem',
-          background: 'radial-gradient(ellipse 120% 100% at 0% 0%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.5) 55%, transparent 100%)',
-          borderRadius: '12px',
+        {/* ══ TEXT PHASE 1 — Name Reveal ══ */}
+        <div id="tp-1" className="tp-box" style={{
+          top: '8%', opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
           <div className="tp-tag">
             <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#d4e84a', display: 'inline-block' }} />
             MCA · AI/ML · Web Dev
           </div>
-          <div className="tp-headline" style={{ fontSize: 'clamp(2.8rem, 7vw, 7.5rem)' }}>
+          <div className="tp-headline" style={{ fontSize: 'clamp(2.8rem, 7vw, 7rem)' }}>
             BHUSHAN<br />
             <span className="tp-italic" style={{ fontSize: '0.78em' }}>Chaturbhuj.</span>
           </div>
@@ -333,93 +333,50 @@ export default function HeroSection({ images = [] }) {
           <div className="tp-sub">Full Stack Developer &amp; LLM AI Intern</div>
         </div>
 
-        {/* ══════════════════════════════════════════════════════════════
-            TEXT PHASE 2 — "BUILT WITH" statement
-            Scroll: 0.4375 → 0.575
-            Position: slightly lower, slightly right — to feel like reading
-        ══════════════════════════════════════════════════════════════ */}
-        <div id="tp-2" style={{
-          position: 'absolute',
-          top: TEXT_TOP, left: TEXT_LEFT,
-          maxWidth: TEXT_WIDTH,
-          opacity: 0, pointerEvents: 'none',
-          zIndex: 10,
-          transition: 'none',
-          padding: '1.5rem 2rem 2rem 2rem',
-          background: 'radial-gradient(ellipse 120% 100% at 0% 0%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.5) 55%, transparent 100%)',
-          borderRadius: '12px',
+        {/* ══ TEXT PHASE 2 — Stack ══ */}
+        <div id="tp-2" className="tp-box" style={{
+          top: '8%', opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
           <div className="tp-tag">Stack</div>
-          <div className="tp-headline" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 6rem)' }}>
+          <div className="tp-headline" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 5.5rem)' }}>
             Built with<br />
-            <span className="tp-italic" style={{ fontSize: '0.92em' }}>Precision.</span>
+            <span className="tp-italic" style={{ fontSize: '0.95em' }}>Precision.</span>
           </div>
           <div className="tp-divider" />
           <div className="tp-sub">React · Node.js · MongoDB · Python · GSAP</div>
         </div>
 
-        {/* ══════════════════════════════════════════════════════════════
-            TEXT PHASE 3 — "TURNING IDEAS" statement
-            Scroll: 0.575 → 0.7125
-            Position: same anchor (consistent eye-level layout)
-        ══════════════════════════════════════════════════════════════ */}
-        <div id="tp-3" style={{
-          position: 'absolute',
-          top: TEXT_TOP, left: TEXT_LEFT,
-          maxWidth: TEXT_WIDTH,
-          opacity: 0, pointerEvents: 'none',
-          zIndex: 10,
-          transition: 'none',
-          padding: '1.5rem 2rem 2rem 2rem',
-          background: 'radial-gradient(ellipse 120% 100% at 0% 0%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.5) 55%, transparent 100%)',
-          borderRadius: '12px',
+        {/* ══ TEXT PHASE 3 — Vision ══ */}
+        <div id="tp-3" className="tp-box" style={{
+          top: '8%', opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
           <div className="tp-tag">Vision</div>
-          <div className="tp-headline" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 6rem)' }}>
+          <div className="tp-headline" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 5.5rem)' }}>
             Turning<br />
-            <span className="tp-italic" style={{ fontSize: '0.92em' }}>Ideas</span><br />
+            <span className="tp-italic">Ideas</span><br />
             into Reality.
           </div>
           <div className="tp-divider" />
           <div className="tp-sub">AI · Web · Mobile · XR</div>
         </div>
 
-        {/* ══════════════════════════════════════════════════════════════
-            TEXT PHASE 4 — CTA / Available
-            Scroll: 0.7125 → 0.85
-            Position: same anchor with CTA buttons
-        ══════════════════════════════════════════════════════════════ */}
-        <div id="tp-4" style={{
-          position: 'absolute',
-          top: TEXT_TOP, left: TEXT_LEFT,
-          maxWidth: TEXT_WIDTH,
-          opacity: 0, pointerEvents: 'none',
-          zIndex: 10,
-          transition: 'none',
-          padding: '1.5rem 2rem 2rem 2rem',
-          background: 'radial-gradient(ellipse 120% 100% at 0% 0%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.5) 55%, transparent 100%)',
-          borderRadius: '12px',
+        {/* ══ TEXT PHASE 4 — CTA ══ */}
+        <div id="tp-4" className="tp-box" style={{
+          top: '8%', opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
           <div className="tp-tag">
             <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', display: 'inline-block', boxShadow: '0 0 8px rgba(34,197,94,0.8)' }} />
             Available for Work
           </div>
-          <div className="tp-headline" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 6rem)' }}>
+          <div className="tp-headline" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 5.5rem)' }}>
             Let's Create<br />
-            <span className="tp-italic" style={{ fontSize: '0.92em' }}>Something</span><br />
+            <span className="tp-italic">Something</span><br />
             Amazing.
           </div>
           <div className="tp-divider" />
-          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-            <a
-              href="mailto:bhushan.chaturbhuj_25pca@sanjivani.edu.in"
-              className="tp-cta-btn tp-cta-primary"
-            >Hire Me →</a>
-            <a
-              href="/Bhushan_Chaturbhuj_Resume.pdf"
-              target="_blank"
-              className="tp-cta-btn tp-cta-ghost"
-            >Resume ↗</a>
+          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.2rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            <a href="mailto:bhushan.chaturbhuj_25pca@sanjivani.edu.in" className="tp-cta-btn tp-cta-primary">Hire Me →</a>
+            <a href="/Bhushan_Chaturbhuj_Resume.pdf" target="_blank" className="tp-cta-btn tp-cta-ghost">Resume ↗</a>
           </div>
         </div>
 

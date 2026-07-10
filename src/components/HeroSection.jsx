@@ -84,23 +84,6 @@ export default function HeroSection({ images = [] }) {
       el.style.transform = `translateY(${translateY})`;
     });
 
-    /* 2b ── Outro text phase (tp-5) for white background */
-    const tp5 = document.getElementById('tp-5');
-    if (tp5) {
-      const outroStart = 0.88;
-      const outroEnd   = 0.98;
-      let op5 = 0;
-      if (progress >= outroStart && progress < outroEnd) {
-        if (progress < outroStart + 0.03) op5 = (progress - outroStart) / 0.03;
-        else if (progress > outroEnd - 0.03) op5 = (outroEnd - progress) / 0.03;
-        else op5 = 1;
-        op5 = Math.min(Math.max(op5, 0), 1);
-      }
-      tp5.style.opacity = String(op5);
-      tp5.style.pointerEvents = op5 > 0.05 ? 'auto' : 'none';
-      const ty5 = op5 < 1 ? `${(1 - op5) * 14}px` : '0px';
-      tp5.style.transform = `translateY(${ty5})`;
-    }
 
     /* 3 ── Lock zone indicator: show the "PAUSED" frame badge */
     const lockBadge = document.getElementById('h-lock-badge');
@@ -397,49 +380,6 @@ export default function HeroSection({ images = [] }) {
           </div>
         </div>
 
-        {/* ══ TEXT PHASE 5 — Outro (white background) ══ */}
-        <div id="tp-5" style={{
-          position: 'absolute',
-          bottom: '12%', left: '50%',
-          transform: 'translateX(-50%)',
-          opacity: 0, pointerEvents: 'none', zIndex: 10,
-          textAlign: 'center',
-          width: '80%', maxWidth: '600px',
-        }}>
-          <div style={{
-            fontSize: 'clamp(0.6rem, 1vw, 0.8rem)',
-            fontFamily: 'var(--font-body, sans-serif)',
-            fontWeight: 700, letterSpacing: '0.22em',
-            textTransform: 'uppercase', color: '#111',
-            marginBottom: '0.8rem',
-          }}>Scroll to explore ↓</div>
-          <div style={{
-            fontSize: 'clamp(1.8rem, 4vw, 3.5rem)',
-            fontFamily: 'var(--font-display, Inter, sans-serif)',
-            fontWeight: 800, lineHeight: 1, letterSpacing: '-0.03em',
-            color: '#111',
-          }}>
-            Ready to <span style={{ fontStyle: 'italic', fontWeight: 300, color: '#7a8a1a' }}>collaborate?</span>
-          </div>
-          <div style={{ marginTop: '1.2rem', display: 'flex', gap: '0.6rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="mailto:bhushan.chaturbhuj_25pca@sanjivani.edu.in" style={{
-              display: 'inline-flex', alignItems: 'center',
-              padding: '0.5rem 1.3rem', borderRadius: '100px',
-              fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em',
-              textTransform: 'uppercase', textDecoration: 'none',
-              background: '#111', color: '#d4e84a',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
-            }}>Get in Touch →</a>
-            <a href="#about" style={{
-              display: 'inline-flex', alignItems: 'center',
-              padding: '0.5rem 1.3rem', borderRadius: '100px',
-              fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em',
-              textTransform: 'uppercase', textDecoration: 'none',
-              border: '1px solid #333', color: '#222',
-              background: 'rgba(0,0,0,0.04)',
-            }}>About Me ↓</a>
-          </div>
-        </div>
 
         {/* ══════════════════════════════════════════════════════════════
             GLOBAL UI CHROME

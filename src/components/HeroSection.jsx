@@ -22,12 +22,11 @@ const LOCK_START = 0.30;
 const LOCK_END   = 0.85;
 const LOCK_SPAN  = LOCK_END - LOCK_START; // 0.55
 
-// 4 text phases evenly carved out of the lock zone
+// 3 text phases evenly carved out of the lock zone (tp-1, tp-2, tp-3)
 const TEXT_PHASES = [
-  { id: 'tp-1', showAt: LOCK_START,                          hideAt: LOCK_START + LOCK_SPAN * 0.25 },
-  { id: 'tp-2', showAt: LOCK_START + LOCK_SPAN * 0.25,      hideAt: LOCK_START + LOCK_SPAN * 0.50 },
-  { id: 'tp-3', showAt: LOCK_START + LOCK_SPAN * 0.50,      hideAt: LOCK_START + LOCK_SPAN * 0.75 },
-  { id: 'tp-4', showAt: LOCK_START + LOCK_SPAN * 0.75,      hideAt: LOCK_END },
+  { id: 'tp-1', showAt: LOCK_START,                          hideAt: LOCK_START + LOCK_SPAN * 0.333 },
+  { id: 'tp-2', showAt: LOCK_START + LOCK_SPAN * 0.333,      hideAt: LOCK_START + LOCK_SPAN * 0.666 },
+  { id: 'tp-3', showAt: LOCK_START + LOCK_SPAN * 0.666,      hideAt: LOCK_END },
 ];
 
 // All dots — include the intro (pre-lock) as the first dot
@@ -83,6 +82,21 @@ export default function HeroSection({ images = [] }) {
       const translateY = op < 1 ? `${(1 - op) * 14}px` : '0px';
       el.style.transform = `translateY(${translateY})`;
     });
+
+    /* 2b ── Outro CTA phase (tp-4) for white background at 100% completion */
+    const tp4 = document.getElementById('tp-4');
+    if (tp4) {
+      const outroStart = 0.88;
+      let op4 = 0;
+      if (progress >= outroStart) {
+        // Fade in from 0.88 to 0.93, then hold fully visible at 1.00
+        op4 = Math.min((progress - outroStart) / 0.05, 1);
+      }
+      tp4.style.opacity = String(op4);
+      tp4.style.pointerEvents = op4 > 0.05 ? 'auto' : 'none';
+      const ty4 = op4 < 1 ? `${(1 - op4) * 14}px` : '0px';
+      tp4.style.transform = `translateY(${ty4})`;
+    }
 
 
     /* 3 ── Lock zone indicator: show the "PAUSED" frame badge */
@@ -267,6 +281,89 @@ export default function HeroSection({ images = [] }) {
           color: #fff;
           background: rgba(255,255,255,0.05);
         }
+
+        /* ── TEXT PHASE BASE CONTAINER (LIGHT FOR WHITE BG) ── */
+        .tp-box-light {
+          position: absolute;
+          right: 3%;
+          left: auto;
+          max-width: 40%;
+          padding: 2rem 2rem 2rem 2.5rem;
+          background: rgba(255, 255, 255, 0.82);
+          border-right: 2px solid #111111;
+          border-left: none;
+          border-radius: 8px 0 0 8px;
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          will-change: opacity, transform;
+          text-align: right;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+        .tp-headline-light {
+          font-family: var(--font-display, 'Inter', sans-serif);
+          font-weight: 800;
+          line-height: 0.92;
+          letter-spacing: -0.04em;
+          color: #111111;
+          margin: 0;
+        }
+        .tp-italic-light {
+          font-style: italic;
+          font-weight: 300;
+          color: #7a8a1a;
+          letter-spacing: -0.02em;
+        }
+        .tp-sub-light {
+          font-family: var(--font-body, sans-serif);
+          font-size: 11px;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: rgba(0, 0, 0, 0.6);
+          margin-top: 0.9rem;
+        }
+        .tp-tag-light {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-family: var(--font-body, sans-serif);
+          font-size: 9px;
+          font-weight: 700;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: #111111;
+          border: 1px solid rgba(0, 0, 0, 0.2);
+          background: rgba(0, 0, 0, 0.05);
+          padding: 0.22rem 0.75rem;
+          border-radius: 100px;
+          margin-bottom: 1rem;
+          margin-left: auto;
+        }
+        .tp-divider-light {
+          width: 36px;
+          height: 2px;
+          background: #111111;
+          margin: 1.1rem 0 0.9rem;
+          opacity: 0.7;
+          margin-left: auto;
+        }
+        .tp-cta-primary-light {
+          background: #111111;
+          color: #d4e84a;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        .tp-cta-primary-light:hover {
+          background: #000000;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        .tp-cta-ghost-light {
+          border: 1px solid rgba(0, 0, 0, 0.3);
+          color: #111111;
+          background: rgba(0, 0, 0, 0.02);
+        }
+        .tp-cta-ghost-light:hover {
+          background: rgba(0, 0, 0, 0.06);
+        }
+
       `}</style>
 
       {/* ══════════════════ STICKY VIEWPORT ══════════════════ */}
@@ -360,23 +457,23 @@ export default function HeroSection({ images = [] }) {
           <div className="tp-sub">AI · Web · Mobile · XR</div>
         </div>
 
-        {/* ══ TEXT PHASE 4 — CTA ══ */}
-        <div id="tp-4" className="tp-box" style={{
+        {/* ══ TEXT PHASE 4 — CTA (Outro on White BG) ══ */}
+        <div id="tp-4" className="tp-box-light" style={{
           top: '8%', opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
-          <div className="tp-tag">
+          <div className="tp-tag-light">
             <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', display: 'inline-block', boxShadow: '0 0 8px rgba(34,197,94,0.8)' }} />
             Available for Work
           </div>
-          <div className="tp-headline" style={{ fontSize: 'clamp(1.4rem, 3.5vw, 3.2rem)' }}>
+          <div className="tp-headline-light" style={{ fontSize: 'clamp(1.4rem, 3.5vw, 3.2rem)' }}>
             Let's Create<br />
-            <span className="tp-italic">Something</span><br />
+            <span className="tp-italic-light">Something</span><br />
             Amazing.
           </div>
-          <div className="tp-divider" />
+          <div className="tp-divider-light" />
           <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.2rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-            <a href="mailto:bhushan.chaturbhuj_25pca@sanjivani.edu.in" className="tp-cta-btn tp-cta-primary">Hire Me →</a>
-            <a href="/Bhushan_Chaturbhuj_Resume.pdf" target="_blank" className="tp-cta-btn tp-cta-ghost">Resume ↗</a>
+            <a href="mailto:bhushan.chaturbhuj_25pca@sanjivani.edu.in" className="tp-cta-btn tp-cta-primary-light">Hire Me →</a>
+            <a href="/Bhushan_Chaturbhuj_Resume.pdf" target="_blank" className="tp-cta-btn tp-cta-ghost-light">Resume ↗</a>
           </div>
         </div>
 

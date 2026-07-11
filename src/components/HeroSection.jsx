@@ -68,12 +68,18 @@ export default function HeroSection({ images = [] }) {
     const sticky = stickyRef.current;
     if (sticky) {
       let displayFrame;
-      if (progress <= LOCK_START) {
-        displayFrame = Math.round((progress / LOCK_START) * 44) + 1;
-      } else if (progress < LOCK_END) {
-        displayFrame = 45;
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        // Match the smooth linear scrolling of frame indices on mobile screens
+        displayFrame = Math.round(progress * 239) + 1;
       } else {
-        displayFrame = Math.round(45 + ((progress - LOCK_END) / (1 - LOCK_END)) * 195) + 1;
+        if (progress <= LOCK_START) {
+          displayFrame = Math.round((progress / LOCK_START) * 44) + 1;
+        } else if (progress < LOCK_END) {
+          displayFrame = 45;
+        } else {
+          displayFrame = Math.round(45 + ((progress - LOCK_END) / (1 - LOCK_END)) * 195) + 1;
+        }
       }
 
       let bgColor = '#000000';

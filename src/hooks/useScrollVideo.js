@@ -16,7 +16,12 @@ const TOTAL_FRAMES = 240;
  * Maps raw scroll progress (0→1) to a canvas frame index (0→239).
  * During LOCK_START→LOCK_END the frame is pinned to LOCK_FRAME.
  */
-function progressToFrame(progress) {
+function progressToFrame(progress, isMobile) {
+  if (isMobile) {
+    // Smooth linear scrolling through all 240 frames on mobile portrait viewports (no pause/stop zone)
+    return Math.min(TOTAL_FRAMES - 1, Math.floor(progress * TOTAL_FRAMES));
+  }
+
   if (progress <= LOCK_START) {
     // Intro zone: 0 → LOCK_FRAME
     const t = progress / LOCK_START;
@@ -127,7 +132,8 @@ export function useScrollVideo(onProgressUpdate, images) {
     if (canvas) {
       canvas.width  = canvas.clientWidth;
       canvas.height = canvas.clientHeight;
-      const frameIndex = progressToFrame(currentProgress.current);
+      const isMobile = window.innerWidth < 768;
+      const frameIndex = progressToFrame(currentProgress.current, isMobile);
       renderFrame(frameIndex);
     }
   }, [renderFrame]);
@@ -163,7 +169,8 @@ export function useScrollVideo(onProgressUpdate, images) {
 
       // Map progress to a 0.0 -> 0.75 sub-range, capping at 1.0 (retains freeze frame F240 for overlap transition)
       const scaledProgress = Math.min(currentProgress.current / 0.75, 1);
-      const frameIndex = progressToFrame(scaledProgress);
+      const isMobile = window.innerWidth < 768;
+      const frameIndex = progressToFrame(scaledProgress, isMobile);
 
       if (lastRenderedFrame.current !== frameIndex) {
         renderFrame(frameIndex);

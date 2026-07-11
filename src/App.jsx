@@ -9,7 +9,6 @@ import ProjectsSection from './components/ProjectsSection';
 import AchievementsSection from './components/AchievementsSection';
 import ContactSection from './components/ContactSection';
 import AIChatSidebar from './components/AIChatSidebar';
-import FlyingResumeButton from './components/FlyingResumeButton';
 import GrainOverlay from './components/GrainOverlay';
 import PageLoader from './components/PageLoader';
 import Navbar from './components/Navbar';
@@ -312,9 +311,6 @@ function PortfolioLayout() {
         <AchievementsSection />
         <ContactSection />
       </main>
-
-      {/* Flying Astronaut Resume Button */}
-      <FlyingResumeButton />
 
       {/* AI Chat Sidebar */}
       <AIChatSidebar />

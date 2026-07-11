@@ -40,6 +40,18 @@ export default function MusicPlayer() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
+  // Collapse the capsule when clicking outside it
+  useEffect(() => {
+    if (!isExpanded) return;
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest('.music-player-capsule')) {
+        setIsExpanded(false);
+      }
+    };
+    document.addEventListener('click', handleOutsideClick);
+    return () => document.removeEventListener('click', handleOutsideClick);
+  }, [isExpanded]);
+
   // Core Audio Playback Lifecycle
   useEffect(() => {
     const audio = audioRef.current;
@@ -125,38 +137,42 @@ export default function MusicPlayer() {
 
   return (
     <div
-      onClick={() => isMobile && !isExpanded && setIsExpanded(true)}
+      onClick={() => !isExpanded && setIsExpanded(true)}
       style={{
         position: 'fixed',
-        top: isMobile ? '4.75rem' : '1.25rem',
-        right: isMobile ? '1.0rem' : '2.5rem',
+        bottom: isMobile ? '1.5rem' : '2rem',
+        left: isMobile ? '1.5rem' : '2rem',
         zIndex: 1001,
-        height: isMobile ? '42px' : '52px',
-        width: isMobile ? (isExpanded ? '230px' : '42px') : '260px',
-        padding: isMobile ? (isExpanded ? '0 0.6rem 0 0.6rem' : '0') : '0 1rem',
+        height: isMobile ? '44px' : '54px',
+        width: isExpanded 
+          ? (isMobile ? '230px' : '270px') 
+          : (isMobile ? '44px' : '54px'),
+        padding: isExpanded 
+          ? (isMobile ? '0 0.6rem 0 0.6rem' : '0 1rem') 
+          : '0',
         borderRadius: '100px',
         background: 'rgba(17, 17, 17, 0.9)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         border: isPlaying ? '1px solid var(--accent-lime)' : '1px solid rgba(255, 255, 255, 0.1)',
         boxShadow: isPlaying 
-          ? '0 4px 20px rgba(212, 255, 61, 0.18), inset 0 0 12px rgba(212, 255, 61, 0.04)'
-          : '0 4px 20px rgba(0, 0, 0, 0.3)',
+          ? '0 4px 24px rgba(212, 255, 61, 0.18), inset 0 0 12px rgba(212, 255, 61, 0.04)'
+          : '0 8px 30px rgba(0, 0, 0, 0.4)',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: isMobile && !isExpanded ? 'center' : 'space-between',
-        gap: isMobile ? '0.45rem' : '0.8rem',
+        justifyContent: !isExpanded ? 'center' : 'space-between',
+        gap: isExpanded ? (isMobile ? '0.45rem' : '0.8rem') : '0',
         transition: 'width 0.4s cubic-bezier(0.25, 1, 0.5, 1), padding 0.4s ease, border-color 0.3s, box-shadow 0.3s',
         userSelect: 'none',
         overflow: 'hidden',
-        cursor: isMobile && !isExpanded ? 'pointer' : 'default',
+        cursor: !isExpanded ? 'pointer' : 'default',
       }}
       className="music-player-capsule"
     >
       <audio ref={audioRef} />
 
-      {/* Collapsed Mode (Mobile): Clickable Rotating Vinyl CD */}
-      {isMobile && !isExpanded ? (
+      {/* Collapsed Mode: Rotating Vector Music Note Badge */}
+      {!isExpanded ? (
         <div
           style={{
             width: '100%',
@@ -166,36 +182,39 @@ export default function MusicPlayer() {
             justifyContent: 'center',
           }}
         >
+          {/* Custom vector double eighth note matching user image */}
           <svg
             viewBox="0 0 24 24"
             fill="none"
             stroke="var(--accent-lime)"
-            strokeWidth="2"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             style={{
-              width: '24px',
-              height: '24px',
-              animation: isPlaying ? 'spin-ring 3s linear infinite' : 'none',
+              width: isMobile ? '20px' : '24px',
+              height: isMobile ? '20px' : '24px',
+              animation: isPlaying ? 'spin-ring 6s linear infinite' : 'none',
               transformOrigin: '50% 50%',
             }}
           >
-            <circle cx="12" cy="12" r="10" stroke="var(--accent-lime)" strokeWidth="2" fill="rgba(17,17,17,0.9)" />
-            <circle cx="12" cy="12" r="4" stroke="var(--accent-lime)" strokeWidth="1.5" />
-            <circle cx="12" cy="12" r="1" fill="var(--accent-lime)" />
-            <circle cx="12" cy="12" r="7" stroke="rgba(212,255,61,0.25)" strokeWidth="0.5" strokeDasharray="2 3" />
+            <path d="M9 18V5l12-2v13" />
+            <circle cx="6" cy="18" r="3" fill="var(--accent-lime)" />
+            <circle cx="18" cy="16" r="3" fill="var(--accent-lime)" />
           </svg>
         </div>
       ) : (
-        /* Full Capsule Content (Desktop, or Expanded Mobile) */
+        /* Full Capsule Content (Expanded) */
         <>
-          {/* Left Vinyl Icon / Visualizer */}
+          {/* Left Music Note Badge / Equalizer Visualizer */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
+            {/* Click to collapse */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                if (isMobile) setIsExpanded(false);
+                setIsExpanded(false);
               }}
               style={{
-                background: 'none', border: 'none', cursor: isMobile ? 'pointer' : 'default',
+                background: 'none', border: 'none', cursor: 'pointer',
                 padding: 0, margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
@@ -203,18 +222,19 @@ export default function MusicPlayer() {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="var(--accent-lime)"
-                strokeWidth="2"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 style={{
-                  width: isMobile ? '22px' : '26px',
-                  height: isMobile ? '22px' : '26px',
-                  animation: isPlaying ? 'spin-ring 3s linear infinite' : 'none',
+                  width: isMobile ? '20px' : '24px',
+                  height: isMobile ? '20px' : '24px',
+                  animation: isPlaying ? 'spin-ring 6s linear infinite' : 'none',
                   transformOrigin: '50% 50%',
                 }}
               >
-                <circle cx="12" cy="12" r="10" stroke="var(--accent-lime)" strokeWidth="2" fill="rgba(17,17,17,0.9)" />
-                <circle cx="12" cy="12" r="4" stroke="var(--accent-lime)" strokeWidth="1.5" />
-                <circle cx="12" cy="12" r="1" fill="var(--accent-lime)" />
-                <circle cx="12" cy="12" r="7" stroke="rgba(212,255,61,0.25)" strokeWidth="0.5" strokeDasharray="2 3" />
+                <path d="M9 18V5l12-2v13" />
+                <circle cx="6" cy="18" r="3" fill="var(--accent-lime)" />
+                <circle cx="18" cy="16" r="3" fill="var(--accent-lime)" />
               </svg>
             </button>
 

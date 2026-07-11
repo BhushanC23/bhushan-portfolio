@@ -180,6 +180,7 @@ export default function AboutSection() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
+        padding: isMobile ? '4rem 0 2rem' : '3.5rem 0 2rem',
       }}
     >
       {/* ── Ambient glows ── */}
@@ -270,8 +271,8 @@ export default function AboutSection() {
         {/* ── Row 2: Main grid (heading + photo) ── */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : '1fr 340px',
-          gap: isMobile ? '2rem' : '4rem',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 300px',
+          gap: isMobile ? '1.5rem' : '2.5rem',
           alignItems: 'center',
         }}>
           {/* ── LEFT COLUMN ── */}
@@ -281,12 +282,12 @@ export default function AboutSection() {
               ref={nameRef}
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(3rem, 7vw, 6.5rem)',
+                fontSize: 'clamp(1.8rem, 4vw, 3.8rem)',
                 fontWeight: 900,
                 letterSpacing: '-0.045em',
-                lineHeight: 0.92,
+                lineHeight: 0.95,
                 color: '#ffffff',
-                marginBottom: '0.6rem',
+                marginBottom: '0.4rem',
                 overflow: 'hidden',
               }}
             >
@@ -325,7 +326,7 @@ export default function AboutSection() {
                 color: 'rgba(255,255,255,0.45)',
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
-                marginBottom: isMobile ? '1rem' : '1.5rem',
+                marginBottom: isMobile ? '0.5rem' : '0.7rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.75rem',
@@ -340,40 +341,20 @@ export default function AboutSection() {
               ref={bioRef}
               style={{
                 fontFamily: 'var(--font-body)',
-                fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
-                lineHeight: 1.75,
+                fontSize: 'clamp(0.8rem, 1.1vw, 0.92rem)',
+                lineHeight: 1.55,
                 color: 'rgba(255,255,255,0.6)',
-                maxWidth: '540px',
-                marginBottom: isMobile ? '1.25rem' : '1.75rem',
+                maxWidth: '520px',
+                marginBottom: isMobile ? '0.65rem' : '0.85rem',
               }}
             >
               {bioText}
             </p>
 
-            {/* Achievement pill */}
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.6rem',
-              padding: '0.5rem 1.1rem',
-              background: 'rgba(212,255,61,0.06)',
-              border: '1px solid rgba(212,255,61,0.18)',
-              borderRadius: '8px',
-              marginBottom: isMobile ? '1.25rem' : '1.75rem',
-            }}>
-              <span style={{ fontSize: '1rem' }}>🏆</span>
-              <span style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: '0.8rem',
-                color: 'rgba(255,255,255,0.65)',
-                letterSpacing: '0.02em',
-              }}>
-                National Rank <strong style={{ color: 'var(--accent-lime)' }}>52</strong> — NEC 2025, IIT Bombay E-Cell
-              </span>
-            </div>
+
 
             {/* CTA buttons */}
-            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
               <a
                 href={BHUSHAN_DATA.social.github}
                 target="_blank"
@@ -578,7 +559,7 @@ export default function AboutSection() {
             width: '100%',
             height: '1px',
             background: 'linear-gradient(90deg, var(--accent-lime), rgba(255,255,255,0.08), transparent)',
-            margin: isMobile ? '1.5rem 0 1rem' : '2rem 0 1.25rem',
+            margin: isMobile ? '1rem 0 0.6rem' : '1.25rem 0 0.75rem',
           }}
         />
 

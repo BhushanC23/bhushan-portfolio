@@ -91,28 +91,17 @@ export function useScrollVideo(onProgressUpdate, images) {
     const canvasRatio = width / height;
 
     let drawWidth, drawHeight, offsetX, offsetY;
-    const isMobile = width < 768;
 
-    if (isMobile) {
-      // Proportional mobile layout: scale width to 1.45x screen width so the subject is sized beautifully,
-      // and center horizontally + shift down 5% to keep head clear of the top menu bar.
-      drawWidth  = width * 1.45;
-      drawHeight = drawWidth / imgRatio;
-      offsetX    = (width - drawWidth) / 2;
-      offsetY    = (height - drawHeight) / 2 + (height * 0.05);
+    if (canvasRatio > imgRatio) {
+      drawWidth  = width;
+      drawHeight = width / imgRatio;
+      offsetX    = 0;
+      offsetY    = (height - drawHeight) / 2;
     } else {
-      // Desktop full screen cover
-      if (canvasRatio > imgRatio) {
-        drawWidth  = width;
-        drawHeight = width / imgRatio;
-        offsetX    = 0;
-        offsetY    = (height - drawHeight) / 2;
-      } else {
-        drawWidth  = height * imgRatio;
-        drawHeight = height;
-        offsetX    = (width - drawWidth) / 2;
-        offsetY    = 0;
-      }
+      drawWidth  = height * imgRatio;
+      drawHeight = height;
+      offsetX    = (width - drawWidth) / 2;
+      offsetY    = 0;
     }
 
     // Fill background with matching frame color to create a seamless landscape-in-portrait integration

@@ -77,11 +77,11 @@ export default function HeroSection({ images = [] }) {
       }
 
       let bgColor = '#000000';
-      if (displayFrame >= 125) {
-        if (displayFrame > 195) {
+      if (displayFrame >= 120) {
+        if (displayFrame > 140) {
           bgColor = '#ffffff';
         } else {
-          const t = (displayFrame - 125) / (195 - 125);
+          const t = (displayFrame - 120) / (140 - 120);
           const val = Math.round(t * 255);
           bgColor = `rgb(${val}, ${val}, ${val})`;
         }

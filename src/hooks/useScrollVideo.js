@@ -32,9 +32,9 @@ function progressToFrame(progress) {
 }
 
 function getFrameBgColor(index) {
-  if (index < 125) return '#000000';
-  if (index > 195) return '#ffffff';
-  const t = (index - 125) / (195 - 125);
+  if (index < 120) return '#000000';
+  if (index > 140) return '#ffffff';
+  const t = (index - 120) / (140 - 120);
   const val = Math.round(t * 255);
   return `rgb(${val}, ${val}, ${val})`;
 }

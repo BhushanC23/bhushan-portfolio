@@ -67,13 +67,11 @@ export default function AboutSection() {
   const { about } = usePortfolioData();
   const sectionRef        = useRef(null);
   const nameRef           = useRef(null);
-  const roleRef           = useRef(null);
   const bioRef            = useRef(null);
   const photoContainerRef = useRef(null);
   const photoImgRef       = useRef(null);
   const curtain1Ref       = useRef(null);
   const curtain2Ref       = useRef(null);
-  const tagsRef           = useRef(null);
   const statsRef          = useRef(null);
   const lineRef           = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -104,13 +102,7 @@ export default function AboutSection() {
         );
       }
 
-      // Role line slides up
-      if (roleRef.current) {
-        gsap.fromTo(roleRef.current,
-          { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8, delay: 0.3, ease: 'power3.out', scrollTrigger: trigger }
-        );
-      }
+
 
       // Bio slides up
       if (bioRef.current) {
@@ -136,14 +128,7 @@ export default function AboutSection() {
         );
       }
 
-      // Floating tags stagger
-      if (tagsRef.current) {
-        const tags = tagsRef.current.querySelectorAll('.about-float-tag');
-        gsap.fromTo(tags,
-          { y: 20, opacity: 0, scale: 0.9 },
-          { y: 0, opacity: 1, scale: 1, stagger: 0.12, duration: 0.6, delay: 0.8, ease: 'back.out(1.7)', scrollTrigger: trigger }
-        );
-      }
+
 
       // Photo double-curtain reveal
       if (curtain1Ref.current && curtain2Ref.current) {
@@ -317,24 +302,7 @@ export default function AboutSection() {
               </em>
             </div>
 
-            {/* Role line */}
-            <div
-              ref={roleRef}
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: 'clamp(0.78rem, 1.2vw, 0.92rem)',
-                color: 'rgba(255,255,255,0.45)',
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                marginBottom: isMobile ? '0.5rem' : '0.7rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-              }}
-            >
-              <span style={{ width: '28px', height: '1px', background: 'var(--accent-lime)', display: 'inline-block' }} />
-              Full Stack Engineer · AI/ML Intern · MCA Candidate
-            </div>
+
 
             {/* Bio text */}
             <p
@@ -393,83 +361,7 @@ export default function AboutSection() {
           {/* ── RIGHT COLUMN — Photo ── */}
           {!isMobile && (
             <div style={{ position: 'relative' }}>
-              {/* Floating tags wrapper */}
-              <div ref={tagsRef}>
-                {/* Tag: Role */}
-                <div className="about-float-tag" style={{
-                  position: 'absolute',
-                  top: '-18px', left: '-32px',
-                  padding: '0.4rem 0.9rem',
-                  background: '#1a1a1a',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  borderRadius: '8px',
-                  boxShadow: '3px 3px 0px rgba(212,255,61,0.25)',
-                  zIndex: 5,
-                  whiteSpace: 'nowrap',
-                }}>
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)' }}>
-                    💻 Full Stack + AI/ML
-                  </span>
-                </div>
 
-                {/* Tag: Location */}
-                <div className="about-float-tag" style={{
-                  position: 'absolute',
-                  bottom: '80px', left: '-28px',
-                  padding: '0.4rem 0.9rem',
-                  background: '#1a1a1a',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: '8px',
-                  zIndex: 5,
-                  whiteSpace: 'nowrap',
-                }}>
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)' }}>
-                    📍 Kopargaon, Maharashtra
-                  </span>
-                </div>
-
-                {/* Tag: Available — lime accent */}
-                <div className="about-float-tag" style={{
-                  position: 'absolute',
-                  top: '24px', right: '-24px',
-                  padding: '0.45rem 1rem',
-                  background: 'rgba(212,255,61,0.08)',
-                  border: '1.5px solid rgba(212,255,61,0.35)',
-                  borderRadius: '100px',
-                  boxShadow: '0 0 16px rgba(212,255,61,0.12)',
-                  zIndex: 5,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  whiteSpace: 'nowrap',
-                }}>
-                  <span style={{
-                    width: '6px', height: '6px', borderRadius: '50%',
-                    background: 'var(--accent-lime)',
-                    boxShadow: '0 0 6px var(--accent-lime)',
-                    animation: 'pulse-dot 2s ease-in-out infinite',
-                  }} />
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--accent-lime)', fontWeight: 600 }}>
-                    Available for work
-                  </span>
-                </div>
-
-                {/* Tag: IIT Bombay — gold */}
-                <div className="about-float-tag" style={{
-                  position: 'absolute',
-                  bottom: '-16px', right: '-16px',
-                  padding: '0.4rem 0.9rem',
-                  background: 'rgba(201,168,76,0.08)',
-                  border: '1px solid rgba(201,168,76,0.25)',
-                  borderRadius: '8px',
-                  zIndex: 5,
-                  whiteSpace: 'nowrap',
-                }}>
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.7rem', color: 'var(--gold-accent)' }}>
-                    🥇 NR 52 · IIT Bombay
-                  </span>
-                </div>
-              </div>
 
               {/* Photo frame */}
               <div

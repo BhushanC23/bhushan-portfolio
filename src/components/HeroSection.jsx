@@ -194,9 +194,7 @@ export default function HeroSection({ images = [] }) {
         }
         @media (max-width:768px){
           .hero-scroll-pin { height:135vh !important; }
-        }
-        @media (max-width:640px){
-          #tp-2,#tp-3 { display:none !important; }
+          #tp-1, #tp-2, #tp-3, #tp-4 { display: none !important; }
         }
 
         /* ── TEXT PHASE BASE CONTAINER ── */

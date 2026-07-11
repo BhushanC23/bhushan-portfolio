@@ -91,17 +91,27 @@ export function useScrollVideo(onProgressUpdate, images) {
     const canvasRatio = width / height;
 
     let drawWidth, drawHeight, offsetX, offsetY;
+    const isMobile = width < 768;
 
-    if (canvasRatio > imgRatio) {
-      drawWidth  = width;
-      drawHeight = width / imgRatio;
-      offsetX    = 0;
+    if (isMobile) {
+      // 68% height scaling for mobile portrait viewport: keeps subject proportional and centered,
+      // avoiding the extreme "close-up face zoom" while remaining immersive via background matching.
+      drawHeight = height * 0.68;
+      drawWidth  = drawHeight * imgRatio;
+      offsetX    = (width - drawWidth) / 2;
       offsetY    = (height - drawHeight) / 2;
     } else {
-      drawWidth  = height * imgRatio;
-      drawHeight = height;
-      offsetX    = (width - drawWidth) / 2;
-      offsetY    = 0;
+      if (canvasRatio > imgRatio) {
+        drawWidth  = width;
+        drawHeight = width / imgRatio;
+        offsetX    = 0;
+        offsetY    = (height - drawHeight) / 2;
+      } else {
+        drawWidth  = height * imgRatio;
+        drawHeight = height;
+        offsetX    = (width - drawWidth) / 2;
+        offsetY    = 0;
+      }
     }
 
     // Fill background with matching frame color to create a seamless landscape-in-portrait integration

@@ -9,7 +9,7 @@ export default function FlyingResumeButton() {
   useEffect(() => {
     const aboutSection = document.getElementById('about');
     if (!aboutSection) {
-      // Fallback if section is missing (e.g., admin pages)
+      // Fallback if section is missing
       setVisible(true);
       return;
     }
@@ -48,241 +48,138 @@ export default function FlyingResumeButton() {
       onMouseLeave={() => setHovered(false)}
       style={{
         position: 'fixed',
-        left: '1rem',
-        bottom: '1rem',
+        left: '2rem',
+        bottom: '2rem',
         zIndex: 90,
         display: 'flex',
         alignItems: 'center',
-        gap: '0.6rem',
         cursor: 'pointer',
-        // Smooth slide-in from off-screen left
         transform: visible 
-          ? (hovered ? 'translateX(0) scale(1.02)' : 'translateX(0) scale(1)') 
-          : 'translateX(-220px) scale(0.8)',
+          ? (hovered ? 'translateY(0) scale(1.05)' : 'translateY(0) scale(1)') 
+          : 'translateY(100px) opacity(0)',
         opacity: visible ? 1 : 0,
         pointerEvents: visible ? 'auto' : 'none',
-        transition: 'transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.8s ease',
+        transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease',
       }}
-      className="flying-bot-container"
+      className="flying-resume-badge"
     >
-      {/* Cute Intelligent Floating AI Robot Widget */}
+      {/* Outer circular badge */}
       <div
         style={{
-          width: '72px',
-          height: '72px',
+          width: '56px',
+          height: '56px',
+          borderRadius: '50%',
+          background: 'rgba(10, 10, 10, 0.9)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: hovered ? '1.5px solid var(--accent-lime)' : '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: hovered 
+            ? '0 0 24px rgba(212, 255, 61, 0.25), 0 8px 30px rgba(0, 0, 0, 0.6)' 
+            : '0 8px 24px rgba(0, 0, 0, 0.4)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           position: 'relative',
-          transition: 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-          transform: hovered ? 'rotate(4deg) scale(1.05)' : 'rotate(0deg) scale(1)',
+          transition: 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
         }}
       >
-        {/* Pulsing Cyan Repulsor Hover Jet (Bottom) */}
-        <div
-          className="bot-repulsor-beam"
-          style={{
-            position: 'absolute',
-            bottom: '5px',
-            left: '27px',
-            width: '18px',
-            height: '28px',
-            background: 'linear-gradient(to bottom, var(--teal-accent), rgba(45,212,191,0.2), transparent)',
-            borderRadius: '50% 50% 30% 30%',
-            filter: 'blur(1.5px)',
-            opacity: 0.9,
-            transformOrigin: 'top center',
-          }}
-        />
-
-        {/* Vector SVG Cute Intelligent Robot */}
+        {/* Rotating dash ring (SVG) */}
         <svg
           viewBox="0 0 100 100"
           style={{
+            position: 'absolute',
+            inset: 0,
             width: '100%',
             height: '100%',
-            filter: 'drop-shadow(0 12px 20px rgba(0,0,0,0.5))',
+            animation: hovered ? 'spin-ring 4s linear infinite' : 'spin-ring 12s linear infinite',
+            transition: 'animation-duration 0.3s ease',
+            pointerEvents: 'none',
           }}
         >
-          <defs>
-            {/* Robot metallic body white gradient */}
-            <linearGradient id="botBody" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="60%" stopColor="#f1f5f9" />
-              <stop offset="100%" stopColor="#cbd5e1" />
-            </linearGradient>
-
-            {/* Dark glass screen visor */}
-            <linearGradient id="botVisor" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#0f172a" />
-              <stop offset="100%" stopColor="#020617" />
-            </linearGradient>
-
-            {/* Glowing cyan lens */}
-            <radialGradient id="botEyeGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="40%" stopColor="#2dd4bf" />
-              <stop offset="100%" stopColor="#0d9488" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-
-          {/* Left Cute Floating Arm */}
-          <g className="bot-arm-left" style={{ transformOrigin: '24px 50px' }}>
-            <rect x="14" y="44" width="8" height="18" rx="4" fill="#94a3b8" stroke="#cbd5e1" strokeWidth="0.5" />
-            {/* Glowing cyan wrist ring */}
-            <rect x="14" y="55" width="8" height="2" fill="var(--teal-accent)" />
-            {/* Cute hand joint */}
-            <circle cx="18" cy="64" r="3" fill="#475569" />
-          </g>
-
-          {/* Right Cute Floating Arm */}
-          <g className="bot-arm-right" style={{ transformOrigin: '76px 50px' }}>
-            <rect x="78" y="44" width="8" height="18" rx="4" fill="#94a3b8" stroke="#cbd5e1" strokeWidth="0.5" />
-            {/* Glowing cyan wrist ring */}
-            <rect x="78" y="55" width="8" height="2" fill="var(--teal-accent)" />
-            {/* Cute hand joint */}
-            <circle cx="82" cy="64" r="3" fill="#475569" />
-          </g>
-
-          {/* Little Head Antenna */}
-          <line x1="50" y1="20" x2="50" y2="8" stroke="#475569" strokeWidth="2" />
-          <circle cx="50" cy="7" r="2.5" fill="var(--teal-accent)" className="bot-antenna-blink" style={{ filter: 'drop-shadow(0 0 3px var(--teal-accent))' }} />
-
-          {/* Spherical Lower Torso */}
-          <circle cx="50" cy="58" r="18" fill="url(#botBody)" stroke="#94a3b8" strokeWidth="1" />
-          
-          {/* Neon energy core ring (Chest) */}
-          <circle cx="50" cy="56" r="6" fill="url(#botEyeGlow)" className="bot-core-pulse" />
-          <circle cx="50" cy="56" r="8" fill="none" stroke="rgba(45,212,191,0.3)" strokeWidth="1" />
-
-          {/* Robot Head */}
-          <rect x="30" y="20" width="40" height="28" rx="14" fill="url(#botBody)" stroke="#94a3b8" strokeWidth="1" />
-
-          {/* Curved Face Visor Visor */}
-          <rect x="35" y="24" width="30" height="18" rx="8" fill="url(#botVisor)" stroke="rgba(45,212,191,0.2)" strokeWidth="1" />
-
-          {/* Glowing Digital Eyes (With Blinking Animation) */}
-          <g className="bot-eyes">
-            <ellipse cx="43" cy="33" rx="4" ry="4" fill="url(#botEyeGlow)" className="bot-eye-left" />
-            <ellipse cx="57" cy="33" rx="4" ry="4" fill="url(#botEyeGlow)" className="bot-eye-right" />
-            {/* Pupil Highlight */}
-            <circle cx="43" cy="33" r="1" fill="#ffffff" className="bot-pupil" />
-            <circle cx="57" cy="33" r="1" fill="#ffffff" className="bot-pupil" />
-          </g>
-
-          {/* Repulsor Port Joint (Underneath Torso) */}
-          <rect x="46" y="74" width="8" height="4" rx="1" fill="#475569" />
+          <circle
+            cx="50"
+            cy="50"
+            r="44"
+            fill="none"
+            stroke={hovered ? 'var(--accent-lime)' : 'rgba(255, 255, 255, 0.2)'}
+            strokeWidth="1.5"
+            strokeDasharray="4 8"
+            style={{ transition: 'stroke 0.3s ease' }}
+          />
         </svg>
+
+        {/* Inner pulsing indicator light */}
+        <div style={{
+          position: 'absolute',
+          top: '8px',
+          right: '8px',
+          width: '6px',
+          height: '6px',
+          borderRadius: '50%',
+          background: 'var(--accent-lime)',
+          boxShadow: '0 0 8px var(--accent-lime)',
+          animation: 'pulse-dot-light 2s infinite alternate',
+        }} />
+
+        {/* Centered Modern CV / Download Icon */}
+        <div style={{
+          position: 'relative',
+          zIndex: 2,
+          color: hovered ? 'var(--accent-lime)' : '#ffffff',
+          transform: hovered ? 'scale(1.1) translateY(1px)' : 'scale(1) translateY(0)',
+          transition: 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
+        }}>
+          <Download size={20} />
+        </div>
       </div>
 
-      {/* Slide-out Speech Bubble Button */}
+      {/* Slide-out sleek label */}
       <div
-        className="bot-slide-bubble"
         style={{
-          background: 'rgba(13,26,28,0.88)',
+          background: 'rgba(10, 10, 10, 0.9)',
           backdropFilter: 'blur(20px)',
-          padding: '0.5rem 1rem',
-          borderRadius: '30px',
-          border: '1px solid rgba(45,212,191,0.3)',
-          color: 'var(--text-primary)',
-          fontSize: '0.8rem',
-          fontWeight: 700,
-          fontFamily: 'var(--font-body)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: hovered ? '1.5px solid var(--accent-lime)' : '1px solid rgba(255, 255, 255, 0.1)',
+          borderLeft: 'none',
+          padding: '0 1.25rem 0 2.25rem',
+          height: '42px',
+          borderRadius: '0 30px 30px 0',
           display: 'flex',
           alignItems: 'center',
-          gap: '0.5rem',
-          boxShadow: '0 8px 30px rgba(0,0,0,0.5), 0 0 15px rgba(45,212,191,0.06)',
-          transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-          transform: hovered ? 'translateX(0) scale(1)' : 'translateX(-10px) scale(0.95)',
+          justifyContent: 'center',
+          marginLeft: '-1.75rem',
+          position: 'relative',
+          zIndex: -1,
+          fontFamily: 'var(--font-display)',
+          fontSize: '11px',
+          fontWeight: 800,
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+          color: hovered ? 'var(--accent-lime)' : 'rgba(255, 255, 255, 0.8)',
+          boxShadow: hovered 
+            ? '0 0 24px rgba(212, 255, 61, 0.15), 0 8px 30px rgba(0, 0, 0, 0.5)' 
+            : '0 8px 24px rgba(0, 0, 0, 0.3)',
+          transform: hovered ? 'translateX(0)' : 'translateX(-12px)',
           opacity: hovered ? 1 : 0,
           pointerEvents: hovered ? 'auto' : 'none',
-          whiteSpace: 'nowrap',
-          textShadow: '0 1px 4px rgba(0,0,0,0.6)',
+          transition: 'all 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
         }}
       >
-        <span style={{ letterSpacing: '0.03em' }}>Download Resume</span>
-        <Download size={14} color="var(--teal-accent)" className="bot-download-icon" style={{ transition: 'transform 0.3s ease' }} />
+        Resume
       </div>
 
-      {/* Advanced CSS Keyframes for High-Fidelity Robot Aerodynamics */}
+      {/* CSS Animations */}
       <style>{`
-        .flying-bot-container {
-          animation: organicBotHover 4s ease-in-out infinite;
-          user-select: none;
+        @keyframes spin-ring {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
         }
-
-        .flying-bot-container:hover .bot-download-icon {
-          transform: translateY(3px);
+        @keyframes pulse-dot-light {
+          0%   { opacity: 0.4; }
+          100% { opacity: 1; }
         }
-
-        /* 🤖 Multi-Axis Organic Float (Simulating high-precision thruster hover) */
-        @keyframes organicBotHover {
-          0% { transform: translateY(0) rotate(0deg); }
-          25% { transform: translateY(-12px) rotate(1.5deg); }
-          50% { transform: translateY(-4px) rotate(-1deg); }
-          75% { transform: translateY(-15px) rotate(0.8deg); }
-          100% { transform: translateY(0) rotate(0deg); }
-        }
-
-        /* 🪫 Blinking Digital Visor Eyes (Simulates Intelligence/Bleeping) */
-        .bot-eyes {
-          animation: botVisorBlink 4.5s step-end infinite;
-          transform-origin: center;
-        }
-
-        @keyframes botVisorBlink {
-          0%, 95%, 100% { transform: scaleY(1); }
-          97% { transform: scaleY(0.1); }
-        }
-
-        /* 🪽 Floating Left Arm Wave */
-        .bot-arm-left {
-          animation: leftArmWave 1.8s ease-in-out infinite alternate;
-        }
-        /* 🪽 Floating Right Arm Wave */
-        .bot-arm-right {
-          animation: rightArmWave 1.8s ease-in-out infinite alternate-reverse;
-        }
-
-        @keyframes leftArmWave {
-          0% { transform: rotate(-5deg) translateY(-2px); }
-          100% { transform: rotate(10deg) translateY(2px); }
-        }
-        @keyframes rightArmWave {
-          0% { transform: rotate(5deg) translateY(-2px); }
-          100% { transform: rotate(-10deg) translateY(2px); }
-        }
-
-        /* 💥 Repulsor Beam Exhaust Pulse */
-        .bot-repulsor-beam {
-          animation: pulseRepulsor 0.12s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulseRepulsor {
-          0% { transform: scaleY(0.85) scaleX(0.95); opacity: 0.8; }
-          100% { transform: scaleY(1.25) scaleX(1.05); opacity: 1; }
-        }
-
-        /* 💡 Bleeping Beacon Indicator Antenna */
-        .bot-antenna-blink {
-          animation: antennaPulse 1s ease-in-out infinite alternate;
-        }
-
-        @keyframes antennaPulse {
-          0% { opacity: 0.4; fill: #0f766e; }
-          100% { opacity: 1; fill: var(--teal-accent); }
-        }
-
-        /* 🌌 Glowing Energy Core Pulsing */
-        .bot-core-pulse {
-          animation: corePulse 1.2s ease-in-out infinite alternate;
-        }
-
-        @keyframes corePulse {
-          0% { opacity: 0.6; r: 5px; }
-          100% { opacity: 1; r: 7.5px; }
-        }
-
-        /* Responsive adjustments */
         @media (max-width: 768px) {
-          .flying-bot-container {
+          .flying-resume-badge {
             display: none !important;
           }
         }

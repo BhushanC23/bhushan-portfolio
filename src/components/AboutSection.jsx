@@ -152,7 +152,7 @@ export default function AboutSection() {
   }, []);
 
   // ── Bio text ──
-  const bioText = `Full Stack Engineer & MCA Candidate specializing in highly interactive web systems, Web AR experiences, and LLM post-training. Currently interning at Ethara AI executing SFT & RLHF workflows.`;
+  const bioText = `Full Stack Engineer & MCA Candidate specializing in highly interactive web systems, Web AR experiences, and LLM post-training. Former LLM Post-Training Intern at Ethara AI executing SFT & RLHF workflows.`;
 
   return (
     <section

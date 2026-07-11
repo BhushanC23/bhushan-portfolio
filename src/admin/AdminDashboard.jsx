@@ -106,7 +106,7 @@ export default function AdminDashboard() {
       // 4. Sync About Bio
       const aboutBio = [
         `Hi, I'm <strong>Bhushan Chaturbhuj</strong> — a Full Stack Developer and MCA student at Sanjivani University, Kopargaon. I build web experiences that are fast, functional, and memorable.`,
-        `Currently interning at <strong style="color:var(--gold-accent)">Ethara AI</strong> on LLM Post-Training (SFT &amp; RLHF workflows). I love turning ideas into reality — from AR heritage platforms to EV buying assistants.`,
+        `Former LLM Post-Training Intern at <strong style="color:var(--gold-accent)">Ethara AI</strong> (Apr 2026 – Jun 2026), executing SFT &amp; RLHF workflows. I love turning ideas into reality — from AR heritage platforms to EV buying assistants.`,
         `🏆 National Rank 52 at NEC 2025 (IIT Bombay E-Cell) — Turning coffee into code, and ideas into impact.`
       ].join('\n');
 

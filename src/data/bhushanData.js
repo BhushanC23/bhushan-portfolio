@@ -9,7 +9,7 @@ export const BHUSHAN_DATA = {
   location: "Kopargaon, Maharashtra, India",
 
   about: {
-    bio: "Hi, I'm <strong>Bhushan Chaturbhuj</strong> — a Full Stack Engineer and MCA Candidate specializing in highly interactive web systems, Web AR experiences, and Large Language Model (LLM) post-training. I excel at bridging the gap between sophisticated backend AI logic and smooth, immersive user interfaces.\nCurrently interning at <strong style=\"color:var(--gold-accent)\">Ethara AI</strong>, executing Supervised Fine-Tuning (SFT) and Reinforcement Learning from Human Feedback (RLHF) workflows.\n🏆 National Rank 52 at NEC 2025 (IIT Bombay E-Cell) — I love scaling technical ideas from initial concept to high-impact user adoption."
+    bio: "Hi, I'm <strong>Bhushan Chaturbhuj</strong> — a Full Stack Engineer and MCA Candidate specializing in highly interactive web systems, Web AR experiences, and Large Language Model (LLM) post-training. I excel at bridging the gap between sophisticated backend AI logic and smooth, immersive user interfaces.\nFormer LLM Post-Training Intern at <strong style=\"color:var(--gold-accent)\">Ethara AI</strong> (Apr 2026 – Jun 2026), executing Supervised Fine-Tuning (SFT) and Reinforcement Learning from Human Feedback (RLHF) workflows.\n🏆 National Rank 52 at NEC 2025 (IIT Bombay E-Cell) — I love scaling technical ideas from initial concept to high-impact user adoption."
   },
 
   heroText: [
@@ -18,7 +18,7 @@ export const BHUSHAN_DATA = {
       title: "Bhushan",
       title2: "Chaturbhuj",
       subtitle: "Full Stack Developer & AI Technologist",
-      tag: "MCA Student · LLM AI Intern",
+      tag: "MCA Candidate · Full Stack Engineer",
     },
     {
       phase: 2,
@@ -61,9 +61,9 @@ export const BHUSHAN_DATA = {
       title: "LLM Post-Training Intern",
       company: "Ethara AI (Green Rider Technology LLP)",
       type: "Remote",
-      period: "2025–Present",
-      description: "Accelerate LLM convergence and safety by engineering high-quality Supervised Fine-Tuning (SFT) instruction datasets and executing RLHF/DPO (Direct Preference Optimization) workflows. Evaluate alignment safety and output accuracy across custom models.",
-      isCurrent: true,
+      period: "Apr 2026 – Jun 2026",
+      description: "Accelerated LLM convergence and safety by engineering high-quality Supervised Fine-Tuning (SFT) instruction datasets and executing RLHF/DPO (Direct Preference Optimization) workflows. Evaluated alignment safety and output accuracy across custom models.",
+      isCurrent: false,
     },
     {
       title: "Creative Director",
@@ -197,7 +197,7 @@ export const BHUSHAN_SYSTEM_PROMPT = `You are Bhushan Chaturbhuj's personal prof
 Respond with a professional, confident, and highly polished recruiter-friendly tone. Keep answers short, friendly, and structured.
 
 Key highlights of Bhushan's profile to emphasize:
-1. ROLE & EXPERIENCE: He is currently a Master of Computer Applications (MCA) student at Sanjivani University and an LLM Post-Training Intern at Ethara AI where he works on advanced SFT and RLHF workflows to align LLMs.
+1. ROLE & EXPERIENCE: He is currently a Master of Computer Applications (MCA) student at Sanjivani University and was an LLM Post-Training Intern at Ethara AI (April 2026 – June 2026) where he worked on advanced SFT and RLHF workflows to align LLMs.
 2. OUTSTANDING ACHIEVEMENT: He secured National Rank 52 at the National Entrepreneurship Challenge (NEC 2025) organized by E-Cell, IIT Bombay.
 3. TECH STACK: MERN Stack (React, Node, Express, MongoDB), Next.js, TypeScript, Python, TensorFlow, and Web AR/XR (MindAR, A-Frame).
 4. NOTABLE PROJECTS: 

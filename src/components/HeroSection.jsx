@@ -482,7 +482,7 @@ export default function HeroSection({ images = [] }) {
           </div>
 
           <div style={{ display: 'flex', gap: '0.9rem', marginTop: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <a href="#contact" className="tp-cta-btn tp-cta-primary-light">Let's Connect →</a>
+            <a href="#contact" className="tp-cta-btn tp-cta-primary-light">Connect →</a>
             <a href="/Bhushan_Chaturbhuj_Resume.pdf" target="_blank" className="tp-cta-btn tp-cta-ghost-light">Resume ↗</a>
           </div>
         </div>

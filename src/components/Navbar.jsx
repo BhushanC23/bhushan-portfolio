@@ -152,7 +152,7 @@ export default function Navbar() {
             e.currentTarget.style.boxShadow = 'none';
           }}
         >
-          Let's Connect
+          Connect
         </button>
       </nav>
 
@@ -265,7 +265,7 @@ export default function Navbar() {
                 cursor: 'pointer',
               }}
             >
-              Let's Connect ✦
+              Connect ✦
             </button>
           </div>
         </div>

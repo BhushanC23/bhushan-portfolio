@@ -419,55 +419,37 @@ export default function HeroSection({ images = [] }) {
         <div id="tp-1" className="tp-box" style={{
           top: '8%', opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
-          <div className="tp-tag">
-            <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#d4e84a', display: 'inline-block' }} />
-            MCA · AI/ML · Web Dev
-          </div>
           <div className="tp-headline" style={{ fontSize: 'clamp(1.6rem, 4vw, 3.8rem)' }}>
             BHUSHAN<br />
             <span className="tp-italic" style={{ fontSize: '0.78em' }}>Chaturbhuj.</span>
           </div>
-          <div className="tp-divider" />
-          <div className="tp-sub">Full Stack Developer &amp; LLM AI Intern</div>
         </div>
 
         {/* ══ TEXT PHASE 2 — Stack ══ */}
         <div id="tp-2" className="tp-box" style={{
           top: '8%', opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
-          <div className="tp-tag">Stack</div>
           <div className="tp-headline" style={{ fontSize: 'clamp(1.4rem, 3.5vw, 3.2rem)' }}>
             Built with<br />
             <span className="tp-italic" style={{ fontSize: '0.95em' }}>Precision.</span>
           </div>
-          <div className="tp-divider" />
-          <div className="tp-sub">React · Node.js · MongoDB · Python · GSAP</div>
         </div>
 
         {/* ══ TEXT PHASE 3 — Vision ══ */}
         <div id="tp-3" className="tp-box" style={{
           top: '8%', opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
-          <div className="tp-tag">Vision</div>
           <div className="tp-headline" style={{ fontSize: 'clamp(1.4rem, 3.5vw, 3.2rem)' }}>
             Turning<br />
             <span className="tp-italic">Ideas</span><br />
             into Reality.
           </div>
-          <div className="tp-divider" />
-          <div className="tp-sub">AI · Web · Mobile · XR</div>
         </div>
 
         {/* ══ TEXT PHASE 4 — CTA (Outro on White BG) ══ */}
         <div id="tp-4" className="tp-box-light" style={{
           top: 0, opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
-          {/* Available tag */}
-          <div className="tp-tag-light">
-            <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', display: 'inline-block', boxShadow: '0 0 8px rgba(34,197,94,0.8)' }} />
-            Available for Work
-          </div>
-
           {/* Giant editorial heading */}
           <div className="tp-headline-light" style={{ fontSize: 'clamp(4rem, 11vw, 11rem)' }}>
             Let’s Create
@@ -476,9 +458,6 @@ export default function HeroSection({ images = [] }) {
             <br />
             Amazing.
           </div>
-
-          {/* Thin divider */}
-          <div className="tp-divider-light" />
 
           {/* Buttons centered */}
           <div style={{ display: 'flex', gap: '0.9rem', marginTop: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>

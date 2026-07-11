@@ -1,11 +1,36 @@
 import { useState, useEffect, useRef } from 'react';
 import { Play, Pause, SkipForward, SkipBack } from 'lucide-react';
 
+const PLAYLIST = [
+  {
+    title: 'Counting Stars',
+    artist: 'OneRepublic',
+    src: '/counting_stars.mp3'
+  },
+  {
+    title: 'Skyfall',
+    artist: 'Adele',
+    src: '/skyfall.mp3'
+  },
+  {
+    title: 'Hanging Tree',
+    artist: 'J. Lawrence',
+    src: '/hanging_tree.mp3'
+  }
+];
+
 export default function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  
+  // Choose a random song index on initial page refresh
+  const [currentSongIndex, setCurrentSongIndex] = useState(() => {
+    return Math.floor(Math.random() * PLAYLIST.length);
+  });
+
   const audioRef = useRef(null);
+  const isFirstMount = useRef(true);
 
   // Monitor viewport size for responsive layout
   useEffect(() => {
@@ -15,43 +40,64 @@ export default function MusicPlayer() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Handle Autoplay policy on modern browsers
+  // Core Audio Playback Lifecycle
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Set initial configuration
-    audio.loop = true;
-    audio.volume = 0.35; // Comfortable background volume
+    // Load active song source
+    audio.src = PLAYLIST[currentSongIndex].src;
+    audio.loop = false; // Disable loop to support auto-play next song
+    audio.volume = 0.35; // Comfortable volume
 
-    const playAudio = () => {
-      audio.play()
-        .then(() => {
-          setIsPlaying(true);
-        })
-        .catch(() => {
-          // Autoplay blocked by browser. Wait for user gesture on document
-          const handleFirstGesture = () => {
-            audio.play()
-              .then(() => {
-                setIsPlaying(true);
-              })
-              .catch(err => console.log('Autoplay play retry failed:', err));
-            window.removeEventListener('click', handleFirstGesture);
-            window.removeEventListener('touchstart', handleFirstGesture);
-          };
-          window.addEventListener('click', handleFirstGesture);
-          window.addEventListener('touchstart', handleFirstGesture);
-        });
+    // Auto-advance to the next track when current one finishes
+    const handleAudioEnded = () => {
+      setCurrentSongIndex(prev => (prev + 1) % PLAYLIST.length);
     };
+    audio.addEventListener('ended', handleAudioEnded);
 
-    // Delay play slightly after page load/mount to allow page transitions to settle
-    const timer = setTimeout(playAudio, 800);
-    return () => clearTimeout(timer);
-  }, []);
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      
+      const playAudio = () => {
+        audio.play()
+          .then(() => setIsPlaying(true))
+          .catch(() => {
+            // Autoplay blocked. Listen to gesture
+            const handleFirstGesture = () => {
+              audio.play()
+                .then(() => setIsPlaying(true))
+                .catch(err => console.log('Autoplay play retry failed:', err));
+              window.removeEventListener('click', handleFirstGesture);
+              window.removeEventListener('touchstart', handleFirstGesture);
+            };
+            window.addEventListener('click', handleFirstGesture);
+            window.addEventListener('touchstart', handleFirstGesture);
+          });
+      };
+
+      const timer = setTimeout(playAudio, 800);
+      return () => {
+        clearTimeout(timer);
+        audio.removeEventListener('ended', handleAudioEnded);
+      };
+    } else {
+      // User manual transition: Play next/prev song immediately
+      audio.play()
+        .then(() => setIsPlaying(true))
+        .catch(err => {
+          console.log('Play transition failed:', err);
+          setIsPlaying(false);
+        });
+    }
+
+    return () => {
+      audio.removeEventListener('ended', handleAudioEnded);
+    };
+  }, [currentSongIndex]);
 
   const togglePlay = (e) => {
-    e.stopPropagation(); // Avoid triggering expand/collapse events
+    e.stopPropagation();
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -65,18 +111,17 @@ export default function MusicPlayer() {
     }
   };
 
-  const handleNextPrev = (e) => {
-    e.stopPropagation(); // Avoid triggering expand/collapse events
-    const audio = audioRef.current;
-    if (!audio) return;
-    // Restart song for next/prev when there is only 1 song
-    audio.currentTime = 0;
-    if (!isPlaying) {
-      audio.play()
-        .then(() => setIsPlaying(true))
-        .catch(err => console.error('Audio play failed:', err));
-    }
+  const handleNext = (e) => {
+    e.stopPropagation();
+    setCurrentSongIndex(prev => (prev + 1) % PLAYLIST.length);
   };
+
+  const handlePrev = (e) => {
+    e.stopPropagation();
+    setCurrentSongIndex(prev => (prev - 1 + PLAYLIST.length) % PLAYLIST.length);
+  };
+
+  const currentSong = PLAYLIST[currentSongIndex];
 
   return (
     <div
@@ -85,7 +130,7 @@ export default function MusicPlayer() {
         position: 'fixed',
         top: isMobile ? '4.75rem' : '1.25rem',
         right: isMobile ? '1.0rem' : '2.5rem',
-        zIndex: 1001, // Positioned above the navbar capsule
+        zIndex: 1001,
         height: isMobile ? '42px' : '52px',
         width: isMobile ? (isExpanded ? '230px' : '42px') : '260px',
         padding: isMobile ? (isExpanded ? '0 0.6rem 0 0.6rem' : '0') : '0 1rem',
@@ -108,7 +153,7 @@ export default function MusicPlayer() {
       }}
       className="music-player-capsule"
     >
-      <audio ref={audioRef} src="/counting_stars.mp3" />
+      <audio ref={audioRef} />
 
       {/* Collapsed Mode (Mobile): Clickable Rotating Vinyl CD */}
       {isMobile && !isExpanded ? (
@@ -121,7 +166,6 @@ export default function MusicPlayer() {
             justifyContent: 'center',
           }}
         >
-          {/* Vinyl CD Player SVG */}
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -145,7 +189,6 @@ export default function MusicPlayer() {
         <>
           {/* Left Vinyl Icon / Visualizer */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
-            {/* Vinyl record button: collapses on mobile click */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -224,14 +267,14 @@ export default function MusicPlayer() {
               textTransform: 'uppercase',
               color: isPlaying ? 'var(--accent-lime)' : '#ffffff',
             }}>
-              Counting Stars
+              {currentSong.title}
             </span>
             <span style={{
               fontFamily: 'var(--font-body)',
               fontSize: isMobile ? '6.5px' : '8px',
               color: 'rgba(255, 255, 255, 0.4)',
             }}>
-              OneRepublic
+              {currentSong.artist}
             </span>
           </div>
 
@@ -241,7 +284,7 @@ export default function MusicPlayer() {
           {/* Controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.3rem' : '0.5rem', flexShrink: 0 }}>
             <button
-              onClick={handleNextPrev}
+              onClick={handlePrev}
               style={{
                 background: 'none', border: 'none', cursor: 'pointer', padding: '0.15rem',
                 color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -272,7 +315,7 @@ export default function MusicPlayer() {
             </button>
 
             <button
-              onClick={handleNextPrev}
+              onClick={handleNext}
               style={{
                 background: 'none', border: 'none', cursor: 'pointer', padding: '0.15rem',
                 color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center',

@@ -297,14 +297,14 @@ export default function HeroSection({ images = [] }) {
           letter-spacing: -0.045em;
           color: #111111;
           margin: 0;
-          /* Soft, highly-feathered mask to prevent a visible "white circle" outline */
-          -webkit-mask-image: radial-gradient(ellipse 35vw 52vh at 50% 48%, transparent 0%, rgba(0,0,0,0.1) 25%, rgba(0,0,0,0.65) 75%, black 100%);
-          mask-image: radial-gradient(ellipse 35vw 52vh at 50% 48%, transparent 0%, rgba(0,0,0,0.1) 25%, rgba(0,0,0,0.65) 75%, black 100%);
+          /* Soft, highly-feathered mask to prevent a visible "white circle" outline, shifted down to cover the neck/collar */
+          -webkit-mask-image: radial-gradient(ellipse 35vw 58vh at 50% 52%, transparent 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.6) 80%, black 100%);
+          mask-image: radial-gradient(ellipse 35vw 58vh at 50% 52%, transparent 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.6) 80%, black 100%);
         }
         @media (max-width: 768px) {
           .tp-headline-light {
-            -webkit-mask-image: radial-gradient(ellipse 52vw 36vh at 50% 50%, transparent 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.6) 75%, black 100%);
-            mask-image: radial-gradient(ellipse 52vw 36vh at 50% 50%, transparent 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.6) 75%, black 100%);
+            -webkit-mask-image: radial-gradient(ellipse 52vw 42vh at 50% 55%, transparent 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.6) 80%, black 100%);
+            mask-image: radial-gradient(ellipse 52vw 42vh at 50% 55%, transparent 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.6) 80%, black 100%);
           }
         }
         .tp-italic-light {

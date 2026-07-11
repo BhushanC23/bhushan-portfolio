@@ -183,6 +183,53 @@ export default function AIChatSidebar() {
 
   return (
     <>
+      {/* Floating Trigger Button */}
+      {!isOpen && (
+        <button
+          id="ai-chat-trigger"
+          onClick={() => setIsOpen(true)}
+          className="glowing-ai-btn"
+          style={{
+            position: 'fixed',
+            bottom: '1.5rem',
+            right: '1.5rem',
+            zIndex: 1100,
+            display: isOpen ? 'none' : 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+            padding: '0.9rem 1.6rem',
+            background: 'linear-gradient(135deg, #1e293b, #0f172a)',
+            color: '#ffffff',
+            border: '1px solid var(--accent-lime)',
+            borderRadius: '50px',
+            cursor: 'pointer',
+            fontFamily: 'var(--font-body)',
+            fontWeight: 700,
+            fontSize: '0.9rem',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 15px rgba(212,255,61,0.25)',
+            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            overflow: 'hidden',
+          }}
+          aria-label="Open AI Chat"
+        >
+          {/* Shimmer overlay effect */}
+          <div className="btn-shimmer" />
+
+          {/* Bot Icon with floating sparks */}
+          <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+            <Bot size={18} color="var(--accent-lime)" className="ai-icon" style={{ transition: 'transform 0.3s ease' }} />
+            <Sparkles size={10} color="var(--accent-lime)" style={{ position: 'absolute', top: '-4px', right: '-4px', transition: 'all 0.3s ease' }} className="spark-micro" />
+          </div>
+          
+          <span style={{ 
+            letterSpacing: '0.04em',
+            background: 'linear-gradient(90deg, #ffffff, rgba(240,244,244,0.95))',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}>Ask AI</span>
+        </button>
+      )}
+
       {/* Floating Invitation Tooltip */}
       {!isOpen && (
         <div
@@ -224,51 +271,6 @@ export default function AIChatSidebar() {
           </span>
         </div>
       )}
-
-      {/* Floating Trigger Button */}
-      <button
-        id="ai-chat-trigger"
-        onClick={() => setIsOpen(true)}
-        className="glowing-ai-btn"
-        style={{
-          position: 'fixed',
-          bottom: '1.5rem',
-          right: '1.5rem',
-          zIndex: 1100,
-          display: isOpen ? 'none' : 'flex',
-          alignItems: 'center',
-          gap: '0.6rem',
-          padding: '0.9rem 1.6rem',
-          background: 'linear-gradient(135deg, #1e293b, #0f172a)',
-          color: '#ffffff',
-          border: '1px solid var(--accent-lime)',
-          borderRadius: '50px',
-          cursor: 'pointer',
-          fontFamily: 'var(--font-body)',
-          fontWeight: 700,
-          fontSize: '0.9rem',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 15px rgba(212,255,61,0.25)',
-          transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-          overflow: 'hidden',
-        }}
-        aria-label="Open AI Chat"
-      >
-        {/* Shimmer overlay effect */}
-        <div className="btn-shimmer" />
-
-        {/* Bot Icon with floating sparks */}
-        <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-          <Bot size={18} color="var(--accent-lime)" className="ai-icon" style={{ transition: 'transform 0.3s ease' }} />
-          <Sparkles size={10} color="var(--accent-lime)" style={{ position: 'absolute', top: '-4px', right: '-4px', transition: 'all 0.3s ease' }} className="spark-micro" />
-        </div>
-        
-        <span style={{ 
-          letterSpacing: '0.04em',
-          background: 'linear-gradient(90deg, #ffffff, rgba(240,244,244,0.95))',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-        }}>Ask AI</span>
-      </button>
 
       {/* Sidebar Overlay */}
       <div
@@ -586,20 +588,27 @@ export default function AIChatSidebar() {
           100% { left: 150%; }
         }
 
-        /* Breathing invitation tooltip animation */
+        /* Hover-triggered invitation tooltip */
         .ai-invite-tooltip {
-          animation: tooltipFloat 3s ease-in-out infinite, fadeInDelayed 1s ease-out 1.5s both;
+          opacity: 0 !important;
+          pointer-events: none;
+          transform: translateY(8px);
+          transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .glowing-ai-btn:hover ~ .ai-invite-tooltip,
+        .glowing-ai-btn:focus ~ .ai-invite-tooltip,
+        .glowing-ai-btn:focus-within ~ .ai-invite-tooltip {
+          opacity: 1 !important;
+          pointer-events: auto;
+          transform: translateY(0);
+          animation: tooltipFloat 3s ease-in-out infinite;
         }
 
         @keyframes tooltipFloat {
           0% { transform: translateY(0); }
           50% { transform: translateY(-4px); }
           100% { transform: translateY(0); }
-        }
-
-        @keyframes fadeInDelayed {
-          0% { opacity: 0; transform: translateY(10px); }
-          100% { opacity: 1; transform: translateY(0); }
         }
 
         /* === AI CHAT RESPONSIVE === */

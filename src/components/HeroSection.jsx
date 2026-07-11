@@ -1,6 +1,5 @@
 import { useRef, useCallback } from 'react';
 import { useScrollVideo } from '../hooks/useScrollVideo';
-import Navbar from './Navbar';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 import TopographicBackground from './TopographicBackground';
 import BlobShape from './BlobShape';
@@ -160,7 +159,7 @@ export default function HeroSection({ images = [] }) {
   return (
     <section
       ref={containerRef}
-      style={{ position: 'relative', height: '400vh' }}
+      style={{ position: 'relative', height: '500vh' }}
     >
       <style>{`
         @keyframes ticker-left {
@@ -364,6 +363,7 @@ export default function HeroSection({ images = [] }) {
           position: 'sticky', top: 0,
           height: '100vh', overflow: 'hidden',
           backgroundColor: '#000',
+          zIndex: 1,
         }}
       >
         {/* ── Canvas (frame sequence) ── */}
@@ -384,8 +384,7 @@ export default function HeroSection({ images = [] }) {
         {/* ── Organic Ambient Light Spotlights ── */}
         <BlobShape zIndex={3} mixBlendMode="soft-light" opacity1={0.12} opacity2={0.10} />
 
-        {/* ── Navbar ── */}
-        <Navbar />
+
 
         {/* ══════════════════════════════════════════════════════════════
             EYE-LEVEL REFERENCE LINE

@@ -48,16 +48,16 @@ export default function FlyingResumeButton() {
       onMouseLeave={() => setHovered(false)}
       style={{
         position: 'fixed',
-        left: '1.5rem',
-        bottom: '1.5rem',
-        zIndex: 999,
+        left: '1rem',
+        bottom: '1rem',
+        zIndex: 90,
         display: 'flex',
         alignItems: 'center',
-        gap: '1rem',
+        gap: '0.6rem',
         cursor: 'pointer',
         // Smooth slide-in from off-screen left
         transform: visible 
-          ? (hovered ? 'translateX(0) scale(1.05)' : 'translateX(0) scale(1)') 
+          ? (hovered ? 'translateX(0) scale(1.02)' : 'translateX(0) scale(1)') 
           : 'translateX(-220px) scale(0.8)',
         opacity: visible ? 1 : 0,
         pointerEvents: visible ? 'auto' : 'none',
@@ -68,8 +68,8 @@ export default function FlyingResumeButton() {
       {/* Cute Intelligent Floating AI Robot Widget */}
       <div
         style={{
-          width: '110px',
-          height: '110px',
+          width: '72px',
+          height: '72px',
           position: 'relative',
           transition: 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
           transform: hovered ? 'rotate(4deg) scale(1.05)' : 'rotate(0deg) scale(1)',
@@ -80,8 +80,8 @@ export default function FlyingResumeButton() {
           className="bot-repulsor-beam"
           style={{
             position: 'absolute',
-            bottom: '8px',
-            left: '46px',
+            bottom: '5px',
+            left: '27px',
             width: '18px',
             height: '28px',
             background: 'linear-gradient(to bottom, var(--teal-accent), rgba(45,212,191,0.2), transparent)',
@@ -178,19 +178,19 @@ export default function FlyingResumeButton() {
         style={{
           background: 'rgba(13,26,28,0.88)',
           backdropFilter: 'blur(20px)',
-          padding: '0.75rem 1.4rem',
+          padding: '0.5rem 1rem',
           borderRadius: '30px',
           border: '1px solid rgba(45,212,191,0.3)',
           color: 'var(--text-primary)',
-          fontSize: '0.9rem',
+          fontSize: '0.8rem',
           fontWeight: 700,
           fontFamily: 'var(--font-body)',
           display: 'flex',
           alignItems: 'center',
-          gap: '0.6rem',
-          boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 20px rgba(45,212,191,0.08)',
+          gap: '0.5rem',
+          boxShadow: '0 8px 30px rgba(0,0,0,0.5), 0 0 15px rgba(45,212,191,0.06)',
           transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-          transform: hovered ? 'translateX(0) scale(1.02)' : 'translateX(-20px) scale(0.9)',
+          transform: hovered ? 'translateX(0) scale(1)' : 'translateX(-10px) scale(0.95)',
           opacity: hovered ? 1 : 0,
           pointerEvents: hovered ? 'auto' : 'none',
           whiteSpace: 'nowrap',
@@ -198,7 +198,7 @@ export default function FlyingResumeButton() {
         }}
       >
         <span style={{ letterSpacing: '0.03em' }}>Download Resume</span>
-        <Download size={16} color="var(--teal-accent)" className="bot-download-icon" style={{ transition: 'transform 0.3s ease' }} />
+        <Download size={14} color="var(--teal-accent)" className="bot-download-icon" style={{ transition: 'transform 0.3s ease' }} />
       </div>
 
       {/* Advanced CSS Keyframes for High-Fidelity Robot Aerodynamics */}

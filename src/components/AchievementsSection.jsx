@@ -71,7 +71,7 @@ export default function AchievementsSection() {
       transition: 'padding 0.3s ease',
     }}>
       {/* Decorative number */}
-      <div className="section-deco-number" style={{ right: '-2%', top: '-5%' }}>05</div>
+
 
       <div className="grid-texture" style={{
         position: 'absolute', inset: 0, opacity: 0.2, pointerEvents: 'none',
@@ -81,20 +81,22 @@ export default function AchievementsSection() {
         {/* Header */}
         <div ref={headerRef} style={{ marginBottom: isMobile ? '2.25rem' : '3.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
           <div style={{
-            fontFamily: 'monospace',
-            fontSize: '9px',
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            color: 'var(--text-muted)',
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.6rem',
+            gap: '0.5rem',
+            padding: '0.3rem 0.9rem',
+            background: 'rgba(212,255,61,0.1)',
+            border: '1px solid rgba(212,255,61,0.25)',
+            borderRadius: '100px',
+            fontFamily: 'var(--font-body)',
+            fontSize: '10px',
+            fontWeight: 600,
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: 'rgba(17,17,17,0.7)',
           }}>
-            <span>[ SEC // 05 ]</span>
-            <span style={{ width: '16px', height: '1px', background: 'var(--line-subtle)' }} />
-            <span>ACCOLADES</span>
-            <span style={{ width: '16px', height: '1px', background: 'var(--line-subtle)' }} />
-            <span>HONORS &amp; METRICS</span>
+            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#d4ff3d', flexShrink: 0 }} />
+            Achievements
           </div>
           <h2 className="heading-display" style={{ marginTop: '0.2rem', textAlign: 'center' }}>
             Achievements &amp;{' '}
@@ -305,52 +307,48 @@ export default function AchievementsSection() {
 
       <style>{`
         .bento-card {
-          background: rgba(255,255,255,0.90);
-          border: 1px solid var(--line-subtle);
-          border-radius: 16px;
+          background: #ffffff;
+          border: 2px solid var(--surface-dark);
+          border-radius: 20px;
           padding: 1.75rem;
           position: relative;
           overflow: hidden;
-          transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+          transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.25s ease, box-shadow 0.25s ease;
           will-change: transform;
-          box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+          box-shadow: 4px 4px 0px var(--surface-dark);
         }
 
         .bento-card:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 20px 48px rgba(0,0,0,0.09);
+          transform: translate(-3px, -3px);
+          box-shadow: 7px 7px 0px var(--surface-dark);
         }
 
         .bento-gold {
           background: #ffffff;
         }
         .bento-gold:hover {
-          border-color: var(--surface-dark) !important;
-          box-shadow: 0 12px 36px rgba(212, 255, 61, 0.16) !important;
+          box-shadow: 7px 7px 0px var(--surface-dark) !important;
         }
 
         .bento-teal {
           background: #ffffff;
         }
         .bento-teal:hover {
-          border-color: var(--surface-dark) !important;
-          box-shadow: 0 12px 36px rgba(212, 255, 61, 0.16) !important;
+          box-shadow: 7px 7px 0px var(--surface-dark) !important;
         }
 
         .bento-amber {
           background: #ffffff;
         }
         .bento-amber:hover {
-          border-color: var(--surface-dark) !important;
-          box-shadow: 0 12px 36px rgba(212, 255, 61, 0.16) !important;
+          box-shadow: 7px 7px 0px var(--surface-dark) !important;
         }
 
         .bento-blue {
           background: #ffffff;
         }
         .bento-blue:hover {
-          border-color: var(--surface-dark) !important;
-          box-shadow: 0 12px 36px rgba(212, 255, 61, 0.16) !important;
+          box-shadow: 7px 7px 0px var(--surface-dark) !important;
         }
 
         @media (max-width: 768px) {

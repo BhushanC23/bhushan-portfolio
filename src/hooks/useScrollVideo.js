@@ -139,17 +139,18 @@ export function useScrollVideo(onProgressUpdate, images) {
         currentProgress.current = targetProgress.current;
       }
 
-      const frameIndex = progressToFrame(currentProgress.current);
+      // Map progress to a 0.0 -> 0.75 sub-range, capping at 1.0 (retains freeze frame F240 for overlap transition)
+      const scaledProgress = Math.min(currentProgress.current / 0.75, 1);
+      const frameIndex = progressToFrame(scaledProgress);
 
       if (lastRenderedFrame.current !== frameIndex) {
         renderFrame(frameIndex);
         lastRenderedFrame.current = frameIndex;
       }
 
-      // Always fire progress callback so text-phase opacity updates
-      // even when the canvas frame hasn't changed (lock zone)
+      // Always fire progress callback with scaledProgress
       if (onProgressUpdateRef.current) {
-        onProgressUpdateRef.current(currentProgress.current);
+        onProgressUpdateRef.current(scaledProgress);
       }
 
       loopRef.current = requestAnimationFrame(updateLoop);

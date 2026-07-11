@@ -38,10 +38,33 @@ function CounterStat({ value, suffix, label }) {
   }, [value]);
 
   return (
-    <div ref={ref} style={{ textAlign: 'center', position: 'relative' }}>
+    <div 
+      ref={ref} 
+      className="about-stat-card"
+      style={{ 
+        textAlign: 'center', 
+        position: 'relative',
+        background: '#181818',
+        border: '2px solid rgba(255, 255, 255, 0.12)',
+        borderRadius: '20px',
+        padding: '2.5rem 1.5rem',
+        boxShadow: '4px 4px 0px rgba(255, 255, 255, 0.08)',
+        transition: 'transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.25s ease, border-color 0.25s ease',
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.transform = 'translate(-3px, -3px)';
+        e.currentTarget.style.boxShadow = '7px 7px 0px var(--accent-lime)';
+        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)';
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.transform = 'translate(0px, 0px)';
+        e.currentTarget.style.boxShadow = '4px 4px 0px rgba(255, 255, 255, 0.08)';
+        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+      }}
+    >
       <div style={{
         fontFamily: 'var(--font-display)',
-        fontSize: 'clamp(2.5rem, 5vw, 5rem)',
+        fontSize: 'clamp(2rem, 4vw, 3.5rem)',
         fontWeight: 800,
         color: '#ffffff',
         lineHeight: 1,
@@ -54,8 +77,8 @@ function CounterStat({ value, suffix, label }) {
       </div>
       <div style={{
         fontFamily: 'var(--font-body)',
-        fontSize: '11px',
-        color: 'rgba(255, 255, 255, 0.6)',
+        fontSize: '10px',
+        color: 'rgba(255, 255, 255, 0.5)',
         marginTop: '0.6rem',
         letterSpacing: '0.2em',
         textTransform: 'uppercase',
@@ -78,6 +101,14 @@ export default function AboutSection() {
   const photoImgRef = useRef(null);
   const curtain1Ref = useRef(null);
   const curtain2Ref = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const bioParagraphs = about?.bio
     ? about.bio.split('\n').filter(p => p.trim())
@@ -96,17 +127,18 @@ export default function AboutSection() {
 
       els.forEach((el, i) => {
         gsap.fromTo(el,
-          { opacity: 0, y: 60 },
+          { opacity: 0, y: 50 },
           {
             opacity: 1,
             y: 0,
-            duration: 1,
-            delay: i * 0.15,
+            duration: 0.9,
+            delay: i * 0.12,
             ease: 'power3.out',
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: 'top 78%',
-              toggleActions: 'play reverse play reverse',
+              start: 'top 85%',
+              toggleActions: 'play none none none',
+              once: true,
             }
           }
         );
@@ -130,47 +162,49 @@ export default function AboutSection() {
       }
 
       // Premium visual: Double-curtain reveal with image scale/parallax
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 72%',
-          toggleActions: 'play reverse play reverse',
+      // Triggered on photoRef so it fires at correct scroll depth regardless of marginTop offset
+      if (curtain2Ref.current && curtain1Ref.current) {
+        // Set initial state: both curtains fully covering the photo
+        gsap.set(curtain2Ref.current, { xPercent: 0 });
+        gsap.set(curtain1Ref.current, { xPercent: 0 });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: photoContainerRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none none', // play once, never reverse
+            once: true,
+          }
+        });
+
+        // Curtain 2 (Dark) slides out first
+        tl.to(curtain2Ref.current,
+          { xPercent: 101, duration: 1.0, ease: 'power3.inOut' }
+        );
+
+        // Curtain 1 (Lime) slides out with overlap
+        tl.to(curtain1Ref.current,
+          { xPercent: 101, duration: 1.0, ease: 'power3.inOut' },
+          '-=0.75'
+        );
+
+        // Profile image scales down from slight zoom
+        if (photoImgRef.current) {
+          gsap.set(photoImgRef.current, { xPercent: -10, scale: 1.15 });
+          tl.to(photoImgRef.current,
+            { xPercent: 0, scale: 1.0, duration: 1.2, ease: 'power2.out' },
+            '-=0.8'
+          );
         }
-      });
 
-      // Curtain 2 (Dark) slides from left-to-right (0% to 101%)
-      if (curtain2Ref.current) {
-        tl.fromTo(curtain2Ref.current,
-          { xPercent: 0 },
-          { xPercent: 101, duration: 1.1, ease: 'power3.inOut' }
-        );
-      }
-
-      // Curtain 1 (Teal) slides from left-to-right (0% to 101%) with overlap
-      if (curtain1Ref.current) {
-        tl.fromTo(curtain1Ref.current,
-          { xPercent: 0 },
-          { xPercent: 101, duration: 1.1, ease: 'power3.inOut' },
-          '-=0.9'
-        );
-      }
-
-      // Profile image counter-slides and scales down
-      if (photoImgRef.current) {
-        tl.fromTo(photoImgRef.current,
-          { xPercent: -20, scale: 1.3 },
-          { xPercent: 0, scale: 1.0, duration: 1.2, ease: 'power2.out' },
-          '-=0.9'
-        );
-      }
-
-      // Offset border frame slides in and snaps with a springy ease
-      if (photoBorderRef.current) {
-        tl.fromTo(photoBorderRef.current,
-          { xPercent: -30, opacity: 0 },
-          { xPercent: 0, opacity: 0.3, duration: 1.0, ease: 'back.out(1.4)' },
-          '-=0.8'
-        );
+        // Offset border frame pops in
+        if (photoBorderRef.current) {
+          gsap.set(photoBorderRef.current, { opacity: 0 });
+          tl.to(photoBorderRef.current,
+            { opacity: 0.3, duration: 0.6, ease: 'power2.out' },
+            '-=0.5'
+          );
+        }
       }
     });
 
@@ -180,12 +214,19 @@ export default function AboutSection() {
   return (
     <section id="about" ref={sectionRef} style={{
       background: '#111111',
-      padding: '10rem 0',
-      position: 'relative',
+      padding: isMobile ? '5rem 0 3rem' : '5rem 0 3.5rem',
+      position: 'sticky',
+      top: 0,
+      height: '100vh',
       overflow: 'hidden',
+      marginTop: '-100vh',
+      zIndex: 10,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
     }}>
       {/* Decorative number */}
-      <div className="section-deco-number" style={{ right: '-2%', top: '-5%' }}>01</div>
+
 
       {/* Background accents */}
       <div style={{
@@ -207,22 +248,24 @@ export default function AboutSection() {
 
       <div className="container-xl">
         {/* Section header */}
-        <div ref={headingRef} style={{ marginBottom: '3.5rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+        <div ref={headingRef} style={{ marginBottom: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
           <div style={{
-            fontFamily: 'monospace',
-            fontSize: '9px',
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            color: 'rgba(255, 255, 255, 0.4)',
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.6rem',
+            gap: '0.5rem',
+            padding: '0.3rem 0.9rem',
+            background: 'rgba(212,255,61,0.08)',
+            border: '1px solid rgba(212,255,61,0.2)',
+            borderRadius: '100px',
+            fontFamily: 'var(--font-body)',
+            fontSize: '10px',
+            fontWeight: 600,
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: 'var(--accent-lime)',
           }}>
-            <span>[ SEC // 01 ]</span>
-            <span style={{ width: '16px', height: '1px', background: 'rgba(255, 255, 255, 0.15)' }} />
-            <span>BIOGRAPHY</span>
-            <span style={{ width: '16px', height: '1px', background: 'rgba(255, 255, 255, 0.15)' }} />
-            <span>KOPARGAON, MH</span>
+            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent-lime)', flexShrink: 0 }} />
+            About Me
           </div>
           <h2 className="heading-display" style={{ marginTop: '0.2rem', color: '#ffffff' }}>
             The person{' '}
@@ -230,13 +273,24 @@ export default function AboutSection() {
           </h2>
         </div>
 
-        {/* Two-column layout: 55% text / 45% image */}
-        <div className="about-two-col" style={{
-          display: 'grid',
-          gridTemplateColumns: '55% 42%',
-          gap: '3rem',
-          alignItems: 'center',
+        {/* Biography & Photo main card */}
+        <div style={{
+          background: '#181818',
+          border: '2px solid rgba(255, 255, 255, 0.12)',
+          borderRadius: '24px',
+          padding: isMobile ? '1.5rem 1.25rem' : '2.5rem 2.5rem',
+          boxShadow: '6px 6px 0px rgba(255, 255, 255, 0.05)',
+          marginBottom: '1.25rem',
+          position: 'relative',
+          zIndex: 1,
         }}>
+          {/* Two-column layout: 55% text / 45% image */}
+          <div className="about-two-col" style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '58% 38%',
+            gap: '2rem',
+            alignItems: 'center',
+          }}>
           {/* Left — Text */}
           <div ref={textRef}>
             <p style={{
@@ -428,28 +482,18 @@ export default function AboutSection() {
               </div>
             </div>
           </div>
+          </div>
         </div>
 
         {/* Stats row */}
         <div ref={statsRef} className="about-stats-grid" style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          marginTop: '6rem',
-          paddingTop: '3rem',
-          borderTop: '1px solid rgba(255, 255, 255, 0.12)',
+          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+          gap: '1rem',
+          marginTop: '1.25rem',
           position: 'relative',
+          zIndex: 1,
         }}>
-          {/* Vertical dividers */}
-          {[1, 2, 3].map(i => (
-            <div key={i} className="about-stat-divider" style={{
-              position: 'absolute',
-              left: `${(100 / 4) * i}%`,
-              top: '3rem',
-              bottom: 0,
-              width: '1px',
-              background: 'rgba(255,255,255,0.08)',
-            }} />
-          ))}
           {BHUSHAN_DATA.stats.map((stat, i) => (
             <CounterStat key={i} {...stat} />
           ))}
@@ -459,23 +503,23 @@ export default function AboutSection() {
       {/* Responsive */}
       <style>{`
         @media (max-width: 900px) {
-          #about { padding: 6rem 0 !important; }
+          #about { padding: 4rem 0 2.5rem !important; }
           .about-two-col {
             grid-template-columns: 1fr !important;
-            gap: 3rem !important;
+            gap: 1.5rem !important;
           }
           .about-stats-grid {
             grid-template-columns: repeat(2, 1fr) !important;
-            gap: 2rem 0 !important;
+            gap: 1rem 0 !important;
           }
           .about-stat-divider {
             display: none !important;
           }
         }
         @media (max-width: 640px) {
-          #about { padding: 5rem 0 !important; }
+          #about { padding: 3.5rem 0 2rem !important; }
           .about-photo-wrap {
-            width: min(280px, 80vw) !important;
+            width: min(220px, 70vw) !important;
             margin: 0 auto;
           }
         }

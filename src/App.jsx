@@ -12,6 +12,7 @@ import AIChatSidebar from './components/AIChatSidebar';
 import FlyingResumeButton from './components/FlyingResumeButton';
 import GrainOverlay from './components/GrainOverlay';
 import PageLoader from './components/PageLoader';
+import Navbar from './components/Navbar';
 import AdminLogin from './admin/AdminLogin';
 import AdminGuard from './admin/AdminGuard';
 import AdminDashboard from './admin/AdminDashboard';
@@ -33,13 +34,20 @@ function CustomCursor() {
     const label = labelRef.current;
     if (!dot || !ring) return;
 
+    dot.style.opacity = '0';
     ring.style.opacity = '0';
     let currentHoverType = null;
+    let hasMoved = false;
 
     const handleMouseMove = (e) => {
       mousePos.current = { x: e.clientX, y: e.clientY };
       dot.style.left = `${e.clientX}px`;
       dot.style.top = `${e.clientY}px`;
+      if (!hasMoved) {
+        hasMoved = true;
+        dot.style.opacity = '1';
+        ring.style.opacity = '1';
+      }
     };
 
     const animateRing = () => {
@@ -290,6 +298,7 @@ function PortfolioLayout() {
 
       {/* Scroll progress bar — only after loader */}
       {loaderDone && <ScrollProgressBar />}
+      {loaderDone && <Navbar />}
 
       {/* Main sections */}
       <main>
@@ -315,11 +324,11 @@ function PortfolioLayout() {
       <GridOverlay />
 
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 768px), (pointer: coarse) {
           .cursor-wrapper { display: none !important; }
         }
         * { cursor: none !important; }
-        @media (max-width: 768px) {
+        @media (max-width: 768px), (pointer: coarse) {
           * { cursor: auto !important; }
         }
       `}</style>

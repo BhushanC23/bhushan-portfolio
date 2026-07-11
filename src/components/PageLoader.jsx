@@ -225,7 +225,7 @@ export default function PageLoader({ progress, onComplete }) {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "baseline",
-            marginTop: "0.7rem",
+            marginTop: "0.85rem",
             opacity: 0,
           }}
         >
@@ -235,6 +235,7 @@ export default function PageLoader({ progress, onComplete }) {
             fontWeight: 600,
             letterSpacing: "0.1em",
             color: "#ffffff",
+            lineHeight: 1,
           }}>
             {padded}
           </span>
@@ -245,6 +246,7 @@ export default function PageLoader({ progress, onComplete }) {
             letterSpacing: "0.22em",
             textTransform: "uppercase",
             color: "rgba(255,255,255,0.5)",
+            lineHeight: 1,
           }}>
             Loading
           </span>

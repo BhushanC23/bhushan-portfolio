@@ -730,3 +730,43 @@ body::after {
   pointer-events: none;
   opacity: 0.03;
 }
+
+/* ========================
+   SOFT NEO-BRUTALIST REDESIGN UTILITIES
+   ======================== */
+.neo-card {
+  background: var(--card-bg, rgba(255, 255, 255, 0.95));
+  border: 2px solid var(--surface-dark, #111111);
+  border-radius: 20px;
+  box-shadow: 4px 4px 0px var(--surface-dark, #111111);
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform, box-shadow;
+}
+
+.neo-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 7px 7px 0px var(--surface-dark, #111111);
+}
+
+.neo-card-dark {
+  background: var(--surface-dark, #111111);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  box-shadow: 4px 4px 0px rgba(255, 255, 255, 0.15);
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform, box-shadow;
+}
+
+.neo-card-dark:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 7px 7px 0px rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.neo-shadow-lime {
+  box-shadow: 4px 4px 0px var(--accent-lime, #d4ff3d);
+}
+
+.neo-shadow-lime:hover {
+  box-shadow: 7px 7px 0px var(--accent-lime, #d4ff3d);
+}

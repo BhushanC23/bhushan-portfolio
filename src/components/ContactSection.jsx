@@ -178,17 +178,36 @@ export default function ContactSection() {
     }
   };
 
-  const underlineInputStyle = {
+  const boxInputStyle = {
     width: '100%',
-    padding: '1rem 0',
-    background: 'transparent',
-    border: 'none',
-    borderBottom: '1px solid var(--line-subtle)',
-    color: 'var(--text-primary)',
+    padding: '0.9rem 1.25rem',
+    background: '#111111',
+    border: '2px solid var(--surface-dark)',
+    borderRadius: '12px',
+    color: '#ffffff',
     fontFamily: 'var(--font-body)',
-    fontSize: '1rem',
+    fontSize: '0.95rem',
     outline: 'none',
-    transition: 'border-color 0.3s ease',
+    transition: 'border-color 0.25s ease, box-shadow 0.25s ease',
+  };
+
+  const labelStyle = {
+    fontFamily: 'var(--font-body)',
+    fontSize: '0.75rem',
+    fontWeight: 600,
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+    color: 'var(--text-muted)'
+  };
+
+  const handleFocus = (e) => {
+    e.target.style.borderColor = 'var(--accent-lime)';
+    e.target.style.boxShadow = '3px 3px 0px var(--surface-dark)';
+  };
+
+  const handleBlur = (e) => {
+    e.target.style.borderColor = 'var(--surface-dark)';
+    e.target.style.boxShadow = 'none';
   };
 
   return (
@@ -199,7 +218,7 @@ export default function ContactSection() {
       overflow: 'hidden',
     }}>
       {/* Decorative number */}
-      <div className="section-deco-number" style={{ left: '-2%', top: '-5%' }}>06</div>
+
 
       {/* Background glow */}
       <div style={{
@@ -217,21 +236,23 @@ export default function ContactSection() {
         {/* Editorial headline — full width, centered */}
         <div ref={headingRef} style={{ marginBottom: '3.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
           <div style={{
-            fontFamily: 'monospace',
-            fontSize: '9px',
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            color: 'var(--text-muted)',
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.6rem',
+            gap: '0.5rem',
+            padding: '0.3rem 0.9rem',
+            background: 'rgba(212,255,61,0.08)',
+            border: '1px solid rgba(212,255,61,0.2)',
+            borderRadius: '100px',
+            fontFamily: 'var(--font-body)',
+            fontSize: '10px',
+            fontWeight: 600,
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: 'var(--accent-lime)',
             marginBottom: '0.5rem',
           }}>
-            <span>[ SEC // 06 ]</span>
-            <span style={{ width: '16px', height: '1px', background: 'var(--line-subtle)' }} />
-            <span>DISCOVERY &amp; INQUIRY</span>
-            <span style={{ width: '16px', height: '1px', background: 'var(--line-subtle)' }} />
-            <span>CONNECT DIRECTLY</span>
+            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent-lime)', flexShrink: 0 }} />
+            Get in Touch
           </div>
 
           {/* Very large editorial title */}
@@ -393,7 +414,19 @@ export default function ContactSection() {
           </div>
 
           {/* Right — Contact form */}
-          <div ref={formBoxRef} className="contact-form-box">
+          <div 
+            ref={formBoxRef} 
+            className="contact-form-box"
+            style={{
+              background: '#ffffff',
+              border: '2px solid var(--surface-dark)',
+              borderRadius: '24px',
+              padding: isMobile ? '2rem 1.25rem' : '3.5rem 3rem',
+              boxShadow: '6px 6px 0px var(--surface-dark)',
+              position: 'relative',
+              zIndex: 1,
+            }}
+          >
             {submitted ? (
               <div style={{ textAlign: 'center', padding: '4rem 0' }}>
                 <div style={{
@@ -410,23 +443,29 @@ export default function ContactSection() {
               </div>
             ) : (
               <form ref={formRef} onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                {/* Float-label inputs */}
+                {/* Inputs with persistent labels */}
                 {[
-                  { name: 'name', type: 'text', label: 'Your name', required: true },
-                  { name: 'email', type: 'email', label: 'your@email.com', required: true },
-                ].map(({ name, type, label, required }) => (
-                  <div key={name} style={{ position: 'relative' }}>
+                  { name: 'name', type: 'text', label: 'Name', placeholder: 'Your name', required: true },
+                  { name: 'email', type: 'email', label: 'Email Address', placeholder: 'your@email.com', required: true },
+                ].map(({ name, type, label, placeholder, required }) => (
+                  <div key={name} style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                    <label 
+                      htmlFor={`contact-${name}`}
+                      style={labelStyle}
+                    >
+                      {label} {required && <span style={{ color: 'var(--accent-lime)' }}>*</span>}
+                    </label>
                     <input
                       type={type}
                       name={name}
                       id={`contact-${name}`}
                       value={formState[name]}
                       onChange={handleChange}
-                      placeholder={label}
+                      placeholder={placeholder}
                       required={required}
-                      style={underlineInputStyle}
-                      onFocus={e => e.target.style.borderBottomColor = 'var(--surface-dark)'}
-                      onBlur={e => e.target.style.borderBottomColor = 'var(--line-subtle)'}
+                      style={boxInputStyle}
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
                     />
                   </div>
                 ))}
@@ -488,7 +527,8 @@ export default function ContactSection() {
                       {showHiring && (
                         <>
                           <div className="form-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                            <div style={{ position: 'relative' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                              <label htmlFor="contact-company" style={labelStyle}>Company {showHiring && <span style={{ color: 'var(--accent-lime)' }}>*</span>}</label>
                               <input
                                 type="text"
                                 name="company"
@@ -497,12 +537,13 @@ export default function ContactSection() {
                                 onChange={handleChange}
                                 placeholder="Company / Organization"
                                 required={showHiring}
-                                style={underlineInputStyle}
-                                onFocus={e => e.target.style.borderBottomColor = 'var(--surface-dark)'}
-                                onBlur={e => e.target.style.borderBottomColor = 'var(--line-subtle)'}
+                                style={boxInputStyle}
+                                onFocus={handleFocus}
+                                onBlur={handleBlur}
                               />
                             </div>
-                            <div style={{ position: 'relative' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                              <label htmlFor="contact-role" style={labelStyle}>Target Role {showHiring && <span style={{ color: 'var(--accent-lime)' }}>*</span>}</label>
                               <input
                                 type="text"
                                 name="role"
@@ -511,9 +552,9 @@ export default function ContactSection() {
                                 onChange={handleChange}
                                 placeholder="Target Role / Position"
                                 required={showHiring}
-                                style={underlineInputStyle}
-                                onFocus={e => e.target.style.borderBottomColor = 'var(--surface-dark)'}
-                                onBlur={e => e.target.style.borderBottomColor = 'var(--line-subtle)'}
+                                style={boxInputStyle}
+                                onFocus={handleFocus}
+                                onBlur={handleBlur}
                               />
                             </div>
                           </div>
@@ -558,7 +599,8 @@ export default function ContactSection() {
                       {/* Freelance Fields */}
                       {showFreelance && (
                         <>
-                          <div style={{ position: 'relative' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                            <label htmlFor="contact-project-company" style={labelStyle}>Company / Project Name</label>
                             <input
                               type="text"
                               name="company"
@@ -566,9 +608,9 @@ export default function ContactSection() {
                               value={formState.company}
                               onChange={handleChange}
                               placeholder="Company / Project Name (Optional)"
-                              style={underlineInputStyle}
-                              onFocus={e => e.target.style.borderBottomColor = 'var(--surface-dark)'}
-                              onBlur={e => e.target.style.borderBottomColor = 'var(--line-subtle)'}
+                              style={boxInputStyle}
+                              onFocus={handleFocus}
+                              onBlur={handleBlur}
                             />
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
@@ -612,7 +654,10 @@ export default function ContactSection() {
                   );
                 })()}
 
-                <div style={{ position: 'relative' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                  <label htmlFor="contact-message" style={labelStyle}>
+                    Message Details <span style={{ color: 'var(--accent-lime)' }}>*</span>
+                  </label>
                   <textarea
                     name="message"
                     id="contact-message"
@@ -621,9 +666,9 @@ export default function ContactSection() {
                     placeholder={getPlaceholderText()}
                     required
                     rows={5}
-                    style={{ ...underlineInputStyle, resize: 'none' }}
-                    onFocus={e => e.target.style.borderBottomColor = 'var(--surface-dark)'}
-                    onBlur={e => e.target.style.borderBottomColor = 'var(--line-subtle)'}
+                    style={{ ...boxInputStyle, resize: 'none' }}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
                   />
                 </div>
 

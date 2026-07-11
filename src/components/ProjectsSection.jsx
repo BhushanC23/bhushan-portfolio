@@ -64,16 +64,16 @@ function ProjectCard({ project, index, cardWidth, cardHeight, isMobile }) {
         width: `${cardWidth}px`,
         flexShrink: 0,
         height: `${cardHeight}px`,
-        borderRadius: '12px',
-        background: '#111111',
-        border: `1px solid ${hovered ? 'var(--accent-lime)' : 'rgba(212, 255, 61, 0.18)'}`,
+        borderRadius: '20px',
+        background: '#151515',
+        border: '2px solid rgba(255, 255, 255, 0.12)',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
         position: 'relative',
-        transition: 'border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease',
-        transform: (isMobile && hovered) ? 'translateY(-4px)' : 'none',
-        boxShadow: hovered ? '0 8px 30px rgba(212,255,61,0.08)' : 'none',
+        transition: 'border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease',
+        transform: hovered ? 'translateY(-3px)' : 'none',
+        boxShadow: hovered ? '6px 6px 0px var(--accent-lime)' : '4px 4px 0px rgba(255, 255, 255, 0.05)',
         willChange: 'transform',
         cursor: 'default',
       }}
@@ -278,7 +278,7 @@ export default function ProjectsSection() {
     const leftPad = isMobile ? 24 : 80;
     const totalCards  = projectList.length + 1; // +1 for "View All" card
     const trackWidth  = totalCards * (cardWidth + CARD_GAP) + leftPad;
-    const slideAmount = trackWidth - window.innerWidth;
+    const slideAmount = Math.max(trackWidth - window.innerWidth, 0);
 
     const ctx = gsap.context(() => {
       gsap.to(trackRef.current, {
@@ -287,8 +287,9 @@ export default function ProjectsSection() {
         scrollTrigger: {
           trigger: outerRef.current,
           start: 'top top',
-          end: 'bottom bottom',
-          scrub: 1,
+          end: `+=${slideAmount}`,
+          scrub: 0.6,
+          pin: false,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             const idx = Math.min(
@@ -301,7 +302,9 @@ export default function ProjectsSection() {
       });
     });
 
-    return () => ctx.revert();
+    // Ensure ScrollTrigger recalculates after a short layout-settle delay
+    const t = setTimeout(() => ScrollTrigger.refresh(), 150);
+    return () => { ctx.revert(); clearTimeout(t); };
   }, [projectList, cardWidth, isMobile]);
 
   /* ── Header fade‑in ── */
@@ -309,13 +312,14 @@ export default function ProjectsSection() {
     if (!headerRef.current) return;
     const ctx = gsap.context(() => {
       gsap.fromTo(headerRef.current,
-        { opacity: 0, y: 50 },
+        { opacity: 0, y: 40 },
         {
-          opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+          opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
           scrollTrigger: {
             trigger: outerRef.current,
-            start: 'top 80%',
-            toggleActions: 'play reverse play reverse',
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+            once: true,
           },
         }
       );
@@ -340,7 +344,7 @@ export default function ProjectsSection() {
       }}
     >
       {/* Decorative number */}
-      <div className="section-deco-number" style={{ left: '-2%', top: '2%' }}>04</div>
+
 
       {/* Locked height sticky viewport */}
       <div
@@ -368,20 +372,22 @@ export default function ProjectsSection() {
           }}
         >
           <div style={{
-            fontFamily: 'monospace',
-            fontSize: '9px',
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.4)',
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.6rem',
+            gap: '0.5rem',
+            padding: '0.3rem 0.9rem',
+            background: 'rgba(212,255,61,0.08)',
+            border: '1px solid rgba(212,255,61,0.2)',
+            borderRadius: '100px',
+            fontFamily: 'var(--font-body)',
+            fontSize: '10px',
+            fontWeight: 600,
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: 'var(--accent-lime)',
           }}>
-            <span>[ SEC // 04 ]</span>
-            <span style={{ width: '16px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
-            <span>PORTFOLIO WORK</span>
-            <span style={{ width: '16px', height: '1px', background: 'rgba(255,255,255,0.15)' }} />
-            <span>INTERNALS &amp; APPS</span>
+            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent-lime)', flexShrink: 0 }} />
+            Projects
           </div>
           <h2 className="heading-display" style={{ fontSize: isMobile ? 'clamp(1.8rem, 6vw, 2.5rem)' : 'clamp(2.5rem, 5vw, 5rem)', marginTop: '0.2rem', color: '#ffffff' }}>
             Projects I've{' '}
@@ -398,7 +404,15 @@ export default function ProjectsSection() {
         </div>
 
         {/* ── Horizontal card track ── */}
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', overflow: 'visible' }}>
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          overflow: 'hidden',
+          width: '100%',
+          maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
+          WebkitMaskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
+        }}>
           <div
             ref={trackRef}
             style={{

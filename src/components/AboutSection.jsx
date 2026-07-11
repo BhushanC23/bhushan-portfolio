@@ -215,8 +215,7 @@ export default function AboutSection() {
     <section id="about" ref={sectionRef} style={{
       background: '#111111',
       padding: isMobile ? '5rem 0 3rem' : '5rem 0 3.5rem',
-      position: 'sticky',
-      top: 0,
+      position: 'relative',
       height: '100vh',
       overflow: 'hidden',
       marginTop: '-100vh',

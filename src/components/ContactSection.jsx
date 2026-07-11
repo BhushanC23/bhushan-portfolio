@@ -37,7 +37,7 @@ export default function ContactSection() {
   };
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
+    const check = () => setIsMobile(window.innerWidth < 900);
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
@@ -55,7 +55,8 @@ export default function ContactSection() {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: 'top 78%',
-              toggleActions: 'play reverse play reverse',
+              toggleActions: 'play none none none',
+              once: true,
             }
           }
         );
@@ -71,7 +72,8 @@ export default function ContactSection() {
             scrollTrigger: {
               trigger: formBoxRef.current,
               start: 'top 85%',
-              toggleActions: 'play reverse play reverse',
+              toggleActions: 'play none none none',
+              once: true,
             }
           }
         );
@@ -164,15 +166,11 @@ export default function ContactSection() {
       }
     } catch (error) {
       console.error('Email submission error:', error);
-      if (error.message === 'Web3Forms Access Key not set in environment.') {
-        alert('Configuration Error: Web3Forms Access Key is not configured. Please define VITE_WEB3FORMS_ACCESS_KEY in your .env file.');
-      } else {
-        alert(
-          `Failed to connect to the email server.\n\n` +
-          `If you are using an ad-blocker (like Brave Shields or uBlock Origin), it might be blocking the submission. Please temporarily disable it and try again.\n\n` +
-          `Alternatively, you can email me directly at: ${BHUSHAN_DATA.social.email}`
-        );
-      }
+      alert(
+        `Failed to connect to the email server.\n\n` +
+        `If you are using an ad-blocker, please temporarily disable it.\n\n` +
+        `Alternatively, you can email me directly at: ${BHUSHAN_DATA.social.email}`
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -181,14 +179,14 @@ export default function ContactSection() {
   const boxInputStyle = {
     width: '100%',
     padding: '0.9rem 1.25rem',
-    background: '#111111',
-    border: '2px solid var(--surface-dark)',
+    background: '#1c1c1c',
+    border: '1.5px solid rgba(255, 255, 255, 0.1)',
     borderRadius: '12px',
     color: '#ffffff',
     fontFamily: 'var(--font-body)',
     fontSize: '0.95rem',
     outline: 'none',
-    transition: 'border-color 0.25s ease, box-shadow 0.25s ease',
+    transition: 'all 0.25s cubic-bezier(0.25, 1, 0.5, 1)',
   };
 
   const labelStyle = {
@@ -197,44 +195,62 @@ export default function ContactSection() {
     fontWeight: 600,
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
-    color: 'var(--text-muted)'
+    color: 'rgba(255, 255, 255, 0.5)'
   };
 
   const handleFocus = (e) => {
     e.target.style.borderColor = 'var(--accent-lime)';
-    e.target.style.boxShadow = '3px 3px 0px var(--surface-dark)';
+    e.target.style.background = '#222222';
+    e.target.style.boxShadow = '0 0 10px rgba(212, 255, 61, 0.15)';
   };
 
   const handleBlur = (e) => {
-    e.target.style.borderColor = 'var(--surface-dark)';
+    e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+    e.target.style.background = '#1c1c1c';
     e.target.style.boxShadow = 'none';
   };
 
   return (
     <section id="contact" ref={sectionRef} style={{
-      background: 'var(--bg-primary)',
-      padding: '10rem 0 5rem',
+      background: '#0a0a0a',
+      padding: isMobile ? '6rem 0 4rem' : '10rem 0 6rem',
       position: 'relative',
       overflow: 'hidden',
     }}>
-      {/* Decorative number */}
 
-
-      {/* Background glow */}
+      {/* Background radial glow */}
       <div style={{
         position: 'absolute',
         bottom: 0,
         left: '50%',
         transform: 'translateX(-50%)',
-        width: '700px',
-        height: '350px',
-        background: 'radial-gradient(ellipse, rgba(212,255,61,0.08) 0%, transparent 70%)',
+        width: '800px',
+        height: '400px',
+        background: 'radial-gradient(ellipse, rgba(212,255,61,0.06) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
 
+      {/* Ghost background text */}
+      <div style={{
+        position: 'absolute',
+        left: '5%',
+        top: '25%',
+        fontFamily: 'var(--font-display)',
+        fontSize: 'clamp(100px, 16vw, 220px)',
+        fontWeight: 900,
+        color: 'rgba(255, 255, 255, 0.012)',
+        lineHeight: 1,
+        letterSpacing: '-0.05em',
+        userSelect: 'none',
+        pointerEvents: 'none',
+      }}>
+        CONNECT
+      </div>
+
       <div className="container-xl" style={{ position: 'relative', zIndex: 1 }}>
-        {/* Editorial headline — full width, centered */}
-        <div ref={headingRef} style={{ marginBottom: '3.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
+        
+        {/* Editorial Title Block */}
+        <div ref={headingRef} style={{ marginBottom: '4rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
           <div style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -255,21 +271,20 @@ export default function ContactSection() {
             Get in Touch
           </div>
 
-          {/* Very large editorial title */}
           <div style={{
             fontFamily: 'var(--font-display)',
-            fontWeight: 700,
-            fontSize: 'clamp(3rem, 7vw, 6.5rem)',
-            letterSpacing: '-0.04em',
+            fontWeight: 900,
+            fontSize: 'clamp(2.5rem, 6.5vw, 5.5rem)',
+            letterSpacing: '-0.045em',
             lineHeight: 0.95,
-            color: 'var(--text-primary)',
+            color: '#ffffff',
             textAlign: 'center',
           }}>
             Let's build <span style={{
               fontFamily: 'var(--font-serif)',
               fontStyle: 'italic',
               fontWeight: 300,
-              color: 'var(--cream)',
+              color: 'var(--accent-lime)',
               letterSpacing: '-0.02em',
             }}>something</span>
           </div>
@@ -277,44 +292,48 @@ export default function ContactSection() {
             fontFamily: 'var(--font-serif)',
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 'clamp(3rem, 7vw, 6.5rem)',
+            fontSize: 'clamp(2.5rem, 6.5vw, 5.5rem)',
             letterSpacing: '-0.02em',
             lineHeight: 0.95,
-            color: 'var(--cream)',
+            color: '#ffffff',
             textAlign: 'center',
+            marginTop: '0.2rem',
           }}>
-            extraordinary
+            extraordinary.
           </div>
 
           <p style={{
             fontFamily: 'var(--font-body)',
-            fontSize: '1rem',
-            color: 'var(--text-muted)',
-            marginTop: '1.5rem',
+            fontSize: '0.95rem',
+            color: 'rgba(255,255,255,0.45)',
+            marginTop: '1.25rem',
+            textAlign: 'center',
+            maxWidth: '440px',
           }}>
-            Available for full-time roles and freelance projects.
+            Currently seeking exciting engineering opportunities and collaborations. Drop me a line!
           </p>
 
-          {/* Large email CTA */}
           <a
             href={`mailto:${BHUSHAN_DATA.social.email}`}
             className="magnetic"
             style={{
               display: 'inline-block',
-              marginTop: '1.5rem',
+              marginTop: '1rem',
               fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(1rem, 2vw, 1.5rem)',
+              fontSize: 'clamp(1rem, 1.8vw, 1.4rem)',
               fontWeight: 600,
-              color: 'var(--surface-dark)',
+              color: '#ffffff',
               textDecoration: 'none',
               letterSpacing: '-0.01em',
               position: 'relative',
               transition: 'all 0.3s ease',
             }}
             onMouseEnter={e => {
+              e.currentTarget.style.color = 'var(--accent-lime)';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={e => {
+              e.currentTarget.style.color = '#ffffff';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
@@ -325,7 +344,7 @@ export default function ContactSection() {
               left: 0,
               width: '100%',
               height: '1px',
-              background: 'var(--surface-dark)',
+              background: 'var(--accent-lime)',
               transformOrigin: 'left',
               transform: 'scaleX(0)',
               transition: 'transform 0.3s ease',
@@ -333,25 +352,24 @@ export default function ContactSection() {
           </a>
         </div>
 
-        {/* Two-column: social + form */}
+        {/* Two Column Layout */}
         <div className="contact-two-col" style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1.2fr',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr',
           gap: '4rem',
           alignItems: 'start',
         }}>
-          {/* Left — Location + social links */}
+          {/* Left Column — Social links */}
           <div>
             <div style={{ marginBottom: '2.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <MapPin size={16} color="var(--surface-dark)" />
-                <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                <MapPin size={16} color="var(--accent-lime)" />
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'rgba(255,255,255,0.6)' }}>
                   Kopargaon, Maharashtra, India
                 </span>
               </div>
             </div>
 
-            {/* Social links — icon only + label */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {SOCIAL_LINKS.map(({ icon: Icon, href, label, handle }) => (
                 <a
@@ -365,9 +383,9 @@ export default function ContactSection() {
                     alignItems: 'center',
                     gap: '1rem',
                     padding: '0.875rem 1.25rem',
-                    background: '#111111',
-                    border: '1px solid #111111',
-                    borderRadius: '8px',
+                    background: '#121212',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: '12px',
                     textDecoration: 'none',
                     transition: 'all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1)',
                   }}
@@ -375,18 +393,20 @@ export default function ContactSection() {
                     e.currentTarget.style.borderColor = 'var(--accent-lime)';
                     e.currentTarget.style.transform = 'translateX(6px)';
                     e.currentTarget.querySelectorAll('.social-label').forEach(el => el.style.color = 'var(--accent-lime)');
+                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(212, 255, 61, 0.05)';
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = '#111111';
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
                     e.currentTarget.style.transform = 'translateX(0)';
                     e.currentTarget.querySelectorAll('.social-label').forEach(el => el.style.color = '#ffffff');
+                    e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
                   <div style={{
                     width: '36px',
                     height: '36px',
                     borderRadius: '6px',
-                    background: 'rgba(212,255,61,0.12)',
+                    background: 'rgba(212,255,61,0.1)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -405,7 +425,7 @@ export default function ContactSection() {
                     <div style={{
                       fontFamily: 'var(--font-body)',
                       fontSize: '0.72rem',
-                      color: 'rgba(255,255,255,0.5)',
+                      color: 'rgba(255,255,255,0.4)',
                     }}>{handle}</div>
                   </div>
                 </a>
@@ -413,16 +433,16 @@ export default function ContactSection() {
             </div>
           </div>
 
-          {/* Right — Contact form */}
+          {/* Right Column — Bento Box Form */}
           <div 
             ref={formBoxRef} 
             className="contact-form-box"
             style={{
-              background: '#ffffff',
-              border: '2px solid var(--surface-dark)',
+              background: '#121212',
+              border: '2px solid rgba(255, 255, 255, 0.12)',
               borderRadius: '24px',
               padding: isMobile ? '2rem 1.25rem' : '3.5rem 3rem',
-              boxShadow: '6px 6px 0px var(--surface-dark)',
+              boxShadow: '6px 6px 0px rgba(212, 255, 61, 0.15)',
               position: 'relative',
               zIndex: 1,
             }}
@@ -434,16 +454,16 @@ export default function ContactSection() {
                   fontStyle: 'italic',
                   fontWeight: 300,
                   fontSize: '2rem',
-                  color: 'var(--cream)',
+                  color: 'var(--accent-lime)',
                   marginBottom: '0.75rem',
                 }}>Message sent.</div>
-                <p style={{ fontFamily: 'var(--font-body)', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                <p style={{ fontFamily: 'var(--font-body)', color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem' }}>
                   I'll get back to you soon. Thanks!
                 </p>
               </div>
             ) : (
-              <form ref={formRef} onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                {/* Inputs with persistent labels */}
+              <form ref={formRef} onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+                {/* Name / Email fields */}
                 {[
                   { name: 'name', type: 'text', label: 'Name', placeholder: 'Your name', required: true },
                   { name: 'email', type: 'email', label: 'Email Address', placeholder: 'your@email.com', required: true },
@@ -471,11 +491,11 @@ export default function ContactSection() {
                 ))}
 
                 {/* Purpose of Contact selector */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
-                  <label style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.25rem' }}>
+                  <label style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     Purpose of Contact
                   </label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
                     {['General Inquiry', 'Hiring / Job Offer', 'Freelance Project'].map((opt) => {
                       const active = formState.purpose === opt;
                       return (
@@ -484,16 +504,16 @@ export default function ContactSection() {
                           type="button"
                           onClick={() => setField('purpose', opt)}
                           style={{
-                            padding: '0.6rem 1.2rem',
+                            padding: '0.55rem 1.1rem',
                             borderRadius: '50px',
                             fontFamily: 'var(--font-body)',
-                            fontSize: '0.85rem',
+                            fontSize: '0.82rem',
                             fontWeight: 500,
-                            background: active ? 'var(--surface-dark)' : 'rgba(0, 0, 0, 0.03)',
-                            border: `1px solid ${active ? 'var(--surface-dark)' : 'var(--line-subtle)'}`,
-                            color: active ? '#ffffff' : 'var(--text-muted)',
+                            background: active ? 'var(--accent-lime)' : 'rgba(255, 255, 255, 0.03)',
+                            border: `1.5px solid ${active ? 'var(--accent-lime)' : 'rgba(255, 255, 255, 0.08)'}`,
+                            color: active ? '#000000' : 'rgba(255, 255, 255, 0.6)',
                             cursor: 'pointer',
-                            transition: 'all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                            transition: 'all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1)',
                           }}
                         >
                           {opt}
@@ -515,9 +535,9 @@ export default function ContactSection() {
                         opacity: hasConditional ? 1 : 0,
                         transform: hasConditional ? 'translateY(0)' : 'translateY(-10px)',
                         overflow: 'hidden',
-                        transition: 'max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease, transform 0.35s ease, margin 0.35s ease',
-                        marginTop: hasConditional ? '0.5rem' : '0px',
-                        marginBottom: hasConditional ? '0.5rem' : '0px',
+                        transition: 'max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease, transform 0.35s ease',
+                        marginTop: hasConditional ? '0.25rem' : '0px',
+                        marginBottom: hasConditional ? '0.25rem' : '0px',
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '1.5rem',
@@ -559,10 +579,10 @@ export default function ContactSection() {
                             </div>
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                            <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                            <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                               Job Type
                             </span>
-                            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
                               {['Full-Time', 'Contract', 'Part-Time / Other'].map((t) => {
                                 const active = formState.jobType === t;
                                 return (
@@ -571,14 +591,14 @@ export default function ContactSection() {
                                     type="button"
                                     onClick={() => setField('jobType', t)}
                                     style={{
-                                      padding: '0.4rem 0.9rem',
+                                      padding: '0.45rem 1rem',
                                       borderRadius: '20px',
                                       fontFamily: 'var(--font-body)',
                                       fontSize: '0.78rem',
                                       fontWeight: 500,
-                                      background: active ? 'var(--surface-dark)' : 'transparent',
-                                      border: `1px solid ${active ? 'var(--surface-dark)' : 'var(--line-subtle)'}`,
-                                      color: active ? '#ffffff' : 'var(--text-muted)',
+                                      background: active ? 'var(--accent-lime)' : 'transparent',
+                                      border: `1.5px solid ${active ? 'var(--accent-lime)' : 'rgba(255, 255, 255, 0.08)'}`,
+                                      color: active ? '#000000' : 'rgba(255, 255, 255, 0.6)',
                                       cursor: 'pointer',
                                       transition: 'all 0.2s ease',
                                     }}
@@ -588,10 +608,6 @@ export default function ContactSection() {
                                 );
                               })}
                             </div>
-                          </div>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '-0.25rem' }}>
-                            <span style={{ color: 'var(--accent-lime)', background: 'var(--surface-dark)', padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700 }}>INFO</span>
-                            <span>I am open to full-time remote or hybrid positions (relocation negotiable).</span>
                           </div>
                         </>
                       )}
@@ -614,10 +630,10 @@ export default function ContactSection() {
                             />
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                            <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                            <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                               Project Budget (USD)
                             </span>
-                            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
                               {['TBD / Flexible', 'Under $2k', '$2k - $5k', '$5k+'].map((b) => {
                                 const active = formState.budget === b;
                                 return (
@@ -626,14 +642,14 @@ export default function ContactSection() {
                                     type="button"
                                     onClick={() => setField('budget', b)}
                                     style={{
-                                      padding: '0.4rem 0.9rem',
+                                      padding: '0.45rem 1rem',
                                       borderRadius: '20px',
                                       fontFamily: 'var(--font-body)',
                                       fontSize: '0.78rem',
                                       fontWeight: 500,
-                                      background: active ? 'var(--surface-dark)' : 'transparent',
-                                      border: `1px solid ${active ? 'var(--surface-dark)' : 'var(--line-subtle)'}`,
-                                      color: active ? '#ffffff' : 'var(--text-muted)',
+                                      background: active ? 'var(--accent-lime)' : 'transparent',
+                                      border: `1.5px solid ${active ? 'var(--accent-lime)' : 'rgba(255, 255, 255, 0.08)'}`,
+                                      color: active ? '#000000' : 'rgba(255, 255, 255, 0.6)',
                                       cursor: 'pointer',
                                       transition: 'all 0.2s ease',
                                     }}
@@ -643,10 +659,6 @@ export default function ContactSection() {
                                 );
                               })}
                             </div>
-                          </div>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '-0.25rem' }}>
-                            <span style={{ color: 'var(--accent-lime)', background: 'var(--surface-dark)', padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700 }}>INFO</span>
-                            <span>Please share high-level project goals, timeline, and tech constraints.</span>
                           </div>
                         </>
                       )}
@@ -665,7 +677,7 @@ export default function ContactSection() {
                     onChange={handleChange}
                     placeholder={getPlaceholderText()}
                     required
-                    rows={5}
+                    rows={4}
                     style={{ ...boxInputStyle, resize: 'none' }}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
@@ -679,9 +691,32 @@ export default function ContactSection() {
                   className="btn-teal magnetic"
                   style={{
                     justifyContent: 'center',
+                    background: 'var(--accent-lime)',
+                    color: '#000000',
+                    border: 'none',
                     opacity: isSubmitting ? 0.7 : 1,
                     cursor: isSubmitting ? 'not-allowed' : 'pointer',
                     alignSelf: 'flex-start',
+                    boxShadow: '0 4px 15px rgba(212, 255, 61, 0.15)',
+                    padding: '0.75rem 1.75rem',
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    transition: 'all 0.25s ease',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = '#ffffff';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 255, 255, 0.15)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = 'var(--accent-lime)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(212, 255, 61, 0.15)';
                   }}
                 >
                   {isSubmitting ? (
@@ -705,7 +740,7 @@ export default function ContactSection() {
         <div style={{
           marginTop: '6rem',
           paddingTop: '2rem',
-          borderTop: '1px solid var(--line-subtle)',
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -715,7 +750,7 @@ export default function ContactSection() {
           <p style={{
             fontFamily: 'var(--font-body)',
             fontSize: '12px',
-            color: 'var(--text-dim)',
+            color: 'rgba(255,255,255,0.4)',
             letterSpacing: '0.1em',
           }}>
             Bhushan Chaturbhuj © 2025 — Built with React &amp; GSAP
@@ -729,15 +764,15 @@ export default function ContactSection() {
                 rel="noopener noreferrer"
                 className="magnetic"
                 style={{
-                  color: 'var(--text-muted)',
+                  color: 'rgba(255,255,255,0.5)',
                   transition: 'all 0.2s ease',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.color = 'var(--surface-dark)';
+                  e.currentTarget.style.color = 'var(--accent-lime)';
                   e.currentTarget.style.transform = 'scale(1.2)';
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.color = 'var(--text-muted)';
+                  e.currentTarget.style.color = 'rgba(255,255,255,0.5)';
                   e.currentTarget.style.transform = 'scale(1)';
                 }}
                 aria-label={label}
@@ -770,7 +805,7 @@ export default function ContactSection() {
         .email-underline { display: block; }
         a:hover .email-underline { transform: scaleX(1) !important; }
         input::placeholder, textarea::placeholder {
-          color: var(--text-dim);
+          color: rgba(255, 255, 255, 0.3) !important;
           font-family: var(--font-body);
         }
       `}</style>

@@ -59,6 +59,23 @@ export default function MusicPlayer() {
     };
   }, [isExpanded]);
 
+  // Collapse the capsule/box when scrolling the window
+  useEffect(() => {
+    if (!isExpanded) return;
+
+    const initialScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      const diff = Math.abs(window.scrollY - initialScrollY);
+      if (diff > 40) {
+        setIsExpanded(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isExpanded]);
+
   // Core Audio Playback Lifecycle
   useEffect(() => {
     const audio = audioRef.current;

@@ -151,10 +151,10 @@ function TimelineItem({ item, index, isMobile }) {
   return (
     <div className="exp-timeline-item" style={{
       display: 'grid',
-      gridTemplateColumns: '1fr 40px 1fr',
-      gap: '1.5rem',
+      gridTemplateColumns: isMobile ? '32px 1fr' : '1fr 40px 1fr',
+      gap: isMobile ? '1rem' : '1.5rem',
       alignItems: 'start',
-      marginBottom: '2.5rem',
+      marginBottom: isMobile ? '1.75rem' : '2.5rem',
     }}>
       {/* ── Left card ── */}
       {!isRight ? (

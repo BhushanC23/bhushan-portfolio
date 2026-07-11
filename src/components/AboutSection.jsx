@@ -460,8 +460,8 @@ export default function AboutSection() {
           ref={statsRef}
           style={{
             display: 'grid',
-            gridTemplateColumns: `repeat(${BHUSHAN_DATA.stats.length}, 1fr)`,
-            gap: '1rem',
+            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : `repeat(${BHUSHAN_DATA.stats.length}, 1fr)`,
+            gap: isMobile ? '1.5rem 1rem' : '1rem',
           }}
         >
           {BHUSHAN_DATA.stats.map((stat, i) => (
@@ -471,8 +471,8 @@ export default function AboutSection() {
               alignItems: 'center',
               position: 'relative',
             }}>
-              {/* Divider (all except first) */}
-              {i > 0 && (
+              {/* Divider (all except first) — hidden on mobile */}
+              {i > 0 && !isMobile && (
                 <div style={{
                   position: 'absolute',
                   left: 0, top: '10%', bottom: '10%',

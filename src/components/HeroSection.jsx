@@ -64,11 +64,29 @@ export default function HeroSection({ images = [] }) {
   /* ── DOM-driven animation: no React re-renders, pure style mutations ── */
   const updateHeroDomStyles = useCallback((progress) => {
 
-    /* 1 ── Canvas intro bg: 0→LOCK_START is dark, LOCK_START+ it stays dark (bg=black image) */
+    /* 1 ── Canvas intro bg: match background color dynamically to the active frame */
     const sticky = stickyRef.current;
     if (sticky) {
-      // keep background black throughout (the canvas images are on dark bg)
-      sticky.style.backgroundColor = '#000';
+      let displayFrame;
+      if (progress <= LOCK_START) {
+        displayFrame = Math.round((progress / LOCK_START) * 44) + 1;
+      } else if (progress < LOCK_END) {
+        displayFrame = 45;
+      } else {
+        displayFrame = Math.round(45 + ((progress - LOCK_END) / (1 - LOCK_END)) * 195) + 1;
+      }
+
+      let bgColor = '#000000';
+      if (displayFrame >= 125) {
+        if (displayFrame > 195) {
+          bgColor = '#ffffff';
+        } else {
+          const t = (displayFrame - 125) / (195 - 125);
+          const val = Math.round(t * 255);
+          bgColor = `rgb(${val}, ${val}, ${val})`;
+        }
+      }
+      sticky.style.backgroundColor = bgColor;
     }
 
     /* 2 ── Text phase visibility (only during lock zone) */

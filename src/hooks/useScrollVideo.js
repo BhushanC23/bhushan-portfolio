@@ -31,6 +31,14 @@ function progressToFrame(progress) {
   return Math.min(TOTAL_FRAMES - 1, Math.floor(LOCK_FRAME + t * (TOTAL_FRAMES - LOCK_FRAME)));
 }
 
+function getFrameBgColor(index) {
+  if (index < 125) return '#000000';
+  if (index > 195) return '#ffffff';
+  const t = (index - 125) / (195 - 125);
+  const val = Math.round(t * 255);
+  return `rgb(${val}, ${val}, ${val})`;
+}
+
 export function useScrollVideo(onProgressUpdate, images) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -83,20 +91,35 @@ export function useScrollVideo(onProgressUpdate, images) {
     const canvasRatio = width / height;
 
     let drawWidth, drawHeight, offsetX, offsetY;
+    const isMobile = width < 768;
 
-    if (canvasRatio > imgRatio) {
-      drawWidth  = width;
-      drawHeight = width / imgRatio;
-      offsetX    = 0;
-      offsetY    = (height - drawHeight) / 2;
-    } else {
-      drawWidth  = height * imgRatio;
-      drawHeight = height;
+    if (isMobile) {
+      // Proportional mobile layout: scale width to 1.45x screen width so the subject is sized beautifully,
+      // and center horizontally + shift down 5% to keep head clear of the top menu bar.
+      drawWidth  = width * 1.45;
+      drawHeight = drawWidth / imgRatio;
       offsetX    = (width - drawWidth) / 2;
-      offsetY    = 0;
+      offsetY    = (height - drawHeight) / 2 + (height * 0.05);
+    } else {
+      // Desktop full screen cover
+      if (canvasRatio > imgRatio) {
+        drawWidth  = width;
+        drawHeight = width / imgRatio;
+        offsetX    = 0;
+        offsetY    = (height - drawHeight) / 2;
+      } else {
+        drawWidth  = height * imgRatio;
+        drawHeight = height;
+        offsetX    = (width - drawWidth) / 2;
+        offsetY    = 0;
+      }
     }
 
-    ctx.clearRect(0, 0, width, height);
+    // Fill background with matching frame color to create a seamless landscape-in-portrait integration
+    const bgColor = getFrameBgColor(index);
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, width, height);
+
     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
   }, [images]);
 

@@ -129,8 +129,8 @@ export default function Navbar() {
 
         <div style={{ width: '1px', height: '18px', background: 'rgba(212,255,61,0.2)', margin: '0 4px', flexShrink: 0 }} />
 
-        <a
-          href="mailto:bhushan.chaturbhuj_25pca@sanjivani.edu.in"
+        <button
+          onClick={() => handleNavClick('#contact')}
           style={{
             position: 'relative', zIndex: 1,
             display: 'inline-flex', alignItems: 'center',
@@ -140,7 +140,7 @@ export default function Navbar() {
             borderRadius: '100px',
             fontFamily: 'var(--font-body)', fontWeight: 800,
             fontSize: '11.5px', letterSpacing: '0.08em', textTransform: 'uppercase',
-            color: '#111111', textDecoration: 'none', flexShrink: 0,
+            color: '#111111', cursor: 'pointer', flexShrink: 0,
             transition: 'all 0.25s cubic-bezier(0.25,1,0.5,1)',
           }}
           onMouseEnter={e => {
@@ -152,8 +152,8 @@ export default function Navbar() {
             e.currentTarget.style.boxShadow = 'none';
           }}
         >
-          Hire Me
-        </a>
+          Let's Connect
+        </button>
       </nav>
 
       {/* ────────────────────────────────
@@ -251,8 +251,8 @@ export default function Navbar() {
               );
             })}
 
-            <a
-              href="mailto:bhushan.chaturbhuj_25pca@sanjivani.edu.in"
+            <button
+              onClick={() => handleNavClick('#contact')}
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 minHeight: '44px', marginTop: '0.4rem',
@@ -262,11 +262,11 @@ export default function Navbar() {
                 color: '#111',
                 fontFamily: 'var(--font-body)', fontWeight: 600,
                 fontSize: '12.5px', letterSpacing: '0.08em', textTransform: 'uppercase',
-                textDecoration: 'none',
+                cursor: 'pointer',
               }}
             >
-              Hire Me ✦
-            </a>
+              Let's Connect ✦
+            </button>
           </div>
         </div>
       </div>

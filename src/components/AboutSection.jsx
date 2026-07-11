@@ -6,82 +6,53 @@ import { usePortfolioData } from '../hooks/usePortfolioData';
 
 gsap.registerPlugin(ScrollTrigger);
 
-function CounterStat({ value, suffix, label }) {
+/* ─────────────────────────────────────────────────────────────
+   Animated Counter
+   ───────────────────────────────────────────────────────────── */
+function Counter({ value, suffix, label }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
-  const hasAnimated = useRef(false);
+  const animated = useRef(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          const duration = 2000;
-          const steps = 60;
-          const increment = value / steps;
-          let current = 0;
-          const timer = setInterval(() => {
-            current += increment;
-            if (current >= value) {
-              setCount(value);
-              clearInterval(timer);
-            } else {
-              setCount(parseFloat(current.toFixed(2)));
-            }
-          }, duration / steps);
-        }
-      },
-      { threshold: 0.5 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !animated.current) {
+        animated.current = true;
+        let start = 0;
+        const steps = 50;
+        const inc = value / steps;
+        const t = setInterval(() => {
+          start += inc;
+          if (start >= value) { setCount(value); clearInterval(t); }
+          else setCount(Math.round(start));
+        }, 30);
+      }
+    }, { threshold: 0.5 });
+    obs.observe(el);
+    return () => obs.disconnect();
   }, [value]);
 
   return (
-    <div 
-      ref={ref} 
-      className="about-stat-card"
-      style={{ 
-        textAlign: 'center', 
-        position: 'relative',
-        background: '#181818',
-        border: '2px solid rgba(255, 255, 255, 0.12)',
-        borderRadius: '20px',
-        padding: '2.5rem 1.5rem',
-        boxShadow: '4px 4px 0px rgba(255, 255, 255, 0.08)',
-        transition: 'transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.25s ease, border-color 0.25s ease',
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.transform = 'translate(-3px, -3px)';
-        e.currentTarget.style.boxShadow = '7px 7px 0px var(--accent-lime)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)';
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.transform = 'translate(0px, 0px)';
-        e.currentTarget.style.boxShadow = '4px 4px 0px rgba(255, 255, 255, 0.08)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-      }}
-    >
+    <div ref={ref} style={{ textAlign: 'center' }}>
       <div style={{
         fontFamily: 'var(--font-display)',
-        fontSize: 'clamp(2rem, 4vw, 3.5rem)',
+        fontSize: 'clamp(1.8rem, 3.5vw, 3rem)',
         fontWeight: 800,
         color: '#ffffff',
-        lineHeight: 1,
         letterSpacing: '-0.04em',
+        lineHeight: 1,
       }}>
-        {typeof value === 'number' && !Number.isInteger(value)
-          ? Number(count).toFixed(2)
-          : Math.round(count)
-        }{suffix}
+        {count}{suffix}
       </div>
       <div style={{
         fontFamily: 'var(--font-body)',
-        fontSize: '10px',
-        color: 'rgba(255, 255, 255, 0.5)',
-        marginTop: '0.6rem',
+        fontSize: '9px',
         letterSpacing: '0.2em',
         textTransform: 'uppercase',
+        color: 'rgba(255,255,255,0.4)',
+        marginTop: '0.4rem',
       }}>
         {label}
       </div>
@@ -89,268 +60,347 @@ function CounterStat({ value, suffix, label }) {
   );
 }
 
+/* ─────────────────────────────────────────────────────────────
+   Main Section
+   ───────────────────────────────────────────────────────── */
 export default function AboutSection() {
   const { about } = usePortfolioData();
-  const sectionRef = useRef(null);
-  const headingRef = useRef(null);
-  const textRef = useRef(null);
-  const photoRef = useRef(null);
-  const statsRef = useRef(null);
-  const photoBorderRef = useRef(null);
+  const sectionRef        = useRef(null);
+  const nameRef           = useRef(null);
+  const roleRef           = useRef(null);
+  const bioRef            = useRef(null);
   const photoContainerRef = useRef(null);
-  const photoImgRef = useRef(null);
-  const curtain1Ref = useRef(null);
-  const curtain2Ref = useRef(null);
+  const photoImgRef       = useRef(null);
+  const curtain1Ref       = useRef(null);
+  const curtain2Ref       = useRef(null);
+  const tagsRef           = useRef(null);
+  const statsRef          = useRef(null);
+  const lineRef           = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
+    const check = () => setIsMobile(window.innerWidth < 900);
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  const bioParagraphs = about?.bio
-    ? about.bio.split('\n').filter(p => p.trim())
-    : [
-        `Hi, I'm <strong>Bhushan Chaturbhuj</strong> — a Full Stack Engineer and MCA Candidate specializing in highly interactive web systems, Web AR experiences, and Large Language Model (LLM) post-training. I excel at bridging the gap between sophisticated backend AI logic and smooth, immersive user interfaces.`,
-        `Currently interning at <strong style="color:var(--gold-accent)">Ethara AI</strong> on LLM Post-Training (SFT &amp; RLHF workflows). I love turning ideas into reality — from AR heritage platforms to EV buying assistants.`,
-        `🏆 National Rank 52 at NEC 2025 (IIT Bombay E-Cell) — I love scaling technical ideas from initial concept to high-impact user adoption.`,
-      ];
-
   const photoSrc = about?.photo_url || '/bhushan-photo.jpg';
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Heading & text elements reveal (removed photoRef from els to prevent conflicting animations)
-      const els = [headingRef.current, textRef.current].filter(Boolean);
+      const trigger = {
+        trigger: sectionRef.current,
+        start: 'top 85%',
+        toggleActions: 'play none none none',
+        once: true,
+      };
 
-      els.forEach((el, i) => {
-        gsap.fromTo(el,
-          { opacity: 0, y: 50 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.9,
-            delay: i * 0.12,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-              once: true,
-            }
-          }
-        );
-      });
-
-      if (statsRef.current) {
-        gsap.fromTo(statsRef.current,
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.9,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: statsRef.current,
-              start: 'top 85%',
-              toggleActions: 'play reverse play reverse',
-            }
-          }
+      // Name chars split-like reveal
+      if (nameRef.current) {
+        gsap.fromTo(nameRef.current,
+          { clipPath: 'inset(0 100% 0 0)', opacity: 0 },
+          { clipPath: 'inset(0 0% 0 0)', opacity: 1, duration: 1.1, ease: 'power4.out', scrollTrigger: trigger }
         );
       }
 
-      // Premium visual: Double-curtain reveal with image scale/parallax
-      // Triggered on photoRef so it fires at correct scroll depth regardless of marginTop offset
-      if (curtain2Ref.current && curtain1Ref.current) {
-        // Set initial state: both curtains fully covering the photo
+      // Role line slides up
+      if (roleRef.current) {
+        gsap.fromTo(roleRef.current,
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, delay: 0.3, ease: 'power3.out', scrollTrigger: trigger }
+        );
+      }
+
+      // Bio slides up
+      if (bioRef.current) {
+        gsap.fromTo(bioRef.current,
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, delay: 0.5, ease: 'power3.out', scrollTrigger: trigger }
+        );
+      }
+
+      // Divider line scaleX
+      if (lineRef.current) {
+        gsap.fromTo(lineRef.current,
+          { scaleX: 0, transformOrigin: 'left' },
+          { scaleX: 1, duration: 1.2, delay: 0.2, ease: 'power3.inOut', scrollTrigger: trigger }
+        );
+      }
+
+      // Stats fade up
+      if (statsRef.current) {
+        gsap.fromTo(statsRef.current,
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7, delay: 0.7, ease: 'power3.out', scrollTrigger: trigger }
+        );
+      }
+
+      // Floating tags stagger
+      if (tagsRef.current) {
+        const tags = tagsRef.current.querySelectorAll('.about-float-tag');
+        gsap.fromTo(tags,
+          { y: 20, opacity: 0, scale: 0.9 },
+          { y: 0, opacity: 1, scale: 1, stagger: 0.12, duration: 0.6, delay: 0.8, ease: 'back.out(1.7)', scrollTrigger: trigger }
+        );
+      }
+
+      // Photo double-curtain reveal
+      if (curtain1Ref.current && curtain2Ref.current) {
         gsap.set(curtain2Ref.current, { xPercent: 0 });
         gsap.set(curtain1Ref.current, { xPercent: 0 });
-
         const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: photoContainerRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none', // play once, never reverse
-            once: true,
-          }
+          scrollTrigger: { trigger: photoContainerRef.current, start: 'top 80%', once: true }
         });
-
-        // Curtain 2 (Dark) slides out first
-        tl.to(curtain2Ref.current,
-          { xPercent: 101, duration: 1.0, ease: 'power3.inOut' }
-        );
-
-        // Curtain 1 (Lime) slides out with overlap
-        tl.to(curtain1Ref.current,
-          { xPercent: 101, duration: 1.0, ease: 'power3.inOut' },
-          '-=0.75'
-        );
-
-        // Profile image scales down from slight zoom
+        tl.to(curtain2Ref.current, { xPercent: 101, duration: 0.9, ease: 'power3.inOut' })
+          .to(curtain1Ref.current, { xPercent: 101, duration: 0.9, ease: 'power3.inOut' }, '-=0.7');
         if (photoImgRef.current) {
-          gsap.set(photoImgRef.current, { xPercent: -10, scale: 1.15 });
-          tl.to(photoImgRef.current,
-            { xPercent: 0, scale: 1.0, duration: 1.2, ease: 'power2.out' },
-            '-=0.8'
-          );
-        }
-
-        // Offset border frame pops in
-        if (photoBorderRef.current) {
-          gsap.set(photoBorderRef.current, { opacity: 0 });
-          tl.to(photoBorderRef.current,
-            { opacity: 0.3, duration: 0.6, ease: 'power2.out' },
-            '-=0.5'
-          );
+          gsap.set(photoImgRef.current, { scale: 1.12 });
+          tl.to(photoImgRef.current, { scale: 1, duration: 1.2, ease: 'power2.out' }, '-=0.7');
         }
       }
     });
-
     return () => ctx.revert();
   }, []);
 
+  // ── Bio text ──
+  const bioText = `Full Stack Engineer & MCA Candidate specializing in highly interactive web systems, Web AR experiences, and LLM post-training. Currently interning at Ethara AI executing SFT & RLHF workflows.`;
+
   return (
-    <section id="about" ref={sectionRef} style={{
-      background: '#111111',
-      padding: isMobile ? '5rem 0 3rem' : '5rem 0 3.5rem',
-      position: 'relative',
-      height: '100vh',
-      overflow: 'hidden',
-      marginTop: '-100vh',
-      zIndex: 10,
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-    }}>
-      {/* Decorative number */}
-
-
-      {/* Background accents */}
+    <section
+      id="about"
+      ref={sectionRef}
+      style={{
+        background: '#0e0e0e',
+        position: 'relative',
+        height: '100vh',
+        overflow: 'hidden',
+        marginTop: '-100vh',
+        zIndex: 10,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}
+    >
+      {/* ── Ambient glows ── */}
       <div style={{
-        position: 'absolute',
-        top: '-100px', right: '-100px',
-        width: '500px', height: '500px',
-        borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(212,255,61,0.08) 0%, transparent 70%)',
+        position: 'absolute', top: '-120px', right: '-80px',
+        width: '550px', height: '550px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(212,255,61,0.07) 0%, transparent 65%)',
         pointerEvents: 'none',
       }} />
       <div style={{
-        position: 'absolute',
-        bottom: '-80px', left: '-80px',
-        width: '300px', height: '300px',
-        borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)',
+        position: 'absolute', bottom: '-100px', left: '30%',
+        width: '400px', height: '400px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(212,255,61,0.04) 0%, transparent 65%)',
         pointerEvents: 'none',
       }} />
 
-      <div className="container-xl">
-        {/* Section header */}
-        <div ref={headingRef} style={{ marginBottom: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+      {/* ── Ghost editorial word — extreme background ── */}
+      <div style={{
+        position: 'absolute',
+        right: isMobile ? '-5%' : '-2%',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        fontFamily: 'var(--font-display)',
+        fontSize: 'clamp(140px, 20vw, 260px)',
+        fontWeight: 900,
+        color: 'rgba(255,255,255,0.025)',
+        lineHeight: 1,
+        letterSpacing: '-0.06em',
+        userSelect: 'none',
+        pointerEvents: 'none',
+        whiteSpace: 'nowrap',
+      }}>
+        ABOUT
+      </div>
+
+      {/* ── Thin lime vertical rule — far left ── */}
+      <div style={{
+        position: 'absolute',
+        left: 0, top: 0, bottom: 0,
+        width: '3px',
+        background: 'linear-gradient(to bottom, transparent, var(--accent-lime) 40%, var(--accent-lime) 60%, transparent)',
+        opacity: 0.35,
+        pointerEvents: 'none',
+      }} />
+
+      {/* ═══════════════════════════════════════════════════
+          MAIN CONTENT
+          ═══════════════════════════════════════════════════ */}
+      <div className="container-xl" style={{ position: 'relative', zIndex: 1 }}>
+
+        {/* ── Row 1: Top label + index ── */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: isMobile ? '1rem' : '1.5rem',
+        }}>
+          {/* Pill */}
           <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
+            display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
             padding: '0.3rem 0.9rem',
             background: 'rgba(212,255,61,0.08)',
             border: '1px solid rgba(212,255,61,0.2)',
             borderRadius: '100px',
             fontFamily: 'var(--font-body)',
-            fontSize: '10px',
-            fontWeight: 600,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
+            fontSize: '10px', fontWeight: 600,
+            letterSpacing: '0.12em', textTransform: 'uppercase',
             color: 'var(--accent-lime)',
           }}>
-            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent-lime)', flexShrink: 0 }} />
+            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent-lime)' }} />
             About Me
           </div>
-          <h2 className="heading-display" style={{ marginTop: '0.2rem', color: '#ffffff' }}>
-            The person{' '}
-            <span className="serif-accent" style={{ color: 'var(--accent-lime)' }}>behind the code</span>
-          </h2>
+
+          {/* Right: year index */}
+          {!isMobile && (
+            <div style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '11px', fontWeight: 700,
+              letterSpacing: '0.25em',
+              textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.2)',
+            }}>
+              SINCE — 2004 · MCA '25
+            </div>
+          )}
         </div>
 
-        {/* Biography & Photo main card */}
+        {/* ── Row 2: Main grid (heading + photo) ── */}
         <div style={{
-          background: '#181818',
-          border: '2px solid rgba(255, 255, 255, 0.12)',
-          borderRadius: '24px',
-          padding: isMobile ? '1.5rem 1.25rem' : '2.5rem 2.5rem',
-          boxShadow: '6px 6px 0px rgba(255, 255, 255, 0.05)',
-          marginBottom: '1.25rem',
-          position: 'relative',
-          zIndex: 1,
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 340px',
+          gap: isMobile ? '2rem' : '4rem',
+          alignItems: 'center',
         }}>
-          {/* Two-column layout: 55% text / 45% image */}
-          <div className="about-two-col" style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '58% 38%',
-            gap: '2rem',
-            alignItems: 'center',
-          }}>
-          {/* Left — Text */}
-          <div ref={textRef}>
-            <p style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: 'var(--text-body-lg)',
-              lineHeight: 1.8,
-              color: 'rgba(255, 255, 255, 0.75)',
-              marginBottom: '1.5rem',
-            }} dangerouslySetInnerHTML={{ __html: bioParagraphs[0] || '' }} />
-
-            {bioParagraphs[1] && (
-              <p style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: 'var(--text-body-lg)',
-                lineHeight: 1.8,
-                color: 'rgba(255, 255, 255, 0.75)',
-                marginBottom: '2rem',
-              }} dangerouslySetInnerHTML={{ __html: bioParagraphs[1] }} />
-            )}
-
-            {/* Blockquote highlight */}
-            {bioParagraphs[2] && (
-              <blockquote style={{
-                borderLeft: '2px solid var(--accent-lime)',
-                paddingLeft: '1.5rem',
-                marginBottom: '2.5rem',
+          {/* ── LEFT COLUMN ── */}
+          <div>
+            {/* Huge editorial name */}
+            <div
+              ref={nameRef}
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(3rem, 7vw, 6.5rem)',
+                fontWeight: 900,
+                letterSpacing: '-0.045em',
+                lineHeight: 0.92,
+                color: '#ffffff',
+                marginBottom: '0.6rem',
+                overflow: 'hidden',
+              }}
+            >
+              The person
+              <br />
+              <span style={{
+                WebkitTextStroke: '1px rgba(255,255,255,0.3)',
+                color: 'transparent',
+                fontFamily: 'var(--font-display)',
+              }}>
+                behind
+              </span>
+              {' '}
+              <span style={{ color: 'var(--accent-lime)' }}>
+                the
+              </span>
+              <br />
+              <em style={{
                 fontFamily: 'var(--font-serif)',
                 fontStyle: 'italic',
                 fontWeight: 300,
-                fontSize: '1.2rem',
-                lineHeight: 1.7,
-                color: 'rgba(255, 255, 255, 0.85)',
-              }} dangerouslySetInnerHTML={{ __html: bioParagraphs[2] }} />
-            )}
+                fontSize: '0.82em',
+                letterSpacing: '-0.02em',
+                color: 'rgba(255,255,255,0.85)',
+              }}>
+                code.
+              </em>
+            </div>
 
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            {/* Role line */}
+            <div
+              ref={roleRef}
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 'clamp(0.78rem, 1.2vw, 0.92rem)',
+                color: 'rgba(255,255,255,0.45)',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                marginBottom: isMobile ? '1rem' : '1.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+              }}
+            >
+              <span style={{ width: '28px', height: '1px', background: 'var(--accent-lime)', display: 'inline-block' }} />
+              Full Stack Engineer · AI/ML Intern · MCA Candidate
+            </div>
+
+            {/* Bio text */}
+            <p
+              ref={bioRef}
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
+                lineHeight: 1.75,
+                color: 'rgba(255,255,255,0.6)',
+                maxWidth: '540px',
+                marginBottom: isMobile ? '1.25rem' : '1.75rem',
+              }}
+            >
+              {bioText}
+            </p>
+
+            {/* Achievement pill */}
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.6rem',
+              padding: '0.5rem 1.1rem',
+              background: 'rgba(212,255,61,0.06)',
+              border: '1px solid rgba(212,255,61,0.18)',
+              borderRadius: '8px',
+              marginBottom: isMobile ? '1.25rem' : '1.75rem',
+            }}>
+              <span style={{ fontSize: '1rem' }}>🏆</span>
+              <span style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.8rem',
+                color: 'rgba(255,255,255,0.65)',
+                letterSpacing: '0.02em',
+              }}>
+                National Rank <strong style={{ color: 'var(--accent-lime)' }}>52</strong> — NEC 2025, IIT Bombay E-Cell
+              </span>
+            </div>
+
+            {/* CTA buttons */}
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
               <a
                 href={BHUSHAN_DATA.social.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-teal magnetic"
-                style={{ textDecoration: 'none' }}
+                style={{ textDecoration: 'none', fontSize: '0.85rem', padding: '0.65rem 1.4rem' }}
               >
-                View GitHub →
+                GitHub →
               </a>
               <a
                 href={BHUSHAN_DATA.social.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-outline magnetic"
-                style={{ textDecoration: 'none' }}
+                style={{ textDecoration: 'none', fontSize: '0.85rem', padding: '0.65rem 1.4rem' }}
               >
                 LinkedIn
               </a>
               <a
                 href="/Bhushan_Chaturbhuj_Resume.pdf"
-                download="Bhushan_Chaturbhuj_Resume.pdf"
+                download
                 className="btn-outline magnetic"
                 style={{
                   textDecoration: 'none',
-                  borderColor: 'rgba(201,168,76,0.4)',
+                  fontSize: '0.85rem',
+                  padding: '0.65rem 1.4rem',
+                  borderColor: 'rgba(201,168,76,0.35)',
                   color: 'var(--gold-accent)',
                 }}
               >
@@ -359,168 +409,217 @@ export default function AboutSection() {
             </div>
           </div>
 
-          {/* Right — Photo */}
-          <div ref={photoRef} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <div className="about-photo-wrap" style={{
-              position: 'relative',
-              width: 'min(380px, 100%)',
-              perspective: '1000px',
-              transformStyle: 'preserve-3d',
-            }}>
-              {/* Offset border for depth */}
-              <div
-                ref={photoBorderRef}
-                style={{
+          {/* ── RIGHT COLUMN — Photo ── */}
+          {!isMobile && (
+            <div style={{ position: 'relative' }}>
+              {/* Floating tags wrapper */}
+              <div ref={tagsRef}>
+                {/* Tag: Role */}
+                <div className="about-float-tag" style={{
                   position: 'absolute',
-                  inset: 0,
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  borderRadius: '20px',
-                  transform: 'translate(12px, 12px)',
-                  opacity: 0.3,
-                  zIndex: 0,
-                  transformStyle: 'preserve-3d',
-                }}
-              />
+                  top: '-18px', left: '-32px',
+                  padding: '0.4rem 0.9rem',
+                  background: '#1a1a1a',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: '8px',
+                  boxShadow: '3px 3px 0px rgba(212,255,61,0.25)',
+                  zIndex: 5,
+                  whiteSpace: 'nowrap',
+                }}>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)' }}>
+                    💻 Full Stack + AI/ML
+                  </span>
+                </div>
 
-              {/* Soft shadow depth */}
-              <div style={{
-                position: 'absolute',
-                inset: '-12px',
-                borderRadius: '24px',
-                background: 'linear-gradient(135deg, rgba(212,255,61,0.12), rgba(201,168,76,0.06), transparent)',
-                filter: 'blur(20px)',
-                zIndex: 0,
-              }} />
+                {/* Tag: Location */}
+                <div className="about-float-tag" style={{
+                  position: 'absolute',
+                  bottom: '80px', left: '-28px',
+                  padding: '0.4rem 0.9rem',
+                  background: '#1a1a1a',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: '8px',
+                  zIndex: 5,
+                  whiteSpace: 'nowrap',
+                }}>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)' }}>
+                    📍 Kopargaon, Maharashtra
+                  </span>
+                </div>
 
-              {/* Photo container */}
+                {/* Tag: Available — lime accent */}
+                <div className="about-float-tag" style={{
+                  position: 'absolute',
+                  top: '24px', right: '-24px',
+                  padding: '0.45rem 1rem',
+                  background: 'rgba(212,255,61,0.08)',
+                  border: '1.5px solid rgba(212,255,61,0.35)',
+                  borderRadius: '100px',
+                  boxShadow: '0 0 16px rgba(212,255,61,0.12)',
+                  zIndex: 5,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  whiteSpace: 'nowrap',
+                }}>
+                  <span style={{
+                    width: '6px', height: '6px', borderRadius: '50%',
+                    background: 'var(--accent-lime)',
+                    boxShadow: '0 0 6px var(--accent-lime)',
+                    animation: 'pulse-dot 2s ease-in-out infinite',
+                  }} />
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--accent-lime)', fontWeight: 600 }}>
+                    Available for work
+                  </span>
+                </div>
+
+                {/* Tag: IIT Bombay — gold */}
+                <div className="about-float-tag" style={{
+                  position: 'absolute',
+                  bottom: '-16px', right: '-16px',
+                  padding: '0.4rem 0.9rem',
+                  background: 'rgba(201,168,76,0.08)',
+                  border: '1px solid rgba(201,168,76,0.25)',
+                  borderRadius: '8px',
+                  zIndex: 5,
+                  whiteSpace: 'nowrap',
+                }}>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.7rem', color: 'var(--gold-accent)' }}>
+                    🥇 NR 52 · IIT Bombay
+                  </span>
+                </div>
+              </div>
+
+              {/* Photo frame */}
               <div
                 ref={photoContainerRef}
-                className="photo-container"
                 style={{
                   position: 'relative',
-                  zIndex: 1,
-                  border: '1px solid var(--line-subtle)',
+                  width: '100%',
+                  aspectRatio: '3/4',
                   borderRadius: '20px',
                   overflow: 'hidden',
-                  aspectRatio: '3/4',
-                  background: 'var(--bg-secondary)',
-                  transformStyle: 'preserve-3d',
+                  border: '1.5px solid rgba(255,255,255,0.1)',
+                  background: '#1a1a1a',
                 }}
-                onMouseEnter={() => {
-                  gsap.to(photoContainerRef.current, { scale: 1.03, z: 20, duration: 0.4, overwrite: 'auto' });
-                }}
-                onMouseLeave={() => {
-                  gsap.to(photoContainerRef.current, { scale: 1, z: 0, duration: 0.4, overwrite: 'auto' });
-                }}
+                onMouseEnter={e => gsap.to(e.currentTarget, { scale: 1.02, duration: 0.4, ease: 'power2.out' })}
+                onMouseLeave={e => gsap.to(e.currentTarget, { scale: 1, duration: 0.4, ease: 'power2.out' })}
               >
-                {/* Curtain 1: Lime Accent */}
-                <div
-                  ref={curtain1Ref}
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'var(--accent-lime)',
-                    zIndex: 2,
-                    pointerEvents: 'none',
-                    borderRadius: '20px',
-                  }}
-                />
-                {/* Curtain 2: Dark Surface */}
-                <div
-                  ref={curtain2Ref}
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'var(--surface-dark)',
-                    zIndex: 3,
-                    pointerEvents: 'none',
-                    borderRadius: '20px',
-                  }}
-                />
+                {/* Lime corner accent — top left */}
+                <div style={{
+                  position: 'absolute', top: 0, left: 0,
+                  width: '48px', height: '48px',
+                  borderTop: '2px solid var(--accent-lime)',
+                  borderLeft: '2px solid var(--accent-lime)',
+                  borderRadius: '20px 0 0 0',
+                  zIndex: 4, pointerEvents: 'none',
+                }} />
+                {/* Lime corner accent — bottom right */}
+                <div style={{
+                  position: 'absolute', bottom: 0, right: 0,
+                  width: '48px', height: '48px',
+                  borderBottom: '2px solid var(--accent-lime)',
+                  borderRight: '2px solid var(--accent-lime)',
+                  borderRadius: '0 0 20px 0',
+                  zIndex: 4, pointerEvents: 'none',
+                }} />
+
+                {/* Curtain 1 — lime */}
+                <div ref={curtain1Ref} style={{
+                  position: 'absolute', inset: 0,
+                  background: 'var(--accent-lime)',
+                  zIndex: 3, borderRadius: '20px',
+                }} />
+                {/* Curtain 2 — dark */}
+                <div ref={curtain2Ref} style={{
+                  position: 'absolute', inset: 0,
+                  background: '#0e0e0e',
+                  zIndex: 2, borderRadius: '20px',
+                }} />
 
                 <img
                   ref={photoImgRef}
                   src={photoSrc}
                   alt="Bhushan Chaturbhuj"
                   style={{
-                    width: '100%',
-                    height: '115%', // slightly taller for parallax scroll shift
-                    objectFit: 'cover',
-                    objectPosition: 'top',
-                    display: 'block',
-                    transformOrigin: 'center center',
-                    willChange: 'transform',
-                    position: 'relative',
-                    zIndex: 1,
+                    width: '100%', height: '115%',
+                    objectFit: 'cover', objectPosition: 'top',
+                    display: 'block', willChange: 'transform',
+                    position: 'relative', zIndex: 1,
                   }}
-                  onError={(e) => { e.target.style.display = 'none'; }}
+                  onError={e => { e.target.style.display = 'none'; }}
                 />
 
-                {/* Available badge */}
+                {/* Bottom gradient overlay */}
                 <div style={{
-                  position: 'absolute',
-                  bottom: '1rem',
-                  right: '1rem',
-                  padding: '0.4rem 0.9rem',
-                  background: 'rgba(17,17,17,0.92)',
-                  backdropFilter: 'blur(8px)',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(212,255,61,0.3)',
-                  zIndex: 1,
-                }}>
-                  <span style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.72rem',
-                    color: 'var(--accent-lime)',
-                    fontWeight: 600,
-                    letterSpacing: '0.05em',
-                  }}>
-                    Available for work ✦
-                  </span>
-                </div>
+                  position: 'absolute', bottom: 0, left: 0, right: 0,
+                  height: '50%',
+                  background: 'linear-gradient(to top, rgba(14,14,14,0.7), transparent)',
+                  zIndex: 2, pointerEvents: 'none',
+                }} />
               </div>
+
+              {/* Offset depth card behind photo */}
+              <div style={{
+                position: 'absolute', inset: 0,
+                borderRadius: '20px',
+                border: '1px solid rgba(212,255,61,0.15)',
+                transform: 'translate(10px, 10px)',
+                zIndex: 0, pointerEvents: 'none',
+              }} />
             </div>
-          </div>
-          </div>
+          )}
         </div>
 
-        {/* Stats row */}
-        <div ref={statsRef} className="about-stats-grid" style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
-          gap: '1rem',
-          marginTop: '1.25rem',
-          position: 'relative',
-          zIndex: 1,
-        }}>
+        {/* ── Divider line ── */}
+        <div
+          ref={lineRef}
+          style={{
+            width: '100%',
+            height: '1px',
+            background: 'linear-gradient(90deg, var(--accent-lime), rgba(255,255,255,0.08), transparent)',
+            margin: isMobile ? '1.5rem 0 1rem' : '2rem 0 1.25rem',
+          }}
+        />
+
+        {/* ── Stats row ── */}
+        <div
+          ref={statsRef}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${BHUSHAN_DATA.stats.length}, 1fr)`,
+            gap: '1rem',
+          }}
+        >
           {BHUSHAN_DATA.stats.map((stat, i) => (
-            <CounterStat key={i} {...stat} />
+            <div key={i} style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              position: 'relative',
+            }}>
+              {/* Divider (all except first) */}
+              {i > 0 && (
+                <div style={{
+                  position: 'absolute',
+                  left: 0, top: '10%', bottom: '10%',
+                  width: '1px',
+                  background: 'rgba(255,255,255,0.08)',
+                }} />
+              )}
+              <Counter {...stat} />
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Responsive */}
       <style>{`
-        @media (max-width: 900px) {
-          #about { padding: 4rem 0 2.5rem !important; }
-          .about-two-col {
-            grid-template-columns: 1fr !important;
-            gap: 1.5rem !important;
-          }
-          .about-stats-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 1rem 0 !important;
-          }
-          .about-stat-divider {
-            display: none !important;
-          }
+        @keyframes pulse-dot {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.3); }
         }
-        @media (max-width: 640px) {
-          #about { padding: 3.5rem 0 2rem !important; }
-          .about-photo-wrap {
-            width: min(220px, 70vw) !important;
-            margin: 0 auto;
-          }
+        @media (max-width: 900px) {
+          #about { height: auto !important; min-height: 100vh; padding: 5rem 0 3rem !important; }
         }
       `}</style>
     </section>

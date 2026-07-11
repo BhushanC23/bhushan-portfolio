@@ -94,54 +94,57 @@ export default function AboutSection() {
         once: true,
       };
 
+      // Main cohesive reveal timeline
+      const mainTl = gsap.timeline({ scrollTrigger: trigger });
+
       // Name chars split-like reveal
       if (nameRef.current) {
-        gsap.fromTo(nameRef.current,
+        mainTl.fromTo(nameRef.current,
           { clipPath: 'inset(0 100% 0 0)', opacity: 0 },
-          { clipPath: 'inset(0 0% 0 0)', opacity: 1, duration: 1.1, ease: 'power4.out', scrollTrigger: trigger }
-        );
-      }
-
-
-
-      // Bio slides up
-      if (bioRef.current) {
-        gsap.fromTo(bioRef.current,
-          { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8, delay: 0.5, ease: 'power3.out', scrollTrigger: trigger }
+          { clipPath: 'inset(0 0% 0 0)', opacity: 1, duration: 1.0, ease: 'power4.out' },
+          0
         );
       }
 
       // Divider line scaleX
       if (lineRef.current) {
-        gsap.fromTo(lineRef.current,
+        mainTl.fromTo(lineRef.current,
           { scaleX: 0, transformOrigin: 'left' },
-          { scaleX: 1, duration: 1.2, delay: 0.2, ease: 'power3.inOut', scrollTrigger: trigger }
+          { scaleX: 1, duration: 1.0, ease: 'power3.inOut' },
+          0.1
+        );
+      }
+
+      // Bio slides up
+      if (bioRef.current) {
+        mainTl.fromTo(bioRef.current,
+          { y: 25, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' },
+          0.3
         );
       }
 
       // Stats fade up
       if (statsRef.current) {
-        gsap.fromTo(statsRef.current,
+        mainTl.fromTo(statsRef.current,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.7, delay: 0.7, ease: 'power3.out', scrollTrigger: trigger }
+          { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' },
+          0.5
         );
       }
-
-
 
       // Photo double-curtain reveal
       if (curtain1Ref.current && curtain2Ref.current) {
         gsap.set(curtain2Ref.current, { xPercent: 0 });
         gsap.set(curtain1Ref.current, { xPercent: 0 });
-        const tl = gsap.timeline({
-          scrollTrigger: { trigger: photoContainerRef.current, start: 'top 80%', once: true }
-        });
-        tl.to(curtain2Ref.current, { xPercent: 101, duration: 0.9, ease: 'power3.inOut' })
-          .to(curtain1Ref.current, { xPercent: 101, duration: 0.9, ease: 'power3.inOut' }, '-=0.7');
         if (photoImgRef.current) {
           gsap.set(photoImgRef.current, { scale: 1.12 });
-          tl.to(photoImgRef.current, { scale: 1, duration: 1.2, ease: 'power2.out' }, '-=0.7');
+        }
+        
+        mainTl.to(curtain2Ref.current, { xPercent: 101, duration: 0.9, ease: 'power3.inOut' }, 0.4);
+        mainTl.to(curtain1Ref.current, { xPercent: 101, duration: 0.9, ease: 'power3.inOut' }, 0.6);
+        if (photoImgRef.current) {
+          mainTl.to(photoImgRef.current, { scale: 1, duration: 1.2, ease: 'power2.out' }, 0.6);
         }
       }
     });

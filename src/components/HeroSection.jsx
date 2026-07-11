@@ -280,34 +280,37 @@ export default function HeroSection({ images = [] }) {
         /* ── TEXT PHASE BASE CONTAINER (LIGHT FOR WHITE BG) ── */
         .tp-box-light {
           position: absolute;
-          right: 3%;
-          left: auto;
-          max-width: 40%;
-          padding: 2rem 0;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 3rem 6%;
           background: transparent;
           will-change: opacity, transform;
-          text-align: right;
+          text-align: center;
         }
         .tp-headline-light {
           font-family: var(--font-display, 'Inter', sans-serif);
-          font-weight: 800;
-          line-height: 0.92;
-          letter-spacing: -0.04em;
+          font-weight: 900;
+          line-height: 0.88;
+          letter-spacing: -0.045em;
           color: #111111;
           margin: 0;
         }
         .tp-italic-light {
           font-style: italic;
           font-weight: 300;
-          color: #7a8a1a;
+          color: #8aaa00;
           letter-spacing: -0.02em;
+          font-family: var(--font-serif, Georgia, serif);
         }
         .tp-sub-light {
           font-family: var(--font-body, sans-serif);
           font-size: 11px;
           letter-spacing: 0.14em;
           text-transform: uppercase;
-          color: rgba(0, 0, 0, 0.6);
+          color: rgba(0, 0, 0, 0.45);
           margin-top: 0.9rem;
         }
         .tp-tag-light {
@@ -320,37 +323,37 @@ export default function HeroSection({ images = [] }) {
           letter-spacing: 0.22em;
           text-transform: uppercase;
           color: #111111;
-          border: 1px solid rgba(0, 0, 0, 0.2);
-          background: rgba(0, 0, 0, 0.05);
-          padding: 0.22rem 0.75rem;
+          border: 1px solid rgba(0, 0, 0, 0.18);
+          background: rgba(0, 0, 0, 0.04);
+          padding: 0.22rem 0.9rem;
           border-radius: 100px;
-          margin-bottom: 1rem;
-          margin-left: auto;
+          margin-bottom: 1.5rem;
         }
         .tp-divider-light {
-          width: 36px;
+          width: 60px;
           height: 2px;
-          background: #111111;
-          margin: 1.1rem 0 0.9rem;
-          opacity: 0.7;
-          margin-left: auto;
+          background: linear-gradient(90deg, transparent, #111111, transparent);
+          margin: 1.25rem auto 0.5rem;
+          opacity: 0.5;
         }
         .tp-cta-primary-light {
           background: #111111;
           color: #d4e84a;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
         }
         .tp-cta-primary-light:hover {
           background: #000000;
-          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
+          transform: translateY(-2px);
         }
         .tp-cta-ghost-light {
-          border: 1px solid rgba(0, 0, 0, 0.3);
+          border: 1.5px solid rgba(0, 0, 0, 0.25);
           color: #111111;
-          background: rgba(0, 0, 0, 0.02);
+          background: transparent;
         }
         .tp-cta-ghost-light:hover {
-          background: rgba(0, 0, 0, 0.06);
+          background: rgba(0, 0, 0, 0.05);
+          transform: translateY(-2px);
         }
 
       `}</style>
@@ -448,19 +451,28 @@ export default function HeroSection({ images = [] }) {
 
         {/* ══ TEXT PHASE 4 — CTA (Outro on White BG) ══ */}
         <div id="tp-4" className="tp-box-light" style={{
-          top: '8%', opacity: 0, pointerEvents: 'none', zIndex: 10,
+          top: 0, opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
+          {/* Available tag */}
           <div className="tp-tag-light">
             <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', display: 'inline-block', boxShadow: '0 0 8px rgba(34,197,94,0.8)' }} />
             Available for Work
           </div>
-          <div className="tp-headline-light" style={{ fontSize: 'clamp(1.4rem, 3.5vw, 3.2rem)' }}>
-            Let's Create<br />
-            <span className="tp-italic-light">Something</span><br />
+
+          {/* Giant editorial heading */}
+          <div className="tp-headline-light" style={{ fontSize: 'clamp(3rem, 8vw, 8rem)' }}>
+            Let’s Create
+            <br />
+            <span className="tp-italic-light">Something</span>
+            <br />
             Amazing.
           </div>
+
+          {/* Thin divider */}
           <div className="tp-divider-light" />
-          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.2rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+
+          {/* Buttons centered */}
+          <div style={{ display: 'flex', gap: '0.9rem', marginTop: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
             <a href="mailto:bhushan.chaturbhuj_25pca@sanjivani.edu.in" className="tp-cta-btn tp-cta-primary-light">Hire Me →</a>
             <a href="/Bhushan_Chaturbhuj_Resume.pdf" target="_blank" className="tp-cta-btn tp-cta-ghost-light">Resume ↗</a>
           </div>

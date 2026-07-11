@@ -18,6 +18,7 @@ import AdminGuard from './admin/AdminGuard';
 import AdminDashboard from './admin/AdminDashboard';
 import { useScrollProgress } from './hooks/useScrollVideo';
 import GridOverlay from './components/GridOverlay';
+import MusicPlayer from './components/MusicPlayer';
 
 /* ─────────── Magnetic Morphing Cursor ─────────── */
 function CustomCursor() {
@@ -299,6 +300,7 @@ function PortfolioLayout() {
       {/* Scroll progress bar — only after loader */}
       {loaderDone && <ScrollProgressBar />}
       {loaderDone && <Navbar />}
+      {loaderDone && <MusicPlayer />}
 
       {/* Main sections */}
       <main>

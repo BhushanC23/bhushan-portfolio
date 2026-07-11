@@ -359,89 +359,92 @@ export default function AboutSection() {
           </div>
 
           {/* ── RIGHT COLUMN — Photo ── */}
-          {!isMobile && (
-            <div style={{ position: 'relative' }}>
+          <div style={{
+            position: 'relative',
+            maxWidth: isMobile ? '240px' : 'none',
+            width: '100%',
+            margin: isMobile ? '0.75rem auto 0' : '0',
+          }}>
 
 
-              {/* Photo frame */}
-              <div
-                ref={photoContainerRef}
-                style={{
-                  position: 'relative',
-                  width: '100%',
-                  aspectRatio: '3/4',
-                  borderRadius: '20px',
-                  overflow: 'hidden',
-                  border: '1.5px solid rgba(255,255,255,0.1)',
-                  background: '#1a1a1a',
-                }}
-                onMouseEnter={e => gsap.to(e.currentTarget, { scale: 1.02, duration: 0.4, ease: 'power2.out' })}
-                onMouseLeave={e => gsap.to(e.currentTarget, { scale: 1, duration: 0.4, ease: 'power2.out' })}
-              >
-                {/* Lime corner accent — top left */}
-                <div style={{
-                  position: 'absolute', top: 0, left: 0,
-                  width: '48px', height: '48px',
-                  borderTop: '2px solid var(--accent-lime)',
-                  borderLeft: '2px solid var(--accent-lime)',
-                  borderRadius: '20px 0 0 0',
-                  zIndex: 4, pointerEvents: 'none',
-                }} />
-                {/* Lime corner accent — bottom right */}
-                <div style={{
-                  position: 'absolute', bottom: 0, right: 0,
-                  width: '48px', height: '48px',
-                  borderBottom: '2px solid var(--accent-lime)',
-                  borderRight: '2px solid var(--accent-lime)',
-                  borderRadius: '0 0 20px 0',
-                  zIndex: 4, pointerEvents: 'none',
-                }} />
-
-                {/* Curtain 1 — lime */}
-                <div ref={curtain1Ref} style={{
-                  position: 'absolute', inset: 0,
-                  background: 'var(--accent-lime)',
-                  zIndex: 3, borderRadius: '20px',
-                }} />
-                {/* Curtain 2 — dark */}
-                <div ref={curtain2Ref} style={{
-                  position: 'absolute', inset: 0,
-                  background: '#0e0e0e',
-                  zIndex: 2, borderRadius: '20px',
-                }} />
-
-                <img
-                  ref={photoImgRef}
-                  src={photoSrc}
-                  alt="Bhushan Chaturbhuj"
-                  style={{
-                    width: '100%', height: '115%',
-                    objectFit: 'cover', objectPosition: 'top',
-                    display: 'block', willChange: 'transform',
-                    position: 'relative', zIndex: 1,
-                  }}
-                  onError={e => { e.target.style.display = 'none'; }}
-                />
-
-                {/* Bottom gradient overlay */}
-                <div style={{
-                  position: 'absolute', bottom: 0, left: 0, right: 0,
-                  height: '50%',
-                  background: 'linear-gradient(to top, rgba(14,14,14,0.7), transparent)',
-                  zIndex: 2, pointerEvents: 'none',
-                }} />
-              </div>
-
-              {/* Offset depth card behind photo */}
-              <div style={{
-                position: 'absolute', inset: 0,
+            {/* Photo frame */}
+            <div
+              ref={photoContainerRef}
+              style={{
+                position: 'relative',
+                width: '100%',
+                aspectRatio: '3/4',
                 borderRadius: '20px',
-                border: '1px solid rgba(212,255,61,0.15)',
-                transform: 'translate(10px, 10px)',
-                zIndex: 0, pointerEvents: 'none',
+                overflow: 'hidden',
+                border: '1.5px solid rgba(255,255,255,0.1)',
+                background: '#1a1a1a',
+              }}
+              onMouseEnter={e => gsap.to(e.currentTarget, { scale: 1.02, duration: 0.4, ease: 'power2.out' })}
+              onMouseLeave={e => gsap.to(e.currentTarget, { scale: 1, duration: 0.4, ease: 'power2.out' })}
+            >
+              {/* Lime corner accent — top left */}
+              <div style={{
+                position: 'absolute', top: 0, left: 0,
+                width: '48px', height: '48px',
+                borderTop: '2px solid var(--accent-lime)',
+                borderLeft: '2px solid var(--accent-lime)',
+                borderRadius: '20px 0 0 0',
+                zIndex: 4, pointerEvents: 'none',
+              }} />
+              {/* Lime corner accent — bottom right */}
+              <div style={{
+                position: 'absolute', bottom: 0, right: 0,
+                width: '48px', height: '48px',
+                borderBottom: '2px solid var(--accent-lime)',
+                borderRight: '2px solid var(--accent-lime)',
+                borderRadius: '0 0 20px 0',
+                zIndex: 4, pointerEvents: 'none',
+              }} />
+
+              {/* Curtain 1 — lime */}
+              <div ref={curtain1Ref} style={{
+                position: 'absolute', inset: 0,
+                background: 'var(--accent-lime)',
+                zIndex: 3, borderRadius: '20px',
+              }} />
+              {/* Curtain 2 — dark */}
+              <div ref={curtain2Ref} style={{
+                position: 'absolute', inset: 0,
+                background: '#0e0e0e',
+                zIndex: 2, borderRadius: '20px',
+              }} />
+
+              <img
+                ref={photoImgRef}
+                src={photoSrc}
+                alt="Bhushan Chaturbhuj"
+                style={{
+                  width: '100%', height: '115%',
+                  objectFit: 'cover', objectPosition: 'top',
+                  display: 'block', willChange: 'transform',
+                  position: 'relative', zIndex: 1,
+                }}
+                onError={e => { e.target.style.display = 'none'; }}
+              />
+
+              {/* Bottom gradient overlay */}
+              <div style={{
+                position: 'absolute', bottom: 0, left: 0, right: 0,
+                height: '50%',
+                background: 'linear-gradient(to top, rgba(14,14,14,0.7), transparent)',
+                zIndex: 2, pointerEvents: 'none',
               }} />
             </div>
-          )}
+
+            {/* Offset depth card behind photo */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              borderRadius: '20px',
+              border: '1px solid rgba(212,255,61,0.15)',
+              transform: 'translate(10px, 10px)',
+              zIndex: 0, pointerEvents: 'none',
+            }} />
+          </div>
         </div>
 
         {/* ── Divider line ── */}

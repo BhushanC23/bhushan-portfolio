@@ -94,12 +94,12 @@ export function useScrollVideo(onProgressUpdate, images) {
     const isMobile = width < 768;
 
     if (isMobile) {
-      // 68% height scaling for mobile portrait viewport: keeps subject proportional and centered,
-      // avoiding the extreme "close-up face zoom" while remaining immersive via background matching.
+      // 68% height scaling for mobile portrait viewport: keeps subject proportional,
+      // centered horizontally, and shifted up vertically by 10% to place the face exactly in the center of the mobile screen.
       drawHeight = height * 0.68;
       drawWidth  = drawHeight * imgRatio;
       offsetX    = (width - drawWidth) / 2;
-      offsetY    = (height - drawHeight) / 2;
+      offsetY    = (height - drawHeight) / 2 - (height * 0.1);
     } else {
       if (canvasRatio > imgRatio) {
         drawWidth  = width;

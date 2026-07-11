@@ -298,13 +298,13 @@ export default function HeroSection({ images = [] }) {
           color: #111111;
           margin: 0;
           /* Mask out center area where the face is to simulate depth (text behind face) */
-          -webkit-mask-image: radial-gradient(ellipse 22vw 38vh at 50% 50%, transparent 0%, transparent 40%, black 85%);
-          mask-image: radial-gradient(ellipse 22vw 38vh at 50% 50%, transparent 0%, transparent 40%, black 85%);
+          -webkit-mask-image: radial-gradient(ellipse 28vw 48vh at 50% 48%, transparent 0%, transparent 75%, black 100%);
+          mask-image: radial-gradient(ellipse 28vw 48vh at 50% 48%, transparent 0%, transparent 75%, black 100%);
         }
         @media (max-width: 768px) {
           .tp-headline-light {
-            -webkit-mask-image: radial-gradient(ellipse 42vw 32vh at 50% 50%, transparent 0%, transparent 40%, black 85%);
-            mask-image: radial-gradient(ellipse 42vw 32vh at 50% 50%, transparent 0%, transparent 40%, black 85%);
+            -webkit-mask-image: radial-gradient(ellipse 48vw 34vh at 50% 50%, transparent 0%, transparent 70%, black 100%);
+            mask-image: radial-gradient(ellipse 48vw 34vh at 50% 50%, transparent 0%, transparent 70%, black 100%);
           }
         }
         .tp-italic-light {
@@ -469,7 +469,7 @@ export default function HeroSection({ images = [] }) {
           </div>
 
           {/* Giant editorial heading */}
-          <div className="tp-headline-light" style={{ fontSize: 'clamp(3rem, 8vw, 8rem)' }}>
+          <div className="tp-headline-light" style={{ fontSize: 'clamp(4rem, 11vw, 11rem)' }}>
             Let’s Create
             <br />
             <span className="tp-italic-light">Something</span>

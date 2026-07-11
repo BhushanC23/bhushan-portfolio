@@ -40,7 +40,7 @@ export default function MusicPlayer() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Collapse the capsule when clicking outside it
+  // Collapse the capsule when clicking outside it (safe timeout to avoid immediate event bubbling close)
   useEffect(() => {
     if (!isExpanded) return;
     const handleOutsideClick = (e) => {
@@ -48,8 +48,15 @@ export default function MusicPlayer() {
         setIsExpanded(false);
       }
     };
-    document.addEventListener('click', handleOutsideClick);
-    return () => document.removeEventListener('click', handleOutsideClick);
+    
+    const timer = setTimeout(() => {
+      document.addEventListener('click', handleOutsideClick);
+    }, 50);
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('click', handleOutsideClick);
+    };
   }, [isExpanded]);
 
   // Core Audio Playback Lifecycle
@@ -70,29 +77,8 @@ export default function MusicPlayer() {
 
     if (isFirstMount.current) {
       isFirstMount.current = false;
-      
-      const playAudio = () => {
-        audio.play()
-          .then(() => setIsPlaying(true))
-          .catch(() => {
-            // Autoplay blocked. Listen to gesture
-            const handleFirstGesture = () => {
-              audio.play()
-                .then(() => setIsPlaying(true))
-                .catch(err => console.log('Autoplay play retry failed:', err));
-              window.removeEventListener('click', handleFirstGesture);
-              window.removeEventListener('touchstart', handleFirstGesture);
-            };
-            window.addEventListener('click', handleFirstGesture);
-            window.addEventListener('touchstart', handleFirstGesture);
-          });
-      };
-
-      const timer = setTimeout(playAudio, 800);
-      return () => {
-        clearTimeout(timer);
-        audio.removeEventListener('ended', handleAudioEnded);
-      };
+      // AUTOPLAY OFF: Just load the track source silently
+      audio.load();
     } else {
       // User manual transition: Play next/prev song immediately
       audio.play()
@@ -133,11 +119,18 @@ export default function MusicPlayer() {
     setCurrentSongIndex(prev => (prev - 1 + PLAYLIST.length) % PLAYLIST.length);
   };
 
+  const handleExpand = (e) => {
+    e.stopPropagation();
+    if (!isExpanded) {
+      setIsExpanded(true);
+    }
+  };
+
   const currentSong = PLAYLIST[currentSongIndex];
 
   return (
     <div
-      onClick={() => !isExpanded && setIsExpanded(true)}
+      onClick={handleExpand}
       style={{
         position: 'fixed',
         bottom: isMobile ? '1.5rem' : '2rem',

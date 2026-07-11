@@ -82,13 +82,13 @@ function CategoryCard({ cat, isActive, onClick, skillCount }) {
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      className="skill-cat-card"
       style={{
-        all: 'unset',
         cursor: 'pointer',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        padding: '1.5rem',
+        padding: '1.25rem',
         borderRadius: '20px',
         border: `2px solid ${isActive ? cat.accent : 'rgba(255,255,255,0.1)'}`,
         background: isActive ? cat.bg : 'rgba(255,255,255,0.03)',
@@ -97,6 +97,12 @@ function CategoryCard({ cat, isActive, onClick, skillCount }) {
         position: 'relative',
         overflow: 'hidden',
         minHeight: '140px',
+        width: '100%',
+        height: '100%',
+        boxSizing: 'border-box',
+        textAlign: 'left',
+        outline: 'none',
+        margin: 0,
         transform: isActive ? 'translateY(-4px)' : hovered ? 'translateY(-2px)' : 'none',
       }}
     >
@@ -471,14 +477,13 @@ export default function SkillsSection() {
           }}
         >
           {CATEGORIES.map(cat => (
-            <div key={cat.key} className="skill-cat-card">
-              <CategoryCard
-                cat={cat}
-                isActive={activeKey === cat.key}
-                onClick={() => setActiveKey(cat.key)}
-                skillCount={(skillsData[cat.key] || []).length}
-              />
-            </div>
+            <CategoryCard
+              key={cat.key}
+              cat={cat}
+              isActive={activeKey === cat.key}
+              onClick={() => setActiveKey(cat.key)}
+              skillCount={(skillsData[cat.key] || []).length}
+            />
           ))}
         </div>
 

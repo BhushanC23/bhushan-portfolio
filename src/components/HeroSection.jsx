@@ -297,6 +297,15 @@ export default function HeroSection({ images = [] }) {
           letter-spacing: -0.045em;
           color: #111111;
           margin: 0;
+          /* Mask out center area where the face is to simulate depth (text behind face) */
+          -webkit-mask-image: radial-gradient(ellipse 22vw 38vh at 50% 50%, transparent 0%, transparent 40%, black 85%);
+          mask-image: radial-gradient(ellipse 22vw 38vh at 50% 50%, transparent 0%, transparent 40%, black 85%);
+        }
+        @media (max-width: 768px) {
+          .tp-headline-light {
+            -webkit-mask-image: radial-gradient(ellipse 42vw 32vh at 50% 50%, transparent 0%, transparent 40%, black 85%);
+            mask-image: radial-gradient(ellipse 42vw 32vh at 50% 50%, transparent 0%, transparent 40%, black 85%);
+          }
         }
         .tp-italic-light {
           font-style: italic;

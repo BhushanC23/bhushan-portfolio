@@ -320,9 +320,9 @@ export default function HeroSection({ images = [] }) {
           color: #111111;
           margin: 0;
           padding-bottom: 0.15em; /* Added padding to make italic descenders like j fully visible */
-          /* Ultra-precision mask: horizontal radius 18vw covers hair volume on right, 84% transparent threshold covers face fully, 92% solid ensures zero halo */
-          -webkit-mask-image: radial-gradient(ellipse 18vw 24vh at 50% 45%, transparent 0%, transparent 84%, rgba(0,0,0,0.1) 87%, black 92%, black 100%);
-          mask-image: radial-gradient(ellipse 18vw 24vh at 50% 45%, transparent 0%, transparent 84%, rgba(0,0,0,0.1) 87%, black 92%, black 100%);
+          /* Linear column mask: crops text with clean vertical lines to eliminate circular spotlight spots/halos */
+          -webkit-mask-image: linear-gradient(90deg, black 0%, black 36%, transparent 39%, transparent 61%, black 64%, black 100%);
+          mask-image: linear-gradient(90deg, black 0%, black 36%, transparent 39%, transparent 61%, black 64%, black 100%);
         }
         .tp-italic-light {
           font-style: italic;

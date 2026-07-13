@@ -302,15 +302,18 @@ export default function HeroSection({ images = [] }) {
         /* ── TEXT PHASE BASE CONTAINER (LIGHT FOR WHITE BG) ── */
         .tp-box-light {
           position: absolute;
-          left: 0;
-          right: 0;
+          inset: 0;
           display: flex;
           flex-direction: column;
           align-items: center;
-          padding: 0 6%;
+          justify-content: flex-start;
+          padding: 8vh 6% 0;
           background: transparent;
           will-change: opacity, transform;
           text-align: center;
+          /* Mask applied to full-screen container to align with viewport face coordinates */
+          -webkit-mask-image: radial-gradient(ellipse 24vw 36vh at 50% 52%, transparent 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.8) 75%, black 100%);
+          mask-image: radial-gradient(ellipse 24vw 36vh at 50% 52%, transparent 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.8) 75%, black 100%);
         }
         .tp-headline-light {
           font-family: var(--font-display, 'Inter', sans-serif);
@@ -462,10 +465,10 @@ export default function HeroSection({ images = [] }) {
 
         {/* ══ TEXT PHASE 4 — Outro on White BG ══ */}
         <div id="tp-4" className="tp-box-light" style={{
-          top: '10%', bottom: 'auto', opacity: 0, pointerEvents: 'none', zIndex: 10,
+          opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
           {/* Giant editorial heading */}
-          <div className="tp-headline-light" style={{ fontSize: 'clamp(3rem, 7.2vw, 7.5rem)' }}>
+          <div className="tp-headline-light" style={{ fontSize: 'clamp(4rem, 10vw, 10rem)' }}>
             BHUSHAN
             <br />
             <span className="tp-italic-light">Chaturbhuj.</span>

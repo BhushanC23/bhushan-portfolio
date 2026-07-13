@@ -302,12 +302,12 @@ export default function HeroSection({ images = [] }) {
         /* ── TEXT PHASE BASE CONTAINER (LIGHT FOR WHITE BG) ── */
         .tp-box-light {
           position: absolute;
-          inset: 0;
+          left: 0;
+          right: 0;
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: center;
-          padding: 3rem 6%;
+          padding: 0 6%;
           background: transparent;
           will-change: opacity, transform;
           text-align: center;
@@ -319,20 +319,11 @@ export default function HeroSection({ images = [] }) {
           letter-spacing: -0.045em;
           color: #111111;
           margin: 0;
-          /* Soft, highly-feathered mask to prevent a visible "white circle" outline, shifted down to cover the neck/collar */
-          -webkit-mask-image: radial-gradient(ellipse 35vw 58vh at 50% 52%, transparent 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.6) 80%, black 100%);
-          mask-image: radial-gradient(ellipse 35vw 58vh at 50% 52%, transparent 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.6) 80%, black 100%);
-        }
-        @media (max-width: 768px) {
-          .tp-headline-light {
-            -webkit-mask-image: radial-gradient(ellipse 52vw 42vh at 50% 55%, transparent 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.6) 80%, black 100%);
-            mask-image: radial-gradient(ellipse 52vw 42vh at 50% 55%, transparent 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.6) 80%, black 100%);
-          }
         }
         .tp-italic-light {
           font-style: italic;
           font-weight: 300;
-          color: #8aaa00;
+          color: #4a6300; /* Rich olive green for high contrast on white background */
           letter-spacing: -0.02em;
           font-family: var(--font-serif, Georgia, serif);
         }
@@ -469,12 +460,12 @@ export default function HeroSection({ images = [] }) {
           </div>
         </div>
 
-        {/* ══ TEXT PHASE 4 — CTA (Outro on White BG) ══ */}
+        {/* ══ TEXT PHASE 4 — Outro on White BG ══ */}
         <div id="tp-4" className="tp-box-light" style={{
-          top: 0, opacity: 0, pointerEvents: 'none', zIndex: 10,
+          top: '10%', bottom: 'auto', opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
           {/* Giant editorial heading */}
-          <div className="tp-headline-light" style={{ fontSize: 'clamp(4rem, 11vw, 11rem)' }}>
+          <div className="tp-headline-light" style={{ fontSize: 'clamp(3rem, 7.2vw, 7.5rem)' }}>
             BHUSHAN
             <br />
             <span className="tp-italic-light">Chaturbhuj.</span>

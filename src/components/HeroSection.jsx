@@ -442,8 +442,9 @@ export default function HeroSection({ images = [] }) {
           top: '8%', opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
           <div className="tp-headline" style={{ fontSize: 'clamp(1.6rem, 4vw, 3.8rem)' }}>
-            BHUSHAN<br />
-            <span className="tp-italic" style={{ fontSize: '0.78em' }}>Chaturbhuj.</span>
+            Let's Create<br />
+            <span className="tp-italic">Something</span><br />
+            Amazing.
           </div>
         </div>
 
@@ -474,16 +475,9 @@ export default function HeroSection({ images = [] }) {
         }}>
           {/* Giant editorial heading */}
           <div className="tp-headline-light" style={{ fontSize: 'clamp(4rem, 11vw, 11rem)' }}>
-            Let’s Create
+            BHUSHAN
             <br />
-            <span className="tp-italic-light">Something</span>
-            <br />
-            Amazing.
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.9rem', marginTop: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <a href="#contact" className="tp-cta-btn tp-cta-primary-light">Connect →</a>
-            <a href="/Bhushan_Chaturbhuj_Resume.pdf" target="_blank" className="tp-cta-btn tp-cta-ghost-light">Resume ↗</a>
+            <span className="tp-italic-light">Chaturbhuj.</span>
           </div>
         </div>
 

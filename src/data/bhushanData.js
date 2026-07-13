@@ -15,10 +15,10 @@ export const BHUSHAN_DATA = {
   heroText: [
     {
       phase: 1,
-      title: "Bhushan",
-      title2: "Chaturbhuj",
-      subtitle: "Full Stack Developer & AI Technologist",
-      tag: "MCA Candidate · Full Stack Engineer",
+      title: "Let's Create",
+      title2: "Something Amazing.",
+      subtitle: "Open to exciting engineering roles & research collaborations",
+      tag: "Available for work ✦",
     },
     {
       phase: 2,
@@ -36,10 +36,10 @@ export const BHUSHAN_DATA = {
     },
     {
       phase: 4,
-      title: "Let's Build the Future of the Web.",
-      title2: null,
-      subtitle: "Open to exciting engineering roles & research collaborations",
-      tag: "Available for work ✦",
+      title: "Bhushan",
+      title2: "Chaturbhuj",
+      subtitle: "Full Stack Developer & AI Technologist",
+      tag: "MCA Candidate · Full Stack Engineer",
     },
   ],
 

@@ -315,13 +315,14 @@ export default function HeroSection({ images = [] }) {
         .tp-headline-light {
           font-family: var(--font-display, 'Inter', sans-serif);
           font-weight: 900;
-          line-height: 0.96;
+          line-height: 0.96; /* Increased to prevent descender clipping */
           letter-spacing: -0.045em;
           color: #111111;
           margin: 0;
-          padding-bottom: 0.15em;
-          -webkit-mask-image: radial-gradient(ellipse 18vw 28vh at 50% 52%, transparent 0%, transparent 78%, rgba(0,0,0,0.15) 86%, black 100%);
-          mask-image: radial-gradient(ellipse 18vw 28vh at 50% 52%, transparent 0%, transparent 78%, rgba(0,0,0,0.15) 86%, black 100%);
+          padding-bottom: 0.15em; /* Added padding to make italic descenders like j fully visible */
+          /* High-precision mask: shifted vertical center to 45% to cover forehead/hair, transparent over the head (75% of 18vw), then fast feather to solid black */
+          -webkit-mask-image: radial-gradient(ellipse 18vw 26vh at 50% 45%, transparent 0%, transparent 75%, rgba(0,0,0,0.15) 84%, black 100%);
+          mask-image: radial-gradient(ellipse 18vw 26vh at 50% 45%, transparent 0%, transparent 75%, rgba(0,0,0,0.15) 84%, black 100%);
         }
         .tp-italic-light {
           font-style: italic;

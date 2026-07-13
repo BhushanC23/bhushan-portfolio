@@ -315,13 +315,13 @@ export default function HeroSection({ images = [] }) {
         .tp-headline-light {
           font-family: var(--font-display, 'Inter', sans-serif);
           font-weight: 900;
-          line-height: 0.88;
+          line-height: 0.96;
           letter-spacing: -0.045em;
           color: #111111;
           margin: 0;
-          /* High-precision sharp mask: 100% transparent over the face, fast feather transition to solid at the boundaries */
-          -webkit-mask-image: radial-gradient(ellipse 13vw 22vh at 50% 52%, transparent 0%, transparent 70%, rgba(0,0,0,0.15) 80%, black 100%);
-          mask-image: radial-gradient(ellipse 13vw 22vh at 50% 52%, transparent 0%, transparent 70%, rgba(0,0,0,0.15) 80%, black 100%);
+          padding-bottom: 0.15em;
+          -webkit-mask-image: radial-gradient(ellipse 18vw 28vh at 50% 52%, transparent 0%, transparent 78%, rgba(0,0,0,0.15) 86%, black 100%);
+          mask-image: radial-gradient(ellipse 18vw 28vh at 50% 52%, transparent 0%, transparent 78%, rgba(0,0,0,0.15) 86%, black 100%);
         }
         .tp-italic-light {
           font-style: italic;

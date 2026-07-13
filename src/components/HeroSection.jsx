@@ -319,9 +319,9 @@ export default function HeroSection({ images = [] }) {
           letter-spacing: -0.045em;
           color: #111111;
           margin: 0;
-          /* Applied directly to text to ensure 100% robust rendering across all browsers */
-          -webkit-mask-image: radial-gradient(ellipse 22vw 36vh at 50% 52%, transparent 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.8) 80%, black 100%);
-          mask-image: radial-gradient(ellipse 22vw 36vh at 50% 52%, transparent 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.8) 80%, black 100%);
+          /* High-precision sharp mask: 100% transparent over the face, fast feather transition to solid at the boundaries */
+          -webkit-mask-image: radial-gradient(ellipse 13vw 22vh at 50% 52%, transparent 0%, transparent 70%, rgba(0,0,0,0.15) 80%, black 100%);
+          mask-image: radial-gradient(ellipse 13vw 22vh at 50% 52%, transparent 0%, transparent 70%, rgba(0,0,0,0.15) 80%, black 100%);
         }
         .tp-italic-light {
           font-style: italic;
@@ -468,7 +468,7 @@ export default function HeroSection({ images = [] }) {
           opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
           {/* Giant editorial heading occupying the whole screen */}
-          <div className="tp-headline-light" style={{ fontSize: 'clamp(3.5rem, 8.8vw, 9.2rem)' }}>
+          <div className="tp-headline-light" style={{ fontSize: 'clamp(4rem, 11vw, 11.2rem)' }}>
             BHUSHAN
             <br />
             <span className="tp-italic-light">Chaturbhuj.</span>

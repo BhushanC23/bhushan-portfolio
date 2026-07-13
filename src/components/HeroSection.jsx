@@ -306,14 +306,14 @@ export default function HeroSection({ images = [] }) {
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: flex-start;
-          padding: 8vh 6% 0;
+          justify-content: center;
+          padding: 3rem 6%;
           background: transparent;
           will-change: opacity, transform;
           text-align: center;
-          /* Mask applied to full-screen container to align with viewport face coordinates */
-          -webkit-mask-image: radial-gradient(ellipse 24vw 36vh at 50% 52%, transparent 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.8) 75%, black 100%);
-          mask-image: radial-gradient(ellipse 24vw 36vh at 50% 52%, transparent 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.8) 75%, black 100%);
+          /* Tight mask centered at head position to keep name highly visible on left/right sides */
+          -webkit-mask-image: radial-gradient(ellipse 18vw 30vh at 50% 50%, transparent 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.85) 80%, black 100%);
+          mask-image: radial-gradient(ellipse 18vw 30vh at 50% 50%, transparent 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.85) 80%, black 100%);
         }
         .tp-headline-light {
           font-family: var(--font-display, 'Inter', sans-serif);
@@ -326,7 +326,7 @@ export default function HeroSection({ images = [] }) {
         .tp-italic-light {
           font-style: italic;
           font-weight: 300;
-          color: #4a6300; /* Rich olive green for high contrast on white background */
+          color: #384c00; /* Darker green with high contrast for maximum visibility on white background */
           letter-spacing: -0.02em;
           font-family: var(--font-serif, Georgia, serif);
         }
@@ -467,8 +467,8 @@ export default function HeroSection({ images = [] }) {
         <div id="tp-4" className="tp-box-light" style={{
           opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
-          {/* Giant editorial heading */}
-          <div className="tp-headline-light" style={{ fontSize: 'clamp(4rem, 10vw, 10rem)' }}>
+          {/* Giant editorial heading occupying the whole screen */}
+          <div className="tp-headline-light" style={{ fontSize: 'clamp(4.5rem, 12.5vw, 13rem)' }}>
             BHUSHAN
             <br />
             <span className="tp-italic-light">Chaturbhuj.</span>

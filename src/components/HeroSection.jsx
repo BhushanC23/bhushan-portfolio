@@ -311,9 +311,6 @@ export default function HeroSection({ images = [] }) {
           background: transparent;
           will-change: opacity, transform;
           text-align: center;
-          /* Tight mask centered at head position to keep name highly visible on left/right sides */
-          -webkit-mask-image: radial-gradient(ellipse 18vw 30vh at 50% 50%, transparent 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.85) 80%, black 100%);
-          mask-image: radial-gradient(ellipse 18vw 30vh at 50% 50%, transparent 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.85) 80%, black 100%);
         }
         .tp-headline-light {
           font-family: var(--font-display, 'Inter', sans-serif);
@@ -322,6 +319,9 @@ export default function HeroSection({ images = [] }) {
           letter-spacing: -0.045em;
           color: #111111;
           margin: 0;
+          /* Applied directly to text to ensure 100% robust rendering across all browsers */
+          -webkit-mask-image: radial-gradient(ellipse 22vw 36vh at 50% 52%, transparent 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.8) 80%, black 100%);
+          mask-image: radial-gradient(ellipse 22vw 36vh at 50% 52%, transparent 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.8) 80%, black 100%);
         }
         .tp-italic-light {
           font-style: italic;
@@ -468,7 +468,7 @@ export default function HeroSection({ images = [] }) {
           opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
           {/* Giant editorial heading occupying the whole screen */}
-          <div className="tp-headline-light" style={{ fontSize: 'clamp(4.5rem, 12.5vw, 13rem)' }}>
+          <div className="tp-headline-light" style={{ fontSize: 'clamp(3.5rem, 8.8vw, 9.2rem)' }}>
             BHUSHAN
             <br />
             <span className="tp-italic-light">Chaturbhuj.</span>

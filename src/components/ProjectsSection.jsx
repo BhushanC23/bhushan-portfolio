@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
-import { GitBranch } from 'lucide-react';
+import { GitBranch, ExternalLink, Zap } from 'lucide-react';
 import { BHUSHAN_DATA } from '../data/bhushanData';
 import { usePortfolioData } from '../hooks/usePortfolioData';
+import ArchitectureXRayModal from './ArchitectureXRayModal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,22 +15,30 @@ const TAG_COLORS = {
   'Full Stack + CMS':    { bg: 'rgba(212,255,61,0.1)', border: 'rgba(212,255,61,0.3)', color: 'var(--accent-lime)' },
   'Utility Tool':        { bg: 'rgba(201,168,76,0.1)',  border: 'rgba(201,168,76,0.3)',  color: 'var(--accent-gold)' },
   'AR / Web XR':         { bg: 'rgba(139,92,246,0.1)',  border: 'rgba(139,92,246,0.3)',  color: '#a78bfa' },
+  'WebXR':               { bg: 'rgba(139,92,246,0.1)',  border: 'rgba(139,92,246,0.3)',  color: '#a78bfa' },
   'AR':                  { bg: 'rgba(139,92,246,0.1)',  border: 'rgba(139,92,246,0.3)',  color: '#a78bfa' },
   'AI/ML':               { bg: 'rgba(212,255,61,0.1)',  border: 'rgba(212,255,61,0.3)',  color: 'var(--accent-lime)' },
 };
-const DEFAULT_TAG = { bg: 'rgba(212,255,61,0.1)', border: 'rgba(212,255,61,0.3)', color: 'var(--accent-lime)' };
+const PROJECT_CATEGORIES = [
+  { id: 'All', label: 'All Projects' },
+  { id: 'Full Stack', label: 'Full Stack' },
+  { id: 'AI & LLMs', label: 'AI & LLMs' },
+  { id: 'WebXR / 3D', label: 'WebXR / 3D' },
+];
 
 /* ──────────────────────────────────────────────
    Single project card — 3‑D tilt + glow on hover
    ────────────────────────────────────────────── */
-function ProjectCard({ project, index, cardWidth, cardHeight, isMobile }) {
+function ProjectCard({ project, index, cardWidth, cardHeight, isMobile, onOpenXRay }) {
   const cardRef = useRef(null);
   const glowRef = useRef(null);
   const [hovered, setHovered] = useState(false);
-  const tagStyle = TAG_COLORS[project.tag] || DEFAULT_TAG;
+  const tagStyle = TAG_COLORS[project.tag || project.category] || DEFAULT_TAG;
   const title    = project.title || project.name || '?';
   const desc     = project.desc  || project.description || '';
-  const stack    = project.tech  || project.stack || [];
+  const stack    = Array.isArray(project.techStack) ? project.techStack : (Array.isArray(project.tech) ? project.tech : (Array.isArray(project.stack) ? project.stack : []));
+  const githubLink = project.github || project.githubUrl;
+  const liveLink   = project.demo || project.liveUrl;
 
   const handleMouseMove = (e) => {
     if (isMobile) return;
@@ -200,25 +209,90 @@ function ProjectCard({ project, index, cardWidth, cardHeight, isMobile }) {
           </div>
         )}
 
-        {/* GitHub */}
-        <a
-          href={project.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
-            color: 'rgba(255,255,255,0.6)',
-            fontSize: isMobile ? '0.7rem' : '0.78rem',
-            fontFamily: 'var(--font-body)', textDecoration: 'none',
-            transition: 'color 0.2s ease', marginTop: '0.25rem',
-            alignSelf: 'flex-start',
-          }}
-          onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-lime)'}
-          onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}
-        >
-          <GitBranch size={13} />
-          GitHub →
-        </a>
+        {/* Project Links */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.65rem',
+          marginTop: '0.35rem',
+          flexWrap: 'wrap',
+        }}>
+          {/* System X-Ray Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenXRay(project);
+            }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              padding: isMobile ? '0.2rem 0.6rem' : '0.25rem 0.75rem',
+              borderRadius: '100px',
+              background: 'rgba(212, 255, 61, 0.12)',
+              border: '1px solid rgba(212, 255, 61, 0.35)',
+              color: 'var(--accent-lime)',
+              fontFamily: 'monospace',
+              fontSize: isMobile ? '0.66rem' : '0.74rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'var(--accent-lime)';
+              e.currentTarget.style.color = '#000000';
+              e.currentTarget.style.boxShadow = '0 0 14px rgba(212, 255, 61, 0.4)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'rgba(212, 255, 61, 0.12)';
+              e.currentTarget.style.color = 'var(--accent-lime)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            <Zap size={11} fill="currentColor" />
+            System X-Ray
+          </button>
+
+          {liveLink && (
+            <a
+              href={liveLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                color: 'var(--accent-lime)',
+                fontSize: isMobile ? '0.7rem' : '0.78rem',
+                fontFamily: 'var(--font-body)', textDecoration: 'none',
+                fontWeight: 600,
+                transition: 'opacity 0.2s ease',
+              }}
+              onMouseEnter={e => e.currentTarget.style.opacity = '0.75'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+            >
+              <ExternalLink size={12} />
+              Live Demo ↗
+            </a>
+          )}
+          {githubLink && (
+            <a
+              href={githubLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                color: 'rgba(255,255,255,0.6)',
+                fontSize: isMobile ? '0.7rem' : '0.78rem',
+                fontFamily: 'var(--font-body)', textDecoration: 'none',
+                transition: 'color 0.2s ease',
+              }}
+              onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-lime)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}
+            >
+              <GitBranch size={12} />
+              GitHub →
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -230,6 +304,26 @@ function ProjectCard({ project, index, cardWidth, cardHeight, isMobile }) {
 export default function ProjectsSection() {
   const { projects, loading } = usePortfolioData();
   const projectList = (projects || BHUSHAN_DATA.projects || []);
+
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedXRayProject, setSelectedXRayProject] = useState(null);
+
+  const filteredProjects = useMemo(() => {
+    return projectList.filter((p) => {
+      if (selectedCategory === 'All') return true;
+      const cat = (p.category || p.tag || '').toLowerCase();
+      if (selectedCategory === 'Full Stack') {
+        return cat.includes('full stack') || cat.includes('cms') || cat.includes('utility');
+      }
+      if (selectedCategory === 'AI & LLMs') {
+        return cat.includes('ai') || cat.includes('ml') || cat.includes('llm');
+      }
+      if (selectedCategory === 'WebXR / 3D') {
+        return cat.includes('ar') || cat.includes('xr') || cat.includes('3d');
+      }
+      return true;
+    });
+  }, [projectList, selectedCategory]);
 
   const outerRef  = useRef(null);  // tall scroll-distance wrapper
   const stickyRef = useRef(null);  // sticky 100vh viewport
@@ -273,10 +367,10 @@ export default function ProjectsSection() {
   /* ── GSAP horizontal pin ── */
   useEffect(() => {
     if (!trackRef.current || !outerRef.current) return;
-    if (projectList.length === 0) return;
+    if (filteredProjects.length === 0) return;
 
     const leftPad = isMobile ? 24 : 80;
-    const totalCards  = projectList.length + 1; // +1 for "View All" card
+    const totalCards  = filteredProjects.length + 1; // +1 for "View All" card
     const trackWidth  = totalCards * (cardWidth + CARD_GAP) + leftPad;
     const slideAmount = Math.max(trackWidth - window.innerWidth, 0);
 
@@ -293,8 +387,8 @@ export default function ProjectsSection() {
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             const idx = Math.min(
-              Math.round(self.progress * projectList.length),
-              projectList.length - 1
+              Math.round(self.progress * filteredProjects.length),
+              filteredProjects.length - 1
             );
             setActiveIndex(idx);
           },
@@ -305,7 +399,7 @@ export default function ProjectsSection() {
     // Ensure ScrollTrigger recalculates after a short layout-settle delay
     const t = setTimeout(() => ScrollTrigger.refresh(), 150);
     return () => { ctx.revert(); clearTimeout(t); };
-  }, [projectList, cardWidth, isMobile]);
+  }, [filteredProjects, cardWidth, isMobile]);
 
   /* ── Header fade‑in ── */
   useEffect(() => {
@@ -328,7 +422,7 @@ export default function ProjectsSection() {
   }, []);
 
   const leftPad = isMobile ? 24 : 80;
-  const totalCards  = projectList.length + 1;
+  const totalCards  = filteredProjects.length + 1;
   const trackWidth  = totalCards * (cardWidth + CARD_GAP) + leftPad;
   const slideAmount = Math.max(trackWidth - (typeof window !== 'undefined' ? window.innerWidth : 1280), 0);
 
@@ -401,6 +495,58 @@ export default function ProjectsSection() {
           }}>
             {isMobile ? 'Scroll down to explore horizontally →' : 'Scroll down to explore → full-stack · AI · Web AR'}
           </p>
+
+          {/* Dynamic Category Filter Tabs */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: isMobile ? '0.4rem' : '0.65rem',
+            marginTop: '0.35rem',
+            overflowX: 'auto',
+            paddingBottom: '4px',
+            scrollbarWidth: 'none',
+          }}>
+            {PROJECT_CATEGORIES.map(cat => {
+              const isActive = selectedCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setSelectedCategory(cat.id);
+                    setTimeout(() => ScrollTrigger.refresh(), 100);
+                  }}
+                  style={{
+                    padding: isMobile ? '0.22rem 0.65rem' : '0.32rem 0.95rem',
+                    borderRadius: '100px',
+                    border: `1px solid ${isActive ? 'var(--accent-lime)' : 'rgba(255, 255, 255, 0.12)'}`,
+                    background: isActive ? 'rgba(212, 255, 61, 0.14)' : 'rgba(255, 255, 255, 0.04)',
+                    color: isActive ? 'var(--accent-lime)' : 'rgba(255, 255, 255, 0.65)',
+                    fontSize: isMobile ? '10px' : '11.5px',
+                    fontFamily: 'monospace',
+                    fontWeight: isActive ? 700 : 500,
+                    letterSpacing: '0.04em',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={e => {
+                    if (!isActive) {
+                      e.currentTarget.style.color = '#fff';
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!isActive) {
+                      e.currentTarget.style.color = 'rgba(255, 255, 255, 0.65)';
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                    }
+                  }}
+                >
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* ── Horizontal card track ── */}
@@ -429,7 +575,7 @@ export default function ProjectsSection() {
               <div style={{ color: 'var(--text-muted)', padding: '3rem', fontFamily: 'var(--font-body)' }}>
                 Loading projects…
               </div>
-            ) : projectList.map((project, i) => (
+            ) : filteredProjects.map((project, i) => (
               <ProjectCard
                 key={project.id || i}
                 project={project}
@@ -437,6 +583,7 @@ export default function ProjectsSection() {
                 cardWidth={cardWidth}
                 cardHeight={cardHeight}
                 isMobile={isMobile}
+                onOpenXRay={setSelectedXRayProject}
               />
             ))}
 
@@ -532,6 +679,13 @@ export default function ProjectsSection() {
           to { opacity: 0.9; }
         }
       `}</style>
+      {/* Engineering Architecture X-Ray Modal */}
+      {selectedXRayProject && (
+        <ArchitectureXRayModal
+          project={selectedXRayProject}
+          onClose={() => setSelectedXRayProject(null)}
+        />
+      )}
     </section>
   );
 }

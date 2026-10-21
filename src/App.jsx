@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import gsap from 'gsap';
 import HeroSection from './components/HeroSection';
 import AboutSection from './components/AboutSection';
@@ -12,6 +12,8 @@ import AIChatSidebar from './components/AIChatSidebar';
 import GrainOverlay from './components/GrainOverlay';
 import PageLoader from './components/PageLoader';
 import Navbar from './components/Navbar';
+import CommandPalette from './components/CommandPalette';
+import LLMSandboxSection from './components/LLMSandboxSection';
 import AdminLogin from './admin/AdminLogin';
 import AdminGuard from './admin/AdminGuard';
 import AdminDashboard from './admin/AdminDashboard';
@@ -19,14 +21,33 @@ import { useScrollProgress } from './hooks/useScrollVideo';
 import GridOverlay from './components/GridOverlay';
 import MusicPlayer from './components/MusicPlayer';
 
-/* ─────────── Magnetic Morphing Cursor ─────────── */
+/* ─────────── Global Keyboard Shortcuts ─────────── */
+function GlobalShortcuts() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Shift + Alt + N immediately launches the Nexus Admin OS
+      if (e.shiftKey && e.altKey && (e.key === 'N' || e.key === 'n' || e.code === 'KeyN')) {
+        e.preventDefault();
+        navigate('/nexus');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [navigate]);
+
+  return null;
+}
+
+/* ─────────── Magnetic Morphing Cursor (GSAP quickSetter) ─────────── */
 function CustomCursor() {
   const dotRef = useRef(null);
   const ringRef = useRef(null);
   const labelRef = useRef(null);
-  const mousePos = useRef({ x: 0, y: 0 });
-  const ringPos = useRef({ x: 0, y: 0 });
-  const rafRef = useRef(null);
+  const mousePos = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+  const ringPos = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
 
   useEffect(() => {
     const dot = dotRef.current;
@@ -34,99 +55,124 @@ function CustomCursor() {
     const label = labelRef.current;
     if (!dot || !ring) return;
 
-    dot.style.opacity = '0';
-    ring.style.opacity = '0';
+    // Center coordinates on anchors with zero layout-thrashing
+    gsap.set([dot, ring], {
+      xPercent: -50,
+      yPercent: -50,
+      top: 0,
+      left: 0,
+      opacity: 0,
+      force3D: true,
+    });
+
+    // High-performance direct CSS transform setters
+    const setDotX = gsap.quickSetter(dot, 'x', 'px');
+    const setDotY = gsap.quickSetter(dot, 'y', 'px');
+    const setRingX = gsap.quickSetter(ring, 'x', 'px');
+    const setRingY = gsap.quickSetter(ring, 'y', 'px');
+
     let currentHoverType = null;
     let hasMoved = false;
 
     const handleMouseMove = (e) => {
-      mousePos.current = { x: e.clientX, y: e.clientY };
-      dot.style.left = `${e.clientX}px`;
-      dot.style.top = `${e.clientY}px`;
+      mousePos.current.x = e.clientX;
+      mousePos.current.y = e.clientY;
+
+      setDotX(e.clientX);
+      setDotY(e.clientY);
+
       if (!hasMoved) {
         hasMoved = true;
-        dot.style.opacity = '1';
-        ring.style.opacity = '1';
+        gsap.to([dot, ring], { opacity: 1, duration: 0.25, ease: 'power2.out' });
       }
     };
 
-    const animateRing = () => {
-      ringPos.current.x += (mousePos.current.x - ringPos.current.x) * 0.12;
-      ringPos.current.y += (mousePos.current.y - ringPos.current.y) * 0.12;
-      ring.style.left = `${ringPos.current.x}px`;
-      ring.style.top = `${ringPos.current.y}px`;
-      rafRef.current = requestAnimationFrame(animateRing);
+    // Smooth inertial ring follow via unified GSAP ticker
+    const tickCursor = () => {
+      ringPos.current.x += (mousePos.current.x - ringPos.current.x) * 0.15;
+      ringPos.current.y += (mousePos.current.y - ringPos.current.y) * 0.15;
+
+      setRingX(ringPos.current.x);
+      setRingY(ringPos.current.y);
     };
+
+    gsap.ticker.add(tickCursor);
 
     const handleMouseOver = (e) => {
       const target = e.target.closest('a, button, .magnetic');
-      const projectCard = e.target.closest('.project-card');
+      const projectCard = e.target.closest('.project-card, .proj-card');
 
       if (projectCard) {
         currentHoverType = 'project';
-        dot.style.width = '12px';
-        dot.style.height = '12px';
-        ring.style.opacity = '1';
-        ring.style.width = '80px';
-        ring.style.height = '80px';
-        ring.style.borderColor = 'rgba(255, 255, 255, 0.8)';
-        ring.style.background = 'transparent';
-        if (label) { label.style.opacity = '1'; label.textContent = 'View →'; }
+        gsap.to(dot, { width: 12, height: 12, duration: 0.2, ease: 'power2.out' });
+        gsap.to(ring, {
+          width: 80,
+          height: 80,
+          borderColor: 'rgba(255, 255, 255, 0.85)',
+          duration: 0.25,
+          ease: 'power2.out',
+        });
+        if (label) {
+          label.textContent = 'View →';
+          gsap.to(label, { opacity: 1, duration: 0.2 });
+        }
       } else if (target) {
         currentHoverType = 'interactive';
-        dot.style.width = '0px'; // hide dot on interactive elements
-        dot.style.height = '0px';
-        ring.style.opacity = '1';
-        ring.style.width = '52px';
-        ring.style.height = '52px';
-        ring.style.borderColor = 'rgba(255, 255, 255, 0.8)';
-        ring.style.background = 'transparent';
-        if (label) label.style.opacity = '0';
+        gsap.to(dot, { width: 0, height: 0, opacity: 0, duration: 0.15 });
+        gsap.to(ring, {
+          width: 54,
+          height: 54,
+          borderColor: 'var(--accent-lime, #d4ff3d)',
+          duration: 0.25,
+          ease: 'power2.out',
+        });
+        if (label) gsap.to(label, { opacity: 0, duration: 0.15 });
       }
     };
 
     const handleMouseOut = (e) => {
-      const target = e.target.closest('a, button, .magnetic, .project-card');
+      const target = e.target.closest('a, button, .magnetic, .project-card, .proj-card');
       if (target) {
         currentHoverType = null;
-        dot.style.width = '8px';
-        dot.style.height = '8px';
-        ring.style.opacity = '1'; // keep always visible but small/subtle
-        ring.style.width = '36px';
-        ring.style.height = '36px';
-        ring.style.borderColor = 'rgba(255, 255, 255, 0.35)';
-        ring.style.background = 'transparent';
-        if (label) label.style.opacity = '0';
+        gsap.to(dot, { width: 8, height: 8, opacity: 1, duration: 0.2 });
+        gsap.to(ring, {
+          width: 36,
+          height: 36,
+          borderColor: 'rgba(255, 255, 255, 0.4)',
+          duration: 0.25,
+          ease: 'power2.out',
+        });
+        if (label) gsap.to(label, { opacity: 0, duration: 0.15 });
       }
     };
 
     const handleMouseDown = () => {
-      const targetWidth = currentHoverType === 'project' ? 50 : (currentHoverType === 'interactive' ? 36 : 20);
-      gsap.to(ring, { width: targetWidth, height: targetWidth, duration: 0.15, ease: 'power2.inOut' });
-      const dotWidth = currentHoverType === 'project' ? 8 : (currentHoverType === 'interactive' ? 0 : 4);
-      gsap.to(dot, { width: dotWidth, height: dotWidth, duration: 0.15 });
-    };
-    const handleMouseUp = () => {
-      const targetWidth = currentHoverType === 'project' ? 80 : (currentHoverType === 'interactive' ? 52 : 36);
-      gsap.to(ring, { width: targetWidth, height: targetWidth, duration: 0.4, ease: 'elastic.out(1, 0.5)' });
-      const dotWidth = currentHoverType === 'project' ? 12 : (currentHoverType === 'interactive' ? 0 : 8);
-      gsap.to(dot, { width: dotWidth, height: dotWidth, duration: 0.4 });
+      const targetWidth = currentHoverType === 'project' ? 50 : currentHoverType === 'interactive' ? 38 : 22;
+      gsap.to(ring, { width: targetWidth, height: targetWidth, duration: 0.14, ease: 'power2.inOut' });
+      const dotWidth = currentHoverType === 'project' ? 8 : currentHoverType === 'interactive' ? 0 : 4;
+      gsap.to(dot, { width: dotWidth, height: dotWidth, duration: 0.14 });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    const handleMouseUp = () => {
+      const targetWidth = currentHoverType === 'project' ? 80 : currentHoverType === 'interactive' ? 54 : 36;
+      gsap.to(ring, { width: targetWidth, height: targetWidth, duration: 0.35, ease: 'elastic.out(1, 0.5)' });
+      const dotWidth = currentHoverType === 'project' ? 12 : currentHoverType === 'interactive' ? 0 : 8;
+      gsap.to(dot, { width: dotWidth, height: dotWidth, duration: 0.35 });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     document.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseout', handleMouseOut);
     document.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mouseup', handleMouseUp);
-    rafRef.current = requestAnimationFrame(animateRing);
 
     return () => {
+      gsap.ticker.remove(tickCursor);
       window.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseout', handleMouseOut);
       document.removeEventListener('mousedown', handleMouseDown);
       document.removeEventListener('mouseup', handleMouseUp);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
@@ -140,7 +186,6 @@ function CustomCursor() {
   );
 }
 
-
 function ScrollProgressBar() {
   const { progressRef } = useScrollProgress();
   return (
@@ -152,7 +197,7 @@ function ScrollProgressBar() {
   );
 }
 
-/* ─────────── Magnetic Effect Hook ─────────── */
+/* ─────────── Magnetic Elements Effect ─────────── */
 function useMagneticEffect() {
   useEffect(() => {
     const elements = document.querySelectorAll('.magnetic');
@@ -193,8 +238,8 @@ function useMouseSpotlight() {
       document.documentElement.style.setProperty('--mouse-x', `${x}%`);
       document.documentElement.style.setProperty('--mouse-y', `${y}%`);
     };
-    document.addEventListener('mousemove', handleMouseMove);
-    return () => document.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 }
 
@@ -220,13 +265,15 @@ function PortfolioLayout() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
-  // Preload image sequence for Hero scroll-scrub video
+  /* ── Progressive Frame Loading: Ready as soon as first 35 frames load ── */
   useEffect(() => {
     const FRAME_COUNT = 240;
+    const INITIAL_THRESHOLD = 35;
     const slots = new Array(FRAME_COUNT).fill(null);
     let loadedCount = 0;
-    let firstFrameShown = false;
+    let initialReadyFired = false;
 
+    // Load initial 35 frames first, then seamlessly cache the rest
     for (let i = 1; i <= FRAME_COUNT; i++) {
       const img = new Image();
       img.src = `/sequence/ezgif-frame-${i.toString().padStart(3, '0')}.jpg`;
@@ -235,16 +282,19 @@ function PortfolioLayout() {
         slots[idx - 1] = img;
         loadedCount++;
 
-        if (idx === 1 && !firstFrameShown) {
-          firstFrameShown = true;
-          setImages([...slots]);
-          setLoadingProgress(1);
-        } else {
-          const progress = Math.round((loadedCount / FRAME_COUNT) * 100);
+        // Fast-track initial progress calculation against the first 35 frames
+        if (!initialReadyFired) {
+          const progress = Math.min(100, Math.round((loadedCount / INITIAL_THRESHOLD) * 100));
           setLoadingProgress(progress);
-          if (loadedCount % 20 === 0 || loadedCount === FRAME_COUNT) {
+
+          if (loadedCount >= INITIAL_THRESHOLD) {
+            initialReadyFired = true;
+            setLoadingProgress(100);
             setImages([...slots]);
           }
+        } else if (loadedCount % 15 === 0 || loadedCount === FRAME_COUNT) {
+          // Incrementally sync newly cached background frames to state
+          setImages([...slots]);
         }
       };
 
@@ -253,33 +303,42 @@ function PortfolioLayout() {
     }
   }, []);
 
-  // Initialize Lenis smooth scroll
+  /* ── Unified Lenis Smooth Scroll Synced to GSAP Ticker ── */
   useEffect(() => {
-    let lenis;
+    let lenisInstance = null;
+    let tickerHandler = null;
+
     const initLenis = async () => {
       try {
         const LenisModule = await import('@studio-freight/lenis');
         const Lenis = LenisModule.default;
-        lenis = new Lenis({
-          duration: 1.4,
+        lenisInstance = new Lenis({
+          duration: 1.2,
           easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           smooth: true,
         });
-        window.lenis = lenis;
+        window.lenis = lenisInstance;
 
-        // Connect Lenis to GSAP ticker
-        gsap.ticker.add((time) => lenis.raf(time * 1000));
+        tickerHandler = (time) => {
+          lenisInstance.raf(time * 1000);
+        };
+
+        gsap.ticker.add(tickerHandler);
         gsap.ticker.lagSmoothing(0);
       } catch (e) {
-        // Lenis not available, native scroll continues
+        // Fallback to native scrolling if module fails
       }
     };
+
     initLenis();
 
     return () => {
-      if (lenis) {
-        lenis.destroy();
-        if (window.lenis === lenis) {
+      if (tickerHandler) {
+        gsap.ticker.remove(tickerHandler);
+      }
+      if (lenisInstance) {
+        lenisInstance.destroy();
+        if (window.lenis === lenisInstance) {
           window.lenis = undefined;
         }
       }
@@ -288,37 +347,39 @@ function PortfolioLayout() {
 
   return (
     <>
-      {/* Page Loader */}
+      {/* Fast-tracked Page Loader */}
       <PageLoader progress={loadingProgress} onComplete={() => setLoaderDone(true)} />
 
-      {/* Custom cursor — desktop only */}
+      {/* Hardware-accelerated custom cursor */}
       <div className="cursor-wrapper" style={{ display: 'block' }}>
         <CustomCursor />
       </div>
 
-      {/* Scroll progress bar — only after loader */}
+      {/* Navigation chrome */}
       {loaderDone && <ScrollProgressBar />}
       {loaderDone && <Navbar />}
       {loaderDone && <MusicPlayer />}
+      {loaderDone && <CommandPalette />}
 
-      {/* Main sections */}
+      {/* Primary content sections */}
       <main>
         <HeroSection images={images} />
         <AboutSection />
         <SkillsSection />
         <ExperienceSection />
+        <LLMSandboxSection />
         <ProjectsSection />
         <AchievementsSection />
         <ContactSection />
       </main>
 
-      {/* AI Chat Sidebar */}
+      {/* Recruiter AI Sidebar */}
       <AIChatSidebar />
 
-      {/* Film Grain */}
+      {/* Hardware-accelerated film grain overlay */}
       <GrainOverlay />
 
-      {/* Grid Guidelines Overlay */}
+      {/* Architectural guidelines overlay */}
       <GridOverlay />
 
       <style>{`
@@ -337,20 +398,31 @@ function PortfolioLayout() {
 export default function App() {
   return (
     <BrowserRouter>
+      {/* Global listener for Shift + Alt + N */}
+      <GlobalShortcuts />
+
       <Routes>
         {/* Public portfolio */}
         <Route path="/" element={<PortfolioLayout />} />
 
-        {/* Hidden admin routes — no links anywhere in the public app */}
-        <Route path="/bx-studio" element={<AdminLogin />} />
+        {/* New 2026 Nexus Admin OS */}
+        <Route path="/nexus" element={<AdminLogin />} />
         <Route
-          path="/bx-studio/dashboard"
+          path="/nexus/os"
           element={
             <AdminGuard>
               <AdminDashboard />
             </AdminGuard>
           }
         />
+
+        {/* Backward-compatible redirects from legacy /bx-studio */}
+        <Route path="/bx-studio" element={<Navigate to="/nexus" replace />} />
+        <Route path="/bx-studio/dashboard" element={<Navigate to="/nexus/os" replace />} />
+        <Route path="/bx-studio/*" element={<Navigate to="/nexus" replace />} />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

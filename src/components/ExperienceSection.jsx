@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import { BHUSHAN_DATA } from '../data/bhushanData';
+import { usePortfolioData } from '../hooks/usePortfolioData';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,7 +12,7 @@ gsap.registerPlugin(ScrollTrigger);
 function ExperienceContent({ item, isMobile }) {
   return (
     <div>
-      {item.isCurrent && (
+      {(item.isCurrent || item.current) && (
         <span style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -47,7 +48,7 @@ function ExperienceContent({ item, isMobile }) {
         textTransform: 'uppercase',
         marginBottom: '0.5rem',
       }}>
-        {item.period}
+        {item.period || item.duration}
       </div>
 
       <h3 style={{
@@ -58,7 +59,7 @@ function ExperienceContent({ item, isMobile }) {
         marginBottom: '0.2rem',
         letterSpacing: '-0.02em',
         lineHeight: 1.2,
-      }}>{item.title}</h3>
+      }}>{item.title || item.role}</h3>
 
       <p style={{
         fontFamily: 'var(--font-serif)',
@@ -193,12 +194,12 @@ function TimelineItem({ item, index, isMobile }) {
       }}>
         <div ref={dotRef} style={{
           width: '14px', height: '14px', borderRadius: '50%',
-          background: item.isCurrent ? '#d4ff3d' : '#ffffff',
+          background: (item.isCurrent || item.current) ? '#d4ff3d' : '#ffffff',
           border: '2.5px solid #111111',
           flexShrink: 0, position: 'relative', zIndex: 1,
-          boxShadow: item.isCurrent ? '0 0 0 4px rgba(212,255,61,0.25)' : 'none',
+          boxShadow: (item.isCurrent || item.current) ? '0 0 0 4px rgba(212,255,61,0.25)' : 'none',
         }}>
-          {item.isCurrent && (
+          {(item.isCurrent || item.current) && (
             <div style={{
               position: 'absolute', inset: '-6px', borderRadius: '50%',
               border: '2px solid #d4ff3d',
@@ -245,6 +246,8 @@ function TimelineItem({ item, index, isMobile }) {
    Section export
    ───────────────────────────────────────── */
 export default function ExperienceSection() {
+  const { experience } = usePortfolioData();
+  const experienceList = experience && experience.length > 0 ? experience : BHUSHAN_DATA.experience;
   const sectionRef = useRef(null);
   const lineRef    = useRef(null);
   const headerRef  = useRef(null);
@@ -441,8 +444,8 @@ export default function ExperienceSection() {
             }}
           />
 
-          {BHUSHAN_DATA.experience.map((item, i) => (
-            <TimelineItem key={i} item={item} index={i} isMobile={isMobile} />
+          {experienceList.map((item, i) => (
+            <TimelineItem key={item.id || i} item={item} index={i} isMobile={isMobile} />
           ))}
         </div>
       </div>

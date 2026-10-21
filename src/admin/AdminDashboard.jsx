@@ -1,330 +1,428 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { LayoutGrid, Wrench, Image, Layers, LogOut, ChevronRight, Database, RefreshCw } from 'lucide-react';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
-import { BHUSHAN_DATA } from '../data/bhushanData';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import {
+  LayoutDashboard,
+  Layers,
+  Briefcase,
+  Award,
+  Wrench,
+  Sliders,
+  LogOut,
+  ExternalLink,
+  CloudUpload,
+  Menu,
+  X,
+  CheckCircle2,
+  AlertCircle,
+  Terminal,
+  Shield,
+  Activity,
+  Cpu
+} from 'lucide-react';
+import { usePortfolioData } from '../hooks/usePortfolioData';
+import { isSupabaseConfigured } from '../lib/supabase';
+import OverviewPanel from './panels/OverviewPanel';
 import ProjectsPanel from './panels/ProjectsPanel';
+import ExperiencePanel from './panels/ExperiencePanel';
+import AchievementsPanel from './panels/AchievementsPanel';
 import SkillsPanel from './panels/SkillsPanel';
-import HeroPanel from './panels/HeroPanel';
-import AboutPanel from './panels/AboutPanel';
+import HeroBioPanel from './panels/HeroBioPanel';
 
 const SESSION_KEY = 'bx_admin_session';
 const SESSION_DURATION_MS = 30 * 60 * 1000;
 
-const TABS = [
-  { id: 'projects', label: 'Projects', icon: LayoutGrid, description: 'Manage project cards' },
-  { id: 'skills', label: 'Skills', icon: Wrench, description: 'Manage skill tags' },
-  { id: 'hero', label: 'Hero Text', icon: Layers, description: 'Edit 4 phase overlays' },
-  { id: 'about', label: 'About', icon: Image, description: 'Edit bio & photo' },
+const NAV_TABS = [
+  { id: 'overview', label: 'Overview & Telemetry', icon: LayoutDashboard, tag: 'System' },
+  { id: 'projects', label: 'Projects Manager', icon: Layers, tag: 'Core' },
+  { id: 'experience', label: 'Experience & Timeline', icon: Briefcase, tag: 'Career' },
+  { id: 'achievements', label: 'Achievements & Certs', icon: Award, tag: 'Laurels' },
+  { id: 'skills', label: 'Skills Matrix', icon: Wrench, tag: 'Tech' },
+  { id: 'herobio', label: 'Hero & Bio Studio', icon: Sliders, tag: 'Content' },
 ];
 
-function SessionTimer() {
+function SessionClock() {
   const [timeLeft, setTimeLeft] = useState(() => {
     try {
-      const { timestamp } = JSON.parse(sessionStorage.getItem(SESSION_KEY) || '{}');
+      const raw = sessionStorage.getItem(SESSION_KEY);
+      if (!raw) return 0;
+      const { timestamp } = JSON.parse(raw);
       return Math.max(0, SESSION_DURATION_MS - (Date.now() - timestamp));
     } catch { return 0; }
   });
 
-  useState(() => {
-    const interval = setInterval(() => {
+  useEffect(() => {
+    const timer = setInterval(() => {
       try {
-        const { timestamp } = JSON.parse(sessionStorage.getItem(SESSION_KEY) || '{}');
+        const raw = sessionStorage.getItem(SESSION_KEY);
+        if (!raw) {
+          setTimeLeft(0);
+          return;
+        }
+        const { timestamp } = JSON.parse(raw);
         setTimeLeft(Math.max(0, SESSION_DURATION_MS - (Date.now() - timestamp)));
-      } catch { setTimeLeft(0); }
-    }, 30000);
-    return () => clearInterval(interval);
-  });
+      } catch {
+        setTimeLeft(0);
+      }
+    }, 15000);
+    return () => clearInterval(timer);
+  }, []);
 
   const minutes = Math.floor(timeLeft / 60000);
-  const isLow = minutes < 5;
+  const isExpiringSoon = minutes < 5;
 
   return (
-    <span style={{ fontSize: '0.75rem', color: isLow ? '#f87171' : 'rgba(240,244,244,0.3)', fontFamily: 'var(--font-body)' }}>
-      Session: {minutes}m left
-    </span>
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.4rem',
+      fontSize: '0.72rem',
+      color: isExpiringSoon ? '#f87171' : 'rgba(255, 255, 255, 0.45)',
+      fontFamily: 'monospace',
+    }}>
+      <Shield size={12} />
+      <span>Session: {minutes}m</span>
+    </div>
   );
 }
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('projects');
-  const [syncing, setSyncing] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [syncingCloud, setSyncingCloud] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const { syncAllToSupabase } = usePortfolioData();
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3500);
+  };
 
   const handleLogout = () => {
     sessionStorage.removeItem(SESSION_KEY);
-    navigate('/bx-studio', { replace: true });
+    navigate('/nexus', { replace: true });
   };
 
-  const handleSyncLocalData = async () => {
-    const confirmSync = window.confirm(
-      "Are you sure you want to sync your existing hardcoded portfolio data to Supabase? This will clear any existing data in your Supabase projects, skills, hero, and about tables and replace it with your current website data."
-    );
-    if (!confirmSync) return;
-
+  const handleHeaderCloudSync = async () => {
     try {
-      setSyncing(true);
-      
-      // 1. Sync Projects
-      const projectsToInsert = BHUSHAN_DATA.projects.map(p => ({
-        title: p.name,
-        desc: p.description,
-        tech: p.stack || [],
-        github: p.github || '',
-        demo: p.demo || '',
-        tag: p.tag || '',
-        featured: p.featured || false
-      }));
-
-      // Delete existing and insert new
-      await supabase.from('projects').delete().not('id', 'is', null);
-      const { error: pErr } = await supabase.from('projects').insert(projectsToInsert);
-      if (pErr) throw new Error("Projects sync failed: " + pErr.message);
-
-      // 2. Sync Skills
-      const skillsToInsert = Object.keys(BHUSHAN_DATA.skills).map(category => ({
-        category,
-        items: BHUSHAN_DATA.skills[category] || []
-      }));
-
-      await supabase.from('skills').delete().not('id', 'is', null);
-      const { error: sErr } = await supabase.from('skills').insert(skillsToInsert);
-      if (sErr) throw new Error("Skills sync failed: " + sErr.message);
-
-      // 3. Sync Hero Text
-      const heroTextToInsert = [
-        { phase: 1, title: 'Bhushan', title2: 'Chaturbhuj', subtitle: 'Full Stack Developer.', tag: 'MCA Student · LLM AI Intern' },
-        { phase: 2, title: 'I Build', title2: 'Things.', subtitle: 'That live on the web.', tag: 'React · Node.js · MongoDB' },
-        { phase: 3, title: 'Built with', title2: 'Precision.', subtitle: 'MERN · AI/ML · Web AR', tag: '' },
-        { phase: 4, title: "Let's Create Something Amazing.", title2: '', subtitle: 'Open to exciting opportunities', tag: 'Available for work' }
-      ];
-
-      await supabase.from('hero_text').delete().not('id', 'is', null);
-      const { error: hErr } = await supabase.from('hero_text').insert(heroTextToInsert);
-      if (hErr) throw new Error("Hero text sync failed: " + hErr.message);
-
-      // 4. Sync About Bio
-      const aboutBio = [
-        `Hi, I'm <strong>Bhushan Chaturbhuj</strong> — a Full Stack Developer and MCA student at Sanjivani University, Kopargaon. I build web experiences that are fast, functional, and memorable.`,
-        `Former LLM Post-Training Intern at <strong style="color:var(--gold-accent)">Ethara AI</strong> (Apr 2026 – Jun 2026), executing SFT &amp; RLHF workflows. I love turning ideas into reality — from AR heritage platforms to EV buying assistants.`,
-        `🏆 National Rank 52 at NEC 2025 (IIT Bombay E-Cell) — Turning coffee into code, and ideas into impact.`
-      ].join('\n');
-
-      const aboutToInsert = {
-        bio: aboutBio,
-        photo_url: '/bhushan-photo.jpg'
-      };
-
-      await supabase.from('about').delete().not('id', 'is', null);
-      const { error: aErr } = await supabase.from('about').insert(aboutToInsert);
-      if (aErr) throw new Error("About bio sync failed: " + aErr.message);
-
-      alert("🎉 Local portfolio data synced to Supabase successfully! Refreshing dashboard...");
-      window.location.reload();
+      setSyncingCloud(true);
+      await syncAllToSupabase();
+      showToast('All portfolio data synced to Supabase Cloud!');
     } catch (err) {
-      console.error(err);
-      alert("❌ Sync failed: " + err.message);
+      showToast(err.message || 'Cloud sync failed', 'error');
     } finally {
-      setSyncing(false);
+      setSyncingCloud(false);
     }
   };
 
-  const ActivePanel = {
-    projects: ProjectsPanel,
-    skills: SkillsPanel,
-    hero: HeroPanel,
-    about: AboutPanel,
-  }[activeTab];
+  const currentTabObj = NAV_TABS.find(t => t.id === activeTab) || NAV_TABS[0];
 
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#080c0d',
+      backgroundColor: '#060608',
       display: 'flex',
-      flexDirection: 'column',
-      fontFamily: 'var(--font-body)',
+      fontFamily: 'var(--font-body, "DM Sans", sans-serif)',
+      color: '#f4f4f6',
+      position: 'relative',
     }}>
+      {/* Toast Feedback */}
+      {toast && (
+        <div style={{
+          position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 99999,
+          padding: '0.9rem 1.4rem',
+          background: toast.type === 'success' ? '#0e2415' : '#2a1215',
+          border: `1px solid ${toast.type === 'success' ? '#22c55e' : '#ef4444'}`,
+          borderRadius: '12px',
+          color: toast.type === 'success' ? '#86efac' : '#fca5a5',
+          fontSize: '0.85rem', fontWeight: 600,
+          boxShadow: '0 20px 40px rgba(0,0,0,0.7)',
+          display: 'flex', alignItems: 'center', gap: '0.6rem',
+        }}>
+          {toast.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+          {toast.message}
+        </div>
+      )}
 
-      {/* Top Bar */}
-      <header style={{
-        height: '60px',
-        background: 'rgba(13,22,24,0.95)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(45,212,191,0.08)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 2rem',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-        flexShrink: 0,
-      }}>
-        {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(45,212,191,0.1)', border: '1px solid rgba(45,212,191,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Database size={15} color="var(--teal-accent)" />
-          </div>
-          <div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '0.95rem', color: '#fff', letterSpacing: '-0.01em' }}>
-              BX Studio
+      {/* ─── SIDEBAR ─── */}
+      <aside
+        style={{
+          width: '260px',
+          flexShrink: 0,
+          background: '#09090d',
+          borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: '1.5rem',
+          boxSizing: 'border-box',
+          position: 'sticky',
+          top: 0,
+          height: '100vh',
+          zIndex: 50,
+          transition: 'transform 0.3s ease',
+        }}
+        className={isMobileSidebarOpen ? 'mobile-sidebar-open' : ''}
+      >
+        <div>
+          {/* Brand Header */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', marginBottom: '0.25rem' }}>
+                <span style={{
+                  width: '8px', height: '8px', borderRadius: '50%',
+                  background: '#22c55e',
+                  boxShadow: '0 0 10px #22c55e, 0 0 4px #22c55e',
+                  animation: 'pulse 1.8s infinite',
+                  display: 'inline-block',
+                }} />
+                <span style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '1rem',
+                  fontWeight: 900,
+                  letterSpacing: '0.08em',
+                  color: '#ffffff',
+                }}>
+                  NEXUS // OS v4.0
+                </span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '9px', color: 'rgba(255, 255, 255, 0.4)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                <span>Portfolio Control Engine</span>
+                <span style={{ color: '#22c55e', fontWeight: 700 }}>● Connected</span>
+              </div>
             </div>
-            <div style={{ fontSize: '0.65rem', color: 'rgba(240,244,244,0.3)', marginTop: '-1px' }}>Admin Dashboard</div>
+
+            {/* Close button on mobile */}
+            <button
+              onClick={() => setIsMobileSidebarOpen(false)}
+              className="mobile-close-btn"
+              style={{
+                background: 'none', border: 'none', color: '#fff', cursor: 'pointer', display: 'none',
+              }}
+            >
+              <X size={20} />
+            </button>
           </div>
+
+          {/* Navigation Items */}
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            {NAV_TABS.map(tab => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    setIsMobileSidebarOpen(false);
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '12px',
+                    border: 'none',
+                    background: isActive ? 'rgba(212, 255, 61, 0.1)' : 'transparent',
+                    color: isActive ? '#d4ff3d' : 'rgba(255, 255, 255, 0.65)',
+                    fontWeight: isActive ? 700 : 500,
+                    fontSize: '0.84rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                    textAlign: 'left',
+                    width: '100%',
+                  }}
+                  onMouseEnter={e => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                      e.currentTarget.style.color = '#fff';
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.color = 'rgba(255, 255, 255, 0.65)';
+                    }
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Icon size={16} color={isActive ? '#d4ff3d' : 'currentColor'} />
+                    <span>{tab.label}</span>
+                  </div>
+                  <span style={{
+                    fontSize: '9px',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    color: isActive ? '#d4ff3d' : 'rgba(255, 255, 255, 0.25)',
+                    letterSpacing: '0.1em',
+                  }}>
+                    {tab.tag}
+                  </span>
+                </button>
+              );
+            })}
+          </nav>
         </div>
 
-        {/* Right side */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          {/* Supabase status */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: isSupabaseConfigured ? '#34d399' : '#f87171' }} />
-            <span style={{ fontSize: '0.72rem', color: 'rgba(240,244,244,0.3)' }}>
-              {isSupabaseConfigured ? 'Supabase connected' : 'Supabase not configured'}
-            </span>
+        {/* Sidebar Footer */}
+        <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '1.25rem' }}>
+          <div style={{ marginBottom: '1rem', padding: '0 0.25rem' }}>
+            <SessionClock />
           </div>
 
-          <SessionTimer />
-
-          {/* Portfolio link */}
-          <a
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: '0.75rem', color: 'rgba(240,244,244,0.3)', textDecoration: 'none', transition: 'color 0.2s', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--teal-accent)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'rgba(240,244,244,0.3)'}
+          <button
+            onClick={handleLogout}
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.65rem',
+              padding: '0.7rem 1rem',
+              borderRadius: '10px',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              background: 'rgba(239, 68, 68, 0.06)',
+              color: '#f87171',
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'background 0.2s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.12)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.06)'}
           >
-            View Portfolio <ChevronRight size={12} />
-          </a>
+            <LogOut size={15} />
+            Lock Session
+          </button>
+        </div>
+      </aside>
 
-          {/* Sync Local Data Button */}
-          {isSupabaseConfigured && (
+      {/* ─── MAIN CONTENT AREA ─── */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+        {/* Top Telemetry Header Bar */}
+        <header style={{
+          height: '68px',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'rgba(6, 6, 8, 0.85)',
+          backdropFilter: 'blur(20px)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 40,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 2rem',
+        }}>
+          {/* Left: Mobile hamburger + active title */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <button
-              onClick={handleSyncLocalData}
-              disabled={syncing}
+              onClick={() => setIsMobileSidebarOpen(true)}
+              className="mobile-hamburger-btn"
+              style={{
+                background: 'none', border: 'none', color: '#fff', cursor: 'pointer', display: 'none', padding: 0,
+              }}
+            >
+              <Menu size={22} />
+            </button>
+
+            <div>
+              <h1 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '1.15rem',
+                fontWeight: 800,
+                color: '#fff',
+                margin: 0,
+                letterSpacing: '-0.01em',
+              }}>
+                {currentTabObj.label}
+              </h1>
+            </div>
+          </div>
+
+          {/* Right Header Actions */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+            <button
+              onClick={handleHeaderCloudSync}
+              disabled={syncingCloud}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.45rem',
-                padding: '0.45rem 0.9rem',
-                background: syncing ? 'rgba(45,212,191,0.03)' : 'rgba(45,212,191,0.08)',
-                border: '1px solid rgba(45,212,191,0.18)',
-                borderRadius: '8px',
-                color: 'var(--teal-accent)',
-                fontSize: '0.78rem',
-                cursor: syncing ? 'not-allowed' : 'pointer',
-                fontFamily: 'var(--font-body)',
-                transition: 'all 0.2s',
-                opacity: syncing ? 0.6 : 1,
+                padding: '0.5rem 1rem',
+                borderRadius: '10px',
+                border: '1px solid rgba(212, 255, 61, 0.3)',
+                background: 'rgba(212, 255, 61, 0.08)',
+                color: '#d4ff3d',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                cursor: syncingCloud ? 'not-allowed' : 'pointer',
+                opacity: syncingCloud ? 0.7 : 1,
               }}
-              onMouseEnter={e => { if (!syncing) e.currentTarget.style.background = 'rgba(45,212,191,0.15)'; }}
-              onMouseLeave={e => { if (!syncing) e.currentTarget.style.background = 'rgba(45,212,191,0.08)'; }}
             >
-              <RefreshCw size={13} style={{ animation: syncing ? 'spin 1.2s linear infinite' : 'none' }} />
-              {syncing ? 'Syncing...' : 'Sync Local Data'}
+              <CloudUpload size={14} />
+              {syncingCloud ? 'Syncing...' : 'Sync Cloud'}
             </button>
-          )}
 
-          {/* Logout */}
-          <button
-            id="admin-logout-btn"
-            onClick={handleLogout}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.45rem 0.9rem', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.18)', borderRadius: '8px', color: '#f87171', fontSize: '0.78rem', cursor: 'pointer', fontFamily: 'var(--font-body)', transition: 'all 0.2s' }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.14)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; }}
-          >
-            <LogOut size={13} /> Logout
-          </button>
-          
-          <style>{`
-            @keyframes spin {
-              from { transform: rotate(0deg); }
-              to { transform: rotate(360deg); }
-            }
-          `}</style>
-        </div>
-      </header>
+            <Link
+              to="/"
+              target="_blank"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                padding: '0.5rem 1rem',
+                borderRadius: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                background: 'rgba(255, 255, 255, 0.04)',
+                color: '#fff',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                textDecoration: 'none',
+              }}
+            >
+              <span>Live Site</span>
+              <ExternalLink size={13} color="rgba(255, 255, 255, 0.6)" />
+            </Link>
+          </div>
+        </header>
 
-      {/* Body — sidebar + content */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-
-        {/* Sidebar */}
-        <nav style={{
-          width: '220px',
-          flexShrink: 0,
-          background: 'rgba(10,18,20,0.8)',
-          borderRight: '1px solid rgba(45,212,191,0.06)',
-          padding: '1.5rem 1rem',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.35rem',
-          overflowY: 'auto',
+        {/* Active Workspace Canvas */}
+        <main style={{
+          flex: 1,
+          padding: '2rem',
+          maxWidth: '1360px',
+          width: '100%',
+          boxSizing: 'border-box',
+          margin: '0 auto',
         }}>
-          <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(240,244,244,0.2)', marginBottom: '0.5rem', paddingLeft: '0.75rem' }}>
-            Content
-          </div>
-          {TABS.map(tab => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                id={`tab-${tab.id}`}
-                onClick={() => setActiveTab(tab.id)}
-                style={{
-                  width: '100%', textAlign: 'left', padding: '0.7rem 0.75rem',
-                  background: isActive ? 'rgba(45,212,191,0.08)' : 'transparent',
-                  border: isActive ? '1px solid rgba(45,212,191,0.15)' : '1px solid transparent',
-                  borderRadius: '10px', cursor: 'pointer',
-                  transition: 'all 0.18s',
-                  display: 'flex', alignItems: 'center', gap: '0.65rem',
-                }}
-                onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(45,212,191,0.04)'; }}
-                onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
-              >
-                <Icon size={16} color={isActive ? 'var(--teal-accent)' : 'rgba(240,244,244,0.35)'} />
-                <div>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 600, color: isActive ? '#fff' : 'rgba(240,244,244,0.55)', lineHeight: 1.2 }}>{tab.label}</div>
-                  <div style={{ fontSize: '0.68rem', color: 'rgba(240,244,244,0.25)', marginTop: '1px' }}>{tab.description}</div>
-                </div>
-              </button>
-            );
-          })}
-
-          {/* Bottom hint */}
-          <div style={{ marginTop: 'auto', paddingTop: '1.5rem', paddingLeft: '0.75rem' }}>
-            <div style={{ fontSize: '0.7rem', color: 'rgba(240,244,244,0.18)', lineHeight: 1.6 }}>
-              Changes are saved to Supabase and reflected live on the portfolio.
-            </div>
-          </div>
-        </nav>
-
-        {/* Main content area */}
-        <main style={{ flex: 1, overflowY: 'auto', padding: '2.5rem 2.5rem' }}>
-          {/* Breadcrumb */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem', color: 'rgba(240,244,244,0.3)', fontSize: '0.8rem' }}>
-            <span>BX Studio</span>
-            <ChevronRight size={13} />
-            <span style={{ color: 'var(--teal-accent)' }}>{TABS.find(t => t.id === activeTab)?.label}</span>
-          </div>
-
-          {/* Supabase warning banner */}
-          {!isSupabaseConfigured && (
-            <div style={{ padding: '1rem 1.25rem', background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.2)', borderRadius: '12px', marginBottom: '2rem', display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
-              <span style={{ fontSize: '1.1rem' }}>⚠️</span>
-              <div>
-                <div style={{ fontWeight: 600, color: '#fbbf24', fontSize: '0.88rem', marginBottom: '0.3rem' }}>Supabase Not Configured</div>
-                <div style={{ color: 'rgba(240,244,244,0.5)', fontSize: '0.82rem', lineHeight: 1.6 }}>
-                  Add <code style={{ background: 'rgba(255,255,255,0.06)', padding: '0 4px', borderRadius: '4px', color: '#fbbf24' }}>VITE_SUPABASE_URL</code> and{' '}
-                  <code style={{ background: 'rgba(255,255,255,0.06)', padding: '0 4px', borderRadius: '4px', color: '#fbbf24' }}>VITE_SUPABASE_ANON_KEY</code> to your <code style={{ background: 'rgba(255,255,255,0.06)', padding: '0 4px', borderRadius: '4px', color: '#fbbf24' }}>.env</code> file, then restart the dev server.
-                </div>
-              </div>
-            </div>
-          )}
-
-          <ActivePanel />
+          {activeTab === 'overview' && <OverviewPanel onNavigateTab={setActiveTab} />}
+          {activeTab === 'projects' && <ProjectsPanel />}
+          {activeTab === 'experience' && <ExperiencePanel />}
+          {activeTab === 'achievements' && <AchievementsPanel />}
+          {activeTab === 'skills' && <SkillsPanel />}
+          {activeTab === 'herobio' && <HeroBioPanel />}
         </main>
       </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          aside {
+            position: fixed !important;
+            top: 0; left: 0; bottom: 0;
+            transform: translateX(-100%);
+          }
+          aside.mobile-sidebar-open {
+            transform: translateX(0) !important;
+          }
+          .mobile-close-btn {
+            display: block !important;
+          }
+          .mobile-hamburger-btn {
+            display: block !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

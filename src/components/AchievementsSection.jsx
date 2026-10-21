@@ -2,10 +2,15 @@ import { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import { BHUSHAN_DATA } from '../data/bhushanData';
+import { usePortfolioData } from '../hooks/usePortfolioData';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function AchievementsSection() {
+  const { achievements } = usePortfolioData();
+  const achievementsList = achievements && achievements.length > 0 ? achievements : BHUSHAN_DATA.achievements;
+  const featuredAchievement = achievementsList[0] || BHUSHAN_DATA.achievements[0];
+  const otherAchievements = achievementsList.slice(1).length >= 4 ? achievementsList.slice(1) : BHUSHAN_DATA.achievements.slice(1);
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
   const cardsRef = useRef([]);
@@ -59,9 +64,6 @@ export default function AchievementsSection() {
     return () => ctx.revert();
   }, [isMobile]);
 
-  const featuredAchievement = BHUSHAN_DATA.achievements[0];
-  const otherAchievements = BHUSHAN_DATA.achievements.slice(1);
-
   return (
     <section id="achievements" ref={sectionRef} style={{
       background: '#ffffff',
@@ -110,198 +112,87 @@ export default function AchievementsSection() {
           gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
           gap: '1.5rem',
         }}>
-          {/* Card 1: IIT Bombay (Featured) */}
-          <div
-            ref={el => cardsRef.current[0] = el}
-            className="bento-card bento-gold"
-            style={{
-              gridColumn: isMobile ? 'span 1' : 'span 2',
-              minHeight: '220px',
-            }}
-          >
-            {/* Watermark 52 */}
-            <div style={{
-              position: 'absolute', right: '1.5rem', top: '50%', transform: 'translateY(-50%)',
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: isMobile ? '6rem' : '8.5rem',
-              color: 'var(--accent-lime)', opacity: 0.18, lineHeight: 1, pointerEvents: 'none', userSelect: 'none',
-            }}>
-              52
-            </div>
+          {achievementsList.map((ach, idx) => {
+            const isFeatured = idx === 0 || ach.featured;
+            const bentoClasses = ['bento-gold', 'bento-teal', 'bento-teal', 'bento-amber', 'bento-blue'];
+            const cardTheme = bentoClasses[idx % bentoClasses.length];
+            const icon = ach.badge || ach.icon || '🏆';
+            const title = ach.title;
+            const desc = ach.description || ach.desc || ach.org || '';
+            const tag = ach.year ? `${ach.year}` : (isFeatured ? 'NATIONAL RANK' : 'RECOGNITION');
 
-            <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
-                  <span style={{ fontSize: '1.3rem' }}>{featuredAchievement.icon || "🥇"}</span>
-                  <span style={{
-                    padding: '0.2rem 0.75rem', background: 'rgba(212,255,61,0.15)',
-                    border: '1px solid rgba(17,17,17,0.15)', borderRadius: '20px',
-                    fontSize: '10px', fontWeight: 700, color: 'var(--surface-dark)',
-                    letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
+            return (
+              <div
+                key={ach.id || idx}
+                ref={el => cardsRef.current[idx] = el}
+                className={`bento-card ${cardTheme}`}
+                style={{
+                  gridColumn: isFeatured && !isMobile ? 'span 2' : 'span 1',
+                  minHeight: isFeatured ? '220px' : 'auto',
+                  position: 'relative',
+                }}
+              >
+                {/* Watermark 52 for featured card */}
+                {isFeatured && (
+                  <div style={{
+                    position: 'absolute', right: '1.5rem', top: '50%', transform: 'translateY(-50%)',
+                    fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: isMobile ? '6rem' : '8.5rem',
+                    color: 'var(--accent-lime)', opacity: 0.18, lineHeight: 1, pointerEvents: 'none', userSelect: 'none',
                   }}>
-                    NATIONAL RANK
-                  </span>
-                </div>
-                <h3 style={{
-                  fontFamily: 'var(--font-display)', fontSize: isMobile ? '1.1rem' : '1.4rem',
-                  fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem',
-                  letterSpacing: '-0.01em',
-                }}>
-                  {featuredAchievement.title}
-                </h3>
-                <p style={{
-                  fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300,
-                  fontSize: '1.05rem', color: 'var(--cream)', lineHeight: 1.5,
-                  maxWidth: '90%',
-                }}>
-                  {featuredAchievement.desc}
-                </p>
-              </div>
-            </div>
-          </div>
+                    52
+                  </div>
+                )}
 
-          {/* Card 2: JPMorgan */}
-          <div
-            ref={el => cardsRef.current[1] = el}
-            className="bento-card bento-teal"
-            style={{ gridColumn: 'span 1' }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
-                  <span style={{ fontSize: '1.3rem' }}>{otherAchievements[0].icon || "🎓"}</span>
-                  <span style={{
-                    padding: '0.2rem 0.75rem', background: 'rgba(212,255,61,0.15)',
-                    border: '1px solid rgba(17,17,17,0.15)', borderRadius: '20px',
-                    fontSize: '10px', fontWeight: 700, color: 'var(--surface-dark)',
-                    letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
-                  }}>
-                    SWE CERTIFIED
-                  </span>
+                <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <span style={{ fontSize: '1.3rem' }}>{icon}</span>
+                        <span style={{
+                          padding: '0.2rem 0.75rem', background: 'rgba(212,255,61,0.15)',
+                          border: '1px solid rgba(17,17,17,0.15)', borderRadius: '20px',
+                          fontSize: '10px', fontWeight: 700, color: 'var(--surface-dark)',
+                          letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
+                        }}>
+                          {tag}
+                        </span>
+                      </div>
+                      {ach.link && (
+                        <a
+                          href={ach.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            color: '#111', fontSize: '0.75rem', fontWeight: 600,
+                            textDecoration: 'none', opacity: 0.6,
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+                          onMouseLeave={e => e.currentTarget.style.opacity = '0.6'}
+                        >
+                          Verify ↗
+                        </a>
+                      )}
+                    </div>
+                    <h3 style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: isFeatured ? (isMobile ? '1.1rem' : '1.4rem') : '1.05rem',
+                      fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem',
+                      lineHeight: 1.3, letterSpacing: isFeatured ? '-0.01em' : 'normal',
+                    }}>
+                      {title}
+                    </h3>
+                    <p style={{
+                      fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300,
+                      fontSize: isFeatured ? '1.05rem' : '0.9rem', color: 'var(--cream)', lineHeight: 1.5,
+                      maxWidth: isFeatured ? '90%' : '100%',
+                    }}>
+                      {desc}
+                    </p>
+                  </div>
                 </div>
-                <h3 style={{
-                  fontFamily: 'var(--font-display)', fontSize: '1.05rem',
-                  fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem',
-                  lineHeight: 1.3,
-                }}>
-                  {otherAchievements[0].title}
-                </h3>
-                <p style={{
-                  fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300,
-                  fontSize: '0.9rem', color: 'var(--cream)', lineHeight: 1.5,
-                }}>
-                  {otherAchievements[0].desc}
-                </p>
               </div>
-            </div>
-          </div>
-
-          {/* Card 3: NASSCOM */}
-          <div
-            ref={el => cardsRef.current[2] = el}
-            className="bento-card bento-teal"
-            style={{ gridColumn: 'span 1' }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
-                  <span style={{ fontSize: '1.3rem' }}>{otherAchievements[1].icon || "🤖"}</span>
-                  <span style={{
-                    padding: '0.2rem 0.75rem', background: 'rgba(212,255,61,0.15)',
-                    border: '1px solid rgba(17,17,17,0.15)', borderRadius: '20px',
-                    fontSize: '10px', fontWeight: 700, color: 'var(--surface-dark)',
-                    letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
-                  }}>
-                    GENERATIVE AI
-                  </span>
-                </div>
-                <h3 style={{
-                  fontFamily: 'var(--font-display)', fontSize: '1.05rem',
-                  fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem',
-                  lineHeight: 1.3,
-                }}>
-                  {otherAchievements[1].title}
-                </h3>
-                <p style={{
-                  fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300,
-                  fontSize: '0.9rem', color: 'var(--cream)', lineHeight: 1.5,
-                }}>
-                  {otherAchievements[1].desc}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 4: MSME */}
-          <div
-            ref={el => cardsRef.current[3] = el}
-            className="bento-card bento-amber"
-            style={{ gridColumn: 'span 1' }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
-                  <span style={{ fontSize: '1.3rem' }}>{otherAchievements[2].icon || "🏢"}</span>
-                  <span style={{
-                    padding: '0.2rem 0.75rem', background: 'rgba(212,255,61,0.15)',
-                    border: '1px solid rgba(17,17,17,0.15)', borderRadius: '20px',
-                    fontSize: '10px', fontWeight: 700, color: 'var(--surface-dark)',
-                    letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
-                  }}>
-                    GOVERNMENT MSME
-                  </span>
-                </div>
-                <h3 style={{
-                  fontFamily: 'var(--font-display)', fontSize: '1.05rem',
-                  fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem',
-                  lineHeight: 1.3,
-                }}>
-                  {otherAchievements[2].title}
-                </h3>
-                <p style={{
-                  fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300,
-                  fontSize: '0.9rem', color: 'var(--cream)', lineHeight: 1.5,
-                }}>
-                  {otherAchievements[2].desc}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 5: GCP */}
-          <div
-            ref={el => cardsRef.current[4] = el}
-            className="bento-card bento-blue"
-            style={{ gridColumn: 'span 1' }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
-                  <span style={{ fontSize: '1.3rem' }}>{otherAchievements[3].icon || "☁️"}</span>
-                  <span style={{
-                    padding: '0.2rem 0.75rem', background: 'rgba(212,255,61,0.15)',
-                    border: '1px solid rgba(17,17,17,0.15)', borderRadius: '20px',
-                    fontSize: '10px', fontWeight: 700, color: 'var(--surface-dark)',
-                    letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-display)',
-                  }}>
-                    CLOUD CERTIFIED
-                  </span>
-                </div>
-                <h3 style={{
-                  fontFamily: 'var(--font-display)', fontSize: '1.05rem',
-                  fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem',
-                  lineHeight: 1.3,
-                }}>
-                  {otherAchievements[3].title}
-                </h3>
-                <p style={{
-                  fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300,
-                  fontSize: '0.9rem', color: 'var(--cream)', lineHeight: 1.5,
-                }}>
-                  {otherAchievements[3].desc}
-                </p>
-              </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
 

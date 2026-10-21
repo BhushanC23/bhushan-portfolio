@@ -1,16 +1,14 @@
 import { useEffect, useRef, useCallback } from 'react';
 
-const frameCount = 240;
-
-// ─── SCROLL ZONES ──────────────────────────────────────────────────────────
-// 0.00 → 0.30  : canvas plays F001 → F072  (intro animation)
-// 0.30 → 0.85  : canvas LOCKED at F045     (text phases scroll here)
-// 0.85 → 1.00  : canvas resumes F072 → F240 (outro animation)
-const LOCK_START   = 0.30;   // scroll% where canvas freezes
-const LOCK_END     = 0.85;   // scroll% where canvas resumes
-const LOCK_FRAME   = 44;     // 0-indexed → frame 045 (the eye-level freeze frame)
-const INTRO_FRAMES = 72;     // frames played in intro zone
 const TOTAL_FRAMES = 240;
+
+// ─── SCROLL ZONES (Optimized for fast responsiveness) ──────────────────────────
+// 0.00 → 0.32  : canvas plays F001 → F045  (intro animation)
+// 0.32 → 0.58  : canvas LOCKED at F045     (snappy text phases 1–3 cycle here)
+// 0.58 → 1.00  : canvas resumes F045 → F240 (outro animation & white morph)
+const LOCK_START = 0.32; // scroll% where canvas freezes on Frame 045
+const LOCK_END   = 0.58; // scroll% where canvas resumes
+const LOCK_FRAME = 44;   // 0-indexed → frame 045 (the eye-level freeze frame)
 
 /**
  * Maps raw scroll progress (0→1) to a canvas frame index (0→239).
@@ -18,7 +16,7 @@ const TOTAL_FRAMES = 240;
  */
 function progressToFrame(progress, isMobile) {
   if (isMobile) {
-    // Smooth linear scrolling through all 240 frames on mobile portrait viewports (no pause/stop zone)
+    // Smooth linear scrolling through all 240 frames on mobile portrait viewports
     return Math.min(TOTAL_FRAMES - 1, Math.floor(progress * TOTAL_FRAMES));
   }
 
@@ -28,7 +26,7 @@ function progressToFrame(progress, isMobile) {
     return Math.min(LOCK_FRAME, Math.floor(t * (LOCK_FRAME + 1)));
   }
   if (progress < LOCK_END) {
-    // Locked zone: always show the freeze frame
+    // Responsive locked zone: always show the freeze frame
     return LOCK_FRAME;
   }
   // Outro zone: LOCK_FRAME → TOTAL_FRAMES-1
@@ -48,10 +46,11 @@ export function useScrollVideo(onProgressUpdate, images) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
 
-  const targetProgress  = useRef(0);
+  const targetProgress = useRef(0);
   const currentProgress = useRef(0);
   const lastRenderedFrame = useRef(-1);
   const loopRef = useRef(null);
+  const isHeroVisible = useRef(true);
 
   const containerHeightRef = useRef(0);
   const easeFactorRef = useRef(0.08);
@@ -78,8 +77,15 @@ export function useScrollVideo(onProgressUpdate, images) {
 
     let img = images[index];
     if (!img) {
+      // Fallback backwards to closest loaded image
       for (let k = index - 1; k >= 0; k--) {
         if (images[k]) { img = images[k]; break; }
+      }
+      // If none found backwards, search forwards
+      if (!img) {
+        for (let k = index + 1; k < images.length; k++) {
+          if (images[k]) { img = images[k]; break; }
+        }
       }
     }
 
@@ -99,8 +105,7 @@ export function useScrollVideo(onProgressUpdate, images) {
     const isMobile = width < 768;
 
     if (isMobile) {
-      // 68% height scaling for mobile portrait viewport: keeps subject proportional,
-      // centered horizontally, and shifted up vertically by 10% to place the face exactly in the center of the mobile screen.
+      // 68% height scaling for mobile portrait viewport
       drawHeight = height * 0.68;
       drawWidth  = drawHeight * imgRatio;
       offsetX    = (width - drawWidth) / 2;
@@ -119,7 +124,7 @@ export function useScrollVideo(onProgressUpdate, images) {
       }
     }
 
-    // Fill background with matching frame color to create a seamless landscape-in-portrait integration
+    // Seamless background matching
     const bgColor = getFrameBgColor(index);
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, width, height);
@@ -142,6 +147,34 @@ export function useScrollVideo(onProgressUpdate, images) {
   useEffect(() => {
     onProgressUpdateRef.current = onProgressUpdate;
   }, [onProgressUpdate]);
+
+  // Pause canvas redraws via IntersectionObserver when HeroSection is out of viewport
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const wasVisible = isHeroVisible.current;
+        isHeroVisible.current = entry.isIntersecting;
+
+        // When scrolling back into the HeroSection, force an immediate redraw of the current frame
+        if (!wasVisible && entry.isIntersecting && images.length > 0) {
+          const isMobile = window.innerWidth < 768;
+          const scaledProgress = Math.min(currentProgress.current / 0.75, 1);
+          const frameIndex = progressToFrame(scaledProgress, isMobile);
+          renderFrame(frameIndex);
+          if (onProgressUpdateRef.current) {
+            onProgressUpdateRef.current(scaledProgress);
+          }
+        }
+      },
+      { root: null, threshold: 0 }
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [images, renderFrame]);
 
   useEffect(() => {
     if (images.length === 0) return;
@@ -167,19 +200,20 @@ export function useScrollVideo(onProgressUpdate, images) {
         currentProgress.current = targetProgress.current;
       }
 
-      // Map progress to a 0.0 -> 0.75 sub-range, capping at 1.0 (retains freeze frame F240 for overlap transition)
-      const scaledProgress = Math.min(currentProgress.current / 0.75, 1);
-      const isMobile = window.innerWidth < 768;
-      const frameIndex = progressToFrame(scaledProgress, isMobile);
+      // ONLY execute canvas rendering when HeroSection is actively intersecting viewport
+      if (isHeroVisible.current) {
+        const scaledProgress = Math.min(currentProgress.current / 0.75, 1);
+        const isMobile = window.innerWidth < 768;
+        const frameIndex = progressToFrame(scaledProgress, isMobile);
 
-      if (lastRenderedFrame.current !== frameIndex) {
-        renderFrame(frameIndex);
-        lastRenderedFrame.current = frameIndex;
-      }
+        if (lastRenderedFrame.current !== frameIndex) {
+          renderFrame(frameIndex);
+          lastRenderedFrame.current = frameIndex;
+        }
 
-      // Always fire progress callback with scaledProgress
-      if (onProgressUpdateRef.current) {
-        onProgressUpdateRef.current(scaledProgress);
+        if (onProgressUpdateRef.current) {
+          onProgressUpdateRef.current(scaledProgress);
+        }
       }
 
       loopRef.current = requestAnimationFrame(updateLoop);
@@ -213,9 +247,9 @@ export function useScrollProgress() {
     if (!el) return;
 
     const handleScroll = () => {
-      const scrollTop  = window.scrollY;
-      const docHeight  = document.documentElement.scrollHeight - window.innerHeight;
-      const progress   = scrollTop / docHeight;
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress  = scrollTop / docHeight;
       el.style.transform = `scaleX(${progress})`;
     };
 

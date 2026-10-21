@@ -84,6 +84,8 @@ export default function AboutSection() {
   }, []);
 
   const photoSrc = about?.photo_url || '/bhushan-photo.jpg';
+  const bioText = about?.bio || BHUSHAN_DATA.about?.bio || '';
+  const statsList = about?.stats && about.stats.length > 0 ? about.stats : BHUSHAN_DATA.stats;
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -150,9 +152,6 @@ export default function AboutSection() {
     });
     return () => ctx.revert();
   }, []);
-
-  // ── Bio text ──
-  const bioText = `Full Stack Engineer & MCA Candidate specializing in highly interactive web systems, Web AR experiences, and LLM post-training. Former LLM Post-Training Intern at Ethara AI executing SFT & RLHF workflows.`;
 
   return (
     <section
@@ -345,7 +344,7 @@ export default function AboutSection() {
                 LinkedIn
               </a>
               <a
-                href="/Bhushan_Chaturbhuj_Resume.pdf"
+                href={about?.resume_url || "/Bhushan_Chaturbhuj_Resume.pdf"}
                 download
                 className="btn-outline magnetic"
                 style={{
@@ -466,11 +465,11 @@ export default function AboutSection() {
           ref={statsRef}
           style={{
             display: 'grid',
-            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : `repeat(${BHUSHAN_DATA.stats.length}, 1fr)`,
+            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : `repeat(${statsList.length}, 1fr)`,
             gap: isMobile ? '1.5rem 1rem' : '1rem',
           }}
         >
-          {BHUSHAN_DATA.stats.map((stat, i) => (
+          {statsList.map((stat, i) => (
             <div key={i} style={{
               display: 'flex',
               flexDirection: 'column',

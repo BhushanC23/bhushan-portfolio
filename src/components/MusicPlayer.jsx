@@ -112,7 +112,7 @@ export default function MusicPlayer() {
   }, [currentSongIndex]);
 
   const togglePlay = (e) => {
-    e.stopPropagation();
+    if (e) e.stopPropagation();
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -125,6 +125,14 @@ export default function MusicPlayer() {
         .catch(err => console.error('Audio play failed:', err));
     }
   };
+
+  useEffect(() => {
+    const handleToggleAudio = () => {
+      togglePlay();
+    };
+    window.addEventListener('toggle_ambient_audio', handleToggleAudio);
+    return () => window.removeEventListener('toggle_ambient_audio', handleToggleAudio);
+  }, [isPlaying]);
 
   const handleNext = (e) => {
     e.stopPropagation();

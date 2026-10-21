@@ -12,20 +12,20 @@ export default function AdminGuard({ children }) {
   function checkSession() {
     const raw = sessionStorage.getItem(SESSION_KEY);
     if (!raw) {
-      navigate('/bx-studio', { replace: true });
+      navigate('/nexus', { replace: true });
       return false;
     }
     try {
       const { timestamp } = JSON.parse(raw);
       if (Date.now() - timestamp > SESSION_DURATION_MS) {
         sessionStorage.removeItem(SESSION_KEY);
-        navigate('/bx-studio', { replace: true });
+        navigate('/nexus', { replace: true });
         return false;
       }
       return true;
     } catch {
       sessionStorage.removeItem(SESSION_KEY);
-      navigate('/bx-studio', { replace: true });
+      navigate('/nexus', { replace: true });
       return false;
     }
   }

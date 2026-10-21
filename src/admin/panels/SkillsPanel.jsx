@@ -1,197 +1,231 @@
-import { useState, useEffect, useCallback } from 'react';
-import { supabase, isSupabaseConfigured } from '../../lib/supabase';
-import { Plus, X, Save } from 'lucide-react';
+import { useState } from 'react';
+import { usePortfolioData } from '../../hooks/usePortfolioData';
+import { Plus, X, Check, Wrench, Sparkles, Code2, Database, Cpu, Terminal } from 'lucide-react';
 
-const DEFAULT_CATEGORIES = [
-  { category: 'frontend', label: 'Frontend', icon: '⚡' },
-  { category: 'backend', label: 'Backend', icon: '🔧' },
-  { category: 'database', label: 'Database', icon: '🗄️' },
-  { category: 'aiml', label: 'AI / ML', icon: '🤖' },
-  { category: 'tools', label: 'Tools & DevOps', icon: '🛠️' },
-  { category: 'specialties', label: 'Specialties', icon: '✨' },
-];
-
-function Toast({ message, type }) {
-  if (!message) return null;
-  return (
-    <div style={{
-      position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 9999,
-      padding: '0.85rem 1.25rem',
-      background: type === 'success' ? 'rgba(34,197,94,0.12)' : 'rgba(239,68,68,0.12)',
-      border: `1px solid ${type === 'success' ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'}`,
-      borderRadius: '12px',
-      color: type === 'success' ? '#86efac' : '#fca5a5',
-      fontSize: '0.88rem', fontFamily: 'var(--font-body)',
-      backdropFilter: 'blur(12px)',
-      display: 'flex', alignItems: 'center', gap: '0.5rem',
-      animation: 'slideUp 0.3s ease',
-    }}>
-      {message}
-    </div>
-  );
-}
-
-function CategoryCard({ cat, skillsMap, onUpdate }) {
-  const items = skillsMap[cat.category] || [];
-  const [newSkill, setNewSkill] = useState('');
-  const [saving, setSaving] = useState(false);
-
-  const addSkill = async () => {
-    const skill = newSkill.trim();
-    if (!skill || items.includes(skill)) return;
-    const updated = [...items, skill];
-    setSaving(true);
-    await onUpdate(cat.category, updated);
-    setNewSkill('');
-    setSaving(false);
-  };
-
-  const removeSkill = async (skill) => {
-    const updated = items.filter(s => s !== skill);
-    await onUpdate(cat.category, updated);
-  };
-
-  return (
-    <div style={{
-      background: 'rgba(13,26,28,0.6)',
-      border: '1px solid rgba(45,212,191,0.1)',
-      borderRadius: '16px',
-      padding: '1.5rem',
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
-        <span style={{ fontSize: '1.4rem' }}>{cat.icon}</span>
-        <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '0.9rem', fontWeight: 700, color: 'var(--teal-accent)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>
-          {cat.label}
-        </h3>
-        <span style={{ marginLeft: 'auto', color: 'rgba(240,244,244,0.3)', fontSize: '0.78rem' }}>
-          {items.length} item{items.length !== 1 ? 's' : ''}
-        </span>
-      </div>
-
-      {/* Skill chips */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem', marginBottom: '1.25rem', minHeight: '36px' }}>
-        {items.map((skill, i) => (
-          <div key={i} style={{
-            display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
-            padding: '0.28rem 0.7rem',
-            background: 'rgba(45,212,191,0.07)',
-            border: '1px solid rgba(45,212,191,0.18)',
-            borderRadius: '20px',
-          }}>
-            <span style={{ fontSize: '0.78rem', color: 'rgba(240,244,244,0.75)', fontFamily: 'var(--font-body)' }}>{skill}</span>
-            <button
-              onClick={() => removeSkill(skill)}
-              style={{ background: 'none', border: 'none', color: 'rgba(240,244,244,0.3)', cursor: 'pointer', padding: '0 1px', display: 'flex', alignItems: 'center', lineHeight: 1 }}
-              title="Remove skill"
-            >
-              <X size={11} />
-            </button>
-          </div>
-        ))}
-        {items.length === 0 && (
-          <span style={{ color: 'rgba(240,244,244,0.2)', fontSize: '0.8rem' }}>No skills yet</span>
-        )}
-      </div>
-
-      {/* Add new skill input */}
-      <div style={{ display: 'flex', gap: '0.5rem' }}>
-        <input
-          value={newSkill}
-          onChange={e => setNewSkill(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && addSkill()}
-          placeholder={`Add to ${cat.label}…`}
-          style={{
-            flex: 1, padding: '0.6rem 0.9rem',
-            background: 'rgba(7,13,14,0.5)',
-            border: '1px solid rgba(45,212,191,0.12)',
-            borderRadius: '8px', color: '#fff',
-            fontSize: '0.83rem', fontFamily: 'var(--font-body)', outline: 'none',
-          }}
-        />
-        <button
-          onClick={addSkill}
-          disabled={!newSkill.trim() || saving}
-          style={{ padding: '0.6rem 0.9rem', background: 'rgba(45,212,191,0.8)', border: 'none', borderRadius: '8px', color: '#070d0e', cursor: !newSkill.trim() ? 'not-allowed' : 'pointer', opacity: !newSkill.trim() ? 0.4 : 1, display: 'flex', alignItems: 'center' }}
-        >
-          <Plus size={16} />
-        </button>
-      </div>
-    </div>
-  );
-}
+const CATEGORY_META = {
+  frontend: { label: 'Frontend & UX', icon: '⚡', color: '#d4ff3d' },
+  backend: { label: 'Backend & APIs', icon: '🔧', color: '#94a3b8' },
+  database: { label: 'Databases & Cloud', icon: '🗄️', color: '#c9a84c' },
+  aiml: { label: 'AI / ML & LLMs', icon: '🤖', color: '#e0b4ff' },
+  tools: { label: 'Tools & DevOps', icon: '🛠', color: '#86efac' },
+  specialties: { label: 'Specialties & WebXR', icon: '✨', color: '#f9a8d4' },
+};
 
 export default function SkillsPanel() {
-  const [skillsMap, setSkillsMap] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [toast, setToast] = useState({ message: '', type: 'success' });
+  const { skills, saveItem } = usePortfolioData();
+  const [activeCategory, setActiveCategory] = useState('frontend');
+  const [newSkillText, setNewSkillText] = useState('');
+  const [toast, setToast] = useState(null);
 
-  const showToast = (message, type = 'success') => {
-    setToast({ message, type });
-    setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
   };
 
-  const load = useCallback(async () => {
-    if (!isSupabaseConfigured) {
-      showToast('Supabase not configured', 'error');
-      setLoading(false);
+  const currentCategorySkills = (skills && skills[activeCategory]) || [];
+
+  const handleAddSkill = async (e) => {
+    if (e) e.preventDefault();
+    const tag = newSkillText.trim();
+    if (!tag) return;
+
+    if (currentCategorySkills.includes(tag)) {
+      showToast(`"${tag}" already exists in this category`);
       return;
     }
-    setLoading(true);
-    const { data, error } = await supabase.from('skills').select('*');
-    if (error) { showToast(error.message, 'error'); }
-    else {
-      const map = {};
-      (data || []).forEach(row => { map[row.category] = row.items || []; });
-      setSkillsMap(map);
-    }
-    setLoading(false);
-  }, []);
 
-  useEffect(() => { load(); }, [load]);
+    const updated = {
+      ...skills,
+      [activeCategory]: [...currentCategorySkills, tag],
+    };
 
-  const handleUpdate = async (category, items) => {
-    // Upsert — insert or update based on category
-    const { error } = await supabase
-      .from('skills')
-      .upsert({ category, items }, { onConflict: 'category' });
-    if (error) { showToast(error.message, 'error'); return; }
-    setSkillsMap(prev => ({ ...prev, [category]: items }));
-    showToast('Skills updated!');
+    await saveItem('skills', updated);
+    setNewSkillText('');
+    showToast(`Added "${tag}" to ${CATEGORY_META[activeCategory]?.label || activeCategory}`);
+  };
+
+  const handleRemoveSkill = async (tagToRemove) => {
+    const updated = {
+      ...skills,
+      [activeCategory]: currentCategorySkills.filter(t => t !== tagToRemove),
+    };
+
+    await saveItem('skills', updated);
+    showToast(`Removed "${tagToRemove}"`);
   };
 
   return (
-    <div>
-      <div style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, color: '#fff', margin: 0 }}>Skills</h2>
-        <p style={{ color: 'rgba(240,244,244,0.4)', fontSize: '0.85rem', marginTop: '0.25rem' }}>
-          Add or remove skills per category. Changes reflect live on the portfolio.
-        </p>
-      </div>
-
-      {loading ? (
-        <div style={{ textAlign: 'center', padding: '4rem', color: 'rgba(240,244,244,0.3)' }}>Loading skills…</div>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
-          {DEFAULT_CATEGORIES.map(cat => (
-            <CategoryCard
-              key={cat.category}
-              cat={cat}
-              skillsMap={skillsMap}
-              onUpdate={handleUpdate}
-            />
-          ))}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+      {toast && (
+        <div style={{
+          position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 9999,
+          padding: '0.9rem 1.4rem', background: '#0e2415', border: '1px solid #22c55e', borderRadius: '12px',
+          color: '#86efac', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem',
+        }}>
+          <Check size={16} />
+          {toast}
         </div>
       )}
 
-      <Toast message={toast.message} type={toast.type} />
+      {/* Header Bar */}
+      <div style={{
+        background: '#0d0d12',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: '16px',
+        padding: '1.25rem 1.5rem',
+      }}>
+        <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 800, color: '#fff', margin: '0 0 0.35rem 0' }}>
+          Skills Matrix &amp; Marquee Ticker
+        </h3>
+        <span style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.5)' }}>
+          Click tags to remove. Adding tags updates the interactive category tab cards and endless marquee on live site.
+        </span>
+      </div>
 
-      <style>{`
-        @keyframes slideUp {
-          from { transform: translateY(10px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-        input::placeholder { color: rgba(240,244,244,0.2); }
-      `}</style>
+      {/* Category Tabs */}
+      <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap' }}>
+        {Object.entries(CATEGORY_META).map(([key, meta]) => {
+          const isActive = activeCategory === key;
+          const count = (skills && skills[key] ? skills[key].length : 0);
+
+          return (
+            <button
+              key={key}
+              onClick={() => setActiveCategory(key)}
+              style={{
+                padding: '0.65rem 1.15rem',
+                borderRadius: '12px',
+                border: `1px solid ${isActive ? meta.color : 'rgba(255, 255, 255, 0.08)'}`,
+                background: isActive ? `${meta.color}15` : 'rgba(255, 255, 255, 0.02)',
+                color: isActive ? '#fff' : 'rgba(255, 255, 255, 0.6)',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                transition: 'all 0.2s',
+              }}
+            >
+              <span>{meta.icon}</span>
+              <span>{meta.label}</span>
+              <span style={{
+                background: isActive ? meta.color : 'rgba(255, 255, 255, 0.1)',
+                color: isActive ? '#000' : 'rgba(255, 255, 255, 0.5)',
+                fontSize: '10px',
+                padding: '0.1rem 0.45rem',
+                borderRadius: '100px',
+                fontWeight: 800,
+              }}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Active Category Manager Canvas */}
+      <div style={{
+        background: '#0d0d12',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: '20px',
+        padding: '2rem',
+      }}>
+        {/* Add Skill Input Form */}
+        <form onSubmit={handleAddSkill} style={{ display: 'flex', gap: '0.75rem', marginBottom: '2rem', maxWidth: '500px' }}>
+          <input
+            type="text"
+            value={newSkillText}
+            onChange={e => setNewSkillText(e.target.value)}
+            placeholder={`Add new ${CATEGORY_META[activeCategory]?.label} skill (e.g. Next.js)...`}
+            style={{
+              flex: 1,
+              padding: '0.8rem 1rem',
+              borderRadius: '10px',
+              background: '#060608',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              color: '#fff',
+              fontSize: '0.85rem',
+              outline: 'none',
+            }}
+          />
+          <button
+            type="submit"
+            style={{
+              padding: '0.8rem 1.25rem',
+              borderRadius: '10px',
+              border: 'none',
+              background: '#d4ff3d',
+              color: '#000',
+              fontWeight: 800,
+              fontSize: '0.82rem',
+              cursor: 'pointer',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+            }}
+          >
+            <Plus size={15} strokeWidth={3} />
+            Add
+          </button>
+        </form>
+
+        {/* Chips List */}
+        <div>
+          <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255, 255, 255, 0.4)', marginBottom: '1rem' }}>
+            Current Active Tags ({currentCategorySkills.length})
+          </span>
+
+          {currentCategorySkills.length === 0 ? (
+            <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem', fontStyle: 'italic' }}>
+              No skills listed in this category yet. Type above to add.
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem' }}>
+              {currentCategorySkills.map(tag => (
+                <div
+                  key={tag}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.5rem 0.85rem',
+                    borderRadius: '8px',
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    color: '#fff',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  <span>{tag}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveSkill(tag)}
+                    title="Remove tag"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'rgba(255, 255, 255, 0.35)',
+                      cursor: 'pointer',
+                      padding: '2px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      borderRadius: '50%',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.color = '#f87171'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.35)'}
+                  >
+                    <X size={13} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

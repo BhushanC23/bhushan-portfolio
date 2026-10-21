@@ -17,9 +17,9 @@ import BlobShape from './BlobShape';
    ph-3 : 0.575 → 0.7125
    ph-4 : 0.7125 → 0.85
 ─────────────────────────────────────────────────────────────────────────────── */
-const LOCK_START = 0.30;
-const LOCK_END   = 0.85;
-const LOCK_SPAN  = LOCK_END - LOCK_START; // 0.55
+const LOCK_START = 0.32;
+const LOCK_END   = 0.58;
+const LOCK_SPAN  = LOCK_END - LOCK_START; // 0.26
 
 // 3 text phases evenly carved out of the lock zone (tp-1, tp-2, tp-3)
 const TEXT_PHASES = [
@@ -34,8 +34,8 @@ const ALL_DOTS = [
   ...TEXT_PHASES,
 ];
 
-const IN_DUR  = 0.025;
-const OUT_DUR = 0.025;
+const IN_DUR  = 0.02;
+const OUT_DUR = 0.02;
 
 function phaseOpacity(progress, showAt, hideAt) {
   if (progress < showAt || progress >= hideAt) return 0;
@@ -60,6 +60,11 @@ const TEXT_WIDTH  = '55%';   // max width so text doesn't bleed into the face
 export default function HeroSection({ images = [] }) {
   const { heroText } = usePortfolioData();
   const stickyRef = useRef(null);
+
+  const p1 = (heroText && heroText[0]) || { title: "Let's Create", subtitle: 'Amazing.', tag: 'Something' };
+  const p2 = (heroText && heroText[1]) || { title: 'Built with', subtitle: 'Precision.' };
+  const p3 = (heroText && heroText[2]) || { title: 'Turning', subtitle: 'into Reality.', tag: 'Ideas' };
+  const p4 = (heroText && heroText[3]) || { title: 'BHUSHAN', subtitle: 'Chaturbhuj.' };
 
   /* ── DOM-driven animation: no React re-renders, pure style mutations ── */
   const updateHeroDomStyles = useCallback((progress) => {
@@ -109,11 +114,11 @@ export default function HeroSection({ images = [] }) {
     /* 2b ── Outro CTA phase (tp-4) for white background at 100% completion */
     const tp4 = document.getElementById('tp-4');
     if (tp4) {
-      const outroStart = 0.88;
+      const outroStart = 0.84;
       let op4 = 0;
       if (progress >= outroStart) {
-        // Fade in from 0.88 to 0.93, then hold fully visible at 1.00
-        op4 = Math.min((progress - outroStart) / 0.05, 1);
+        // Fade in smoothly from 0.84 to 0.90, then hold fully visible at 1.00
+        op4 = Math.min((progress - outroStart) / 0.06, 1);
       }
       tp4.style.opacity = String(op4);
       tp4.style.pointerEvents = op4 > 0.05 ? 'auto' : 'none';
@@ -437,9 +442,9 @@ export default function HeroSection({ images = [] }) {
           top: '8%', opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
           <div className="tp-headline" style={{ fontSize: 'clamp(1.6rem, 4vw, 3.8rem)' }}>
-            Let's Create<br />
-            <span className="tp-italic">Something</span><br />
-            Amazing.
+            {p1.title}<br />
+            {p1.tag && <><span className="tp-italic">{p1.tag}</span><br /></>}
+            {p1.subtitle || p1.title2 || 'Amazing.'}
           </div>
         </div>
 
@@ -448,8 +453,8 @@ export default function HeroSection({ images = [] }) {
           top: '8%', opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
           <div className="tp-headline" style={{ fontSize: 'clamp(1.4rem, 3.5vw, 3.2rem)' }}>
-            Built with<br />
-            <span className="tp-italic" style={{ fontSize: '0.95em' }}>Precision.</span>
+            {p2.title}<br />
+            <span className="tp-italic" style={{ fontSize: '0.95em' }}>{p2.subtitle || p2.title2 || 'Precision.'}</span>
           </div>
         </div>
 
@@ -458,9 +463,9 @@ export default function HeroSection({ images = [] }) {
           top: '8%', opacity: 0, pointerEvents: 'none', zIndex: 10,
         }}>
           <div className="tp-headline" style={{ fontSize: 'clamp(1.4rem, 3.5vw, 3.2rem)' }}>
-            Turning<br />
-            <span className="tp-italic">Ideas</span><br />
-            into Reality.
+            {p3.title}<br />
+            {p3.tag && <><span className="tp-italic">{p3.tag}</span><br /></>}
+            {p3.subtitle || p3.title2 || 'into Reality.'}
           </div>
         </div>
 
@@ -470,9 +475,9 @@ export default function HeroSection({ images = [] }) {
         }}>
           {/* Giant editorial heading occupying the whole screen */}
           <div className="tp-headline-light" style={{ fontSize: 'clamp(4rem, 11vw, 11.2rem)' }}>
-            BHUSHAN
+            {p4.title || 'BHUSHAN'}
             <br />
-            <span className="tp-italic-light">Chaturbhuj.</span>
+            <span className="tp-italic-light">{p4.subtitle || p4.title2 || 'Chaturbhuj.'}</span>
           </div>
         </div>
 

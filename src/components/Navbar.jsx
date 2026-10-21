@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Command } from 'lucide-react';
 
 const NAV_LINKS = [
   { href: '#about',      label: 'About' },
@@ -130,6 +130,36 @@ export default function Navbar() {
         <div style={{ width: '1px', height: '18px', background: 'rgba(212,255,61,0.2)', margin: '0 4px', flexShrink: 0 }} />
 
         <button
+          onClick={() => window.dispatchEvent(new CustomEvent('toggle_command_palette'))}
+          title="Open Command Palette (Cmd + K / Ctrl + K)"
+          style={{
+            position: 'relative', zIndex: 1,
+            display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+            padding: '0 0.75rem', height: '34px', margin: '0 4px',
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: '100px',
+            fontFamily: 'monospace', fontSize: '11px', fontWeight: 600,
+            color: 'rgba(255, 255, 255, 0.65)',
+            cursor: 'pointer', flexShrink: 0,
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.color = 'var(--accent-lime)';
+            e.currentTarget.style.borderColor = 'rgba(212, 255, 61, 0.4)';
+            e.currentTarget.style.background = 'rgba(212, 255, 61, 0.08)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.color = 'rgba(255, 255, 255, 0.65)';
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+          }}
+        >
+          <Command size={12} />
+          <span>⌘K</span>
+        </button>
+
+        <button
           onClick={() => handleNavClick('#contact')}
           style={{
             position: 'relative', zIndex: 1,
@@ -193,22 +223,45 @@ export default function Navbar() {
             Bhushan
           </span>
 
-          <button
-            onClick={() => setIsMenuOpen(v => !v)}
-            style={{
-              background: 'rgba(212,255,61,0.08)',
-              border: '1px solid rgba(212,255,61,0.15)',
-              borderRadius: '10px',
-              color: 'var(--accent-lime)',
-              cursor: 'pointer',
-              width: '36px', height: '36px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'background 0.2s ease',
-            }}
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X size={17} /> : <Menu size={17} />}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('toggle_command_palette'))}
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: '8px',
+                color: 'rgba(255, 255, 255, 0.75)',
+                cursor: 'pointer',
+                padding: '0 0.55rem',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+                fontFamily: 'monospace',
+                fontSize: '11px',
+              }}
+            >
+              <Command size={11} />
+              <span>⌘K</span>
+            </button>
+
+            <button
+              onClick={() => setIsMenuOpen(v => !v)}
+              style={{
+                background: 'rgba(212,255,61,0.08)',
+                border: '1px solid rgba(212,255,61,0.15)',
+                borderRadius: '10px',
+                color: 'var(--accent-lime)',
+                cursor: 'pointer',
+                width: '36px', height: '36px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'background 0.2s ease',
+              }}
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? <X size={17} /> : <Menu size={17} />}
+            </button>
+          </div>
         </div>
 
         {/* Dropdown */}

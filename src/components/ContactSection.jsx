@@ -43,6 +43,23 @@ export default function ContactSection() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
+  // Recruiter fast-track event listener (from JD Role Matcher or AI Chat)
+  useEffect(() => {
+    const handleSelectContactPurpose = (e) => {
+      const { purpose, role, notes } = e.detail || {};
+      if (purpose) {
+        setFormState(prev => ({
+          ...prev,
+          purpose: purpose,
+          role: role || prev.role,
+          message: notes ? (prev.message ? `${prev.message}\n\n${notes}` : notes) : prev.message,
+        }));
+      }
+    };
+    window.addEventListener('select_contact_purpose', handleSelectContactPurpose);
+    return () => window.removeEventListener('select_contact_purpose', handleSelectContactPurpose);
+  }, []);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       if (headingRef.current) {

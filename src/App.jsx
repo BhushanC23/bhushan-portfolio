@@ -267,67 +267,81 @@ function PortfolioLayout() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
-  /* ── Ultra-Fast Frame 1 Paint + Background Idle Streaming ── */
+  /* ── Ultra-Fast Frame 1 Paint + High-Throughput 240-Frame Preloader ── */
   useEffect(() => {
     const FRAME_COUNT = 240;
     const slots = new Array(FRAME_COUNT).fill(null);
     let isMounted = true;
+    let loadedCount = 0;
+    let syncScheduled = false;
 
-    // 1. Critical Path: Preload Frame 1 immediately for instant FCP/LCP
+    // Throttled state synchronization using requestAnimationFrame
+    const syncState = () => {
+      syncScheduled = false;
+      if (!isMounted) return;
+      setImages([...slots]);
+    };
+
+    const triggerSync = () => {
+      if (!syncScheduled) {
+        syncScheduled = true;
+        requestAnimationFrame(syncState);
+      }
+    };
+
+    // 1. Critical Path: Frame 1 loaded immediately
     const firstImg = new Image();
     firstImg.src = '/sequence/ezgif-frame-001.jpg';
 
-    const onFirstFrameReady = () => {
-      if (!isMounted) return;
+    const handleFirstFrame = () => {
+      if (!isMounted || slots[0]) return;
       slots[0] = firstImg;
+      loadedCount++;
       setImages([...slots]);
-      setLoadingProgress(100); // Unblocks PageLoader in < 150ms!
+      setLoadingProgress(15);
+    };
 
-      // 2. Non-blocking Idle Streaming: Lazily cache remaining frames in small batches
-      const streamRemainingFrames = () => {
-        let currentIdx = 2;
-        const BATCH_SIZE = 12;
+    firstImg.onload = handleFirstFrame;
+    firstImg.onerror = handleFirstFrame;
 
-        const loadBatch = () => {
-          if (!isMounted || currentIdx > FRAME_COUNT) return;
-          const end = Math.min(currentIdx + BATCH_SIZE, FRAME_COUNT + 1);
+    // 2. Preload all remaining frames concurrently
+    for (let i = 1; i <= FRAME_COUNT; i++) {
+      if (i === 1) continue; // Frame 1 handled above
+      const img = new Image();
+      img.src = `/sequence/ezgif-frame-${i.toString().padStart(3, '0')}.jpg`;
 
-          for (let i = currentIdx; i < end; i++) {
-            const img = new Image();
-            img.src = `/sequence/ezgif-frame-${i.toString().padStart(3, '0')}.jpg`;
-            img.onload = () => { slots[i - 1] = img; };
-            img.onerror = () => {};
-          }
+      const onFrameLoad = () => {
+        if (!isMounted) return;
+        slots[i - 1] = img;
+        loadedCount++;
 
-          currentIdx = end;
-          if (currentIdx <= FRAME_COUNT) {
-            if ('requestIdleCallback' in window) {
-              window.requestIdleCallback(loadBatch, { timeout: 1200 });
-            } else {
-              setTimeout(loadBatch, 150);
-            }
-          }
-        };
+        // Fast ramp for PageLoader: unblock within first 15-20 frames for 90+ Lighthouse score
+        if (loadedCount <= 20) {
+          const p = Math.min(100, Math.round((loadedCount / 20) * 100));
+          setLoadingProgress(p);
+        }
 
-        if ('requestIdleCallback' in window) {
-          window.requestIdleCallback(loadBatch, { timeout: 800 });
-        } else {
-          setTimeout(loadBatch, 200);
+        // Batch state sync: every 6 frames or on final frame
+        if (loadedCount % 6 === 0 || loadedCount === FRAME_COUNT) {
+          triggerSync();
         }
       };
 
-      streamRemainingFrames();
-    };
+      img.onload = onFrameLoad;
+      img.onerror = onFrameLoad;
+    }
 
-    firstImg.onload = onFirstFrameReady;
-    firstImg.onerror = onFirstFrameReady;
-
-    // Failsafe timer: unblock within 250ms max even on 2G/throttled network
-    const timer = setTimeout(onFirstFrameReady, 250);
+    // Failsafe timer: ensures PageLoader is dismissed within 450ms max
+    const failsafeTimer = setTimeout(() => {
+      if (isMounted) {
+        setLoadingProgress(100);
+        triggerSync();
+      }
+    }, 450);
 
     return () => {
       isMounted = false;
-      clearTimeout(timer);
+      clearTimeout(failsafeTimer);
     };
   }, []);
 

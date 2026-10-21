@@ -45,6 +45,11 @@ function getFrameBgColor(index) {
 export function useScrollVideo(onProgressUpdate, images) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  const imagesRef = useRef(images);
+
+  useEffect(() => {
+    imagesRef.current = images;
+  }, [images]);
 
   const targetProgress = useRef(0);
   const currentProgress = useRef(0);
@@ -53,7 +58,9 @@ export function useScrollVideo(onProgressUpdate, images) {
   const isHeroVisible = useRef(true);
 
   const containerHeightRef = useRef(0);
-  const easeFactorRef = useRef(0.08);
+  const easeFactorRef = useRef(0.25);
+  const dimensionsRef = useRef({ width: 0, height: 0 });
+  const lastReportedProgress = useRef(-1);
 
   const updateDimensions = useCallback(() => {
     const container = containerRef.current;
@@ -61,6 +68,17 @@ export function useScrollVideo(onProgressUpdate, images) {
     containerHeightRef.current = container.offsetHeight - window.innerHeight;
     const isMobile = window.innerWidth <= 768;
     easeFactorRef.current = isMobile ? 0.35 : 0.25;
+
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      if (w > 0 && h > 0 && (canvas.width !== w || canvas.height !== h)) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+      dimensionsRef.current = { width: canvas.width, height: canvas.height };
+    }
   }, []);
 
   const handleScroll = useCallback(() => {
@@ -74,30 +92,34 @@ export function useScrollVideo(onProgressUpdate, images) {
   const renderFrame = useCallback((index) => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
+    const imgs = imagesRef.current || [];
 
-    let img = images[index];
+    let img = imgs[index];
     if (!img) {
       // Fallback backwards to closest loaded image
       for (let k = index - 1; k >= 0; k--) {
-        if (images[k]) { img = images[k]; break; }
+        if (imgs[k]) { img = imgs[k]; break; }
       }
       // If none found backwards, search forwards
       if (!img) {
-        for (let k = index + 1; k < images.length; k++) {
-          if (images[k]) { img = images[k]; break; }
+        for (let k = index + 1; k < imgs.length; k++) {
+          if (imgs[k]) { img = imgs[k]; break; }
         }
       }
     }
 
     if (!canvas || !ctx || !img) return;
 
-    const { clientWidth, clientHeight } = canvas;
-    if (canvas.width !== clientWidth || canvas.height !== clientHeight) {
-      canvas.width  = clientWidth;
-      canvas.height = clientHeight;
+    let { width, height } = dimensionsRef.current;
+    if (!width || !height) {
+      width = canvas.width || canvas.clientWidth;
+      height = canvas.height || canvas.clientHeight;
+      canvas.width = width;
+      canvas.height = height;
+      dimensionsRef.current = { width, height };
     }
+    if (!width || !height) return;
 
-    const { width, height } = canvas;
     const imgRatio    = img.width / img.height;
     const canvasRatio = width / height;
 
@@ -130,15 +152,21 @@ export function useScrollVideo(onProgressUpdate, images) {
     ctx.fillRect(0, 0, width, height);
 
     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-  }, [images]);
+  }, []);
 
   const handleResize = useCallback(() => {
     const canvas = canvasRef.current;
     if (canvas) {
-      canvas.width  = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      if (w > 0 && h > 0 && (canvas.width !== w || canvas.height !== h)) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+      dimensionsRef.current = { width: canvas.width, height: canvas.height };
       const isMobile = window.innerWidth < 768;
-      const frameIndex = progressToFrame(currentProgress.current, isMobile);
+      const scaledProgress = Math.min(currentProgress.current / 0.75, 1);
+      const frameIndex = progressToFrame(scaledProgress, isMobile);
       renderFrame(frameIndex);
     }
   }, [renderFrame]);
@@ -177,8 +205,6 @@ export function useScrollVideo(onProgressUpdate, images) {
   }, [images, renderFrame]);
 
   useEffect(() => {
-    if (images.length === 0) return;
-
     updateDimensions();
     handleResize();
 
@@ -191,7 +217,10 @@ export function useScrollVideo(onProgressUpdate, images) {
     window.addEventListener('resize', handleResizeEvent, { passive: true });
 
     const updateLoop = () => {
-      if (images.length === 0) return;
+      if (!imagesRef.current || imagesRef.current.length === 0) {
+        loopRef.current = requestAnimationFrame(updateLoop);
+        return;
+      }
 
       const easeFactor = easeFactorRef.current;
       currentProgress.current += (targetProgress.current - currentProgress.current) * easeFactor;
@@ -211,8 +240,11 @@ export function useScrollVideo(onProgressUpdate, images) {
           lastRenderedFrame.current = frameIndex;
         }
 
-        if (onProgressUpdateRef.current) {
-          onProgressUpdateRef.current(scaledProgress);
+        if (Math.abs(lastReportedProgress.current - scaledProgress) > 0.0001) {
+          lastReportedProgress.current = scaledProgress;
+          if (onProgressUpdateRef.current) {
+            onProgressUpdateRef.current(scaledProgress);
+          }
         }
       }
 
@@ -226,13 +258,18 @@ export function useScrollVideo(onProgressUpdate, images) {
       window.removeEventListener('resize', handleResizeEvent);
       if (loopRef.current) cancelAnimationFrame(loopRef.current);
     };
-  }, [images, handleScroll, updateDimensions, handleResize, renderFrame]);
+  }, [handleScroll, updateDimensions, handleResize, renderFrame]);
 
   useEffect(() => {
     if (images.length > 0 && images[0]) {
-      renderFrame(0);
-      lastRenderedFrame.current = 0;
-      if (onProgressUpdateRef.current) onProgressUpdateRef.current(0);
+      const isMobile = window.innerWidth < 768;
+      const scaledProgress = Math.min(currentProgress.current / 0.75, 1);
+      const frameIndex = progressToFrame(scaledProgress, isMobile);
+      renderFrame(frameIndex);
+      if (lastRenderedFrame.current === -1) {
+        lastRenderedFrame.current = frameIndex;
+        if (onProgressUpdateRef.current) onProgressUpdateRef.current(scaledProgress);
+      }
     }
   }, [images, renderFrame]);
 

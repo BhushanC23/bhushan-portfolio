@@ -82,6 +82,8 @@ function CategoryCard({ cat, isActive, onClick, skillCount }) {
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      aria-pressed={isActive}
+      aria-label={`Select ${cat.label} skills category`}
       className="skill-cat-card"
       style={{
         cursor: 'pointer',

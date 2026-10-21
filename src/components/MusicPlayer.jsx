@@ -240,6 +240,7 @@ export default function MusicPlayer() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
               <button
                 onClick={handlePrev}
+                aria-label="Previous track"
                 style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.2rem', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 <SkipBack size={12} />
@@ -247,6 +248,7 @@ export default function MusicPlayer() {
 
               <button
                 onClick={togglePlay}
+                aria-label={isPlaying ? 'Pause music' : 'Play music'}
                 style={{
                   background: isPlaying ? 'var(--accent-lime)' : 'rgba(255, 255, 255, 0.1)',
                   border: 'none', cursor: 'pointer',
@@ -260,6 +262,7 @@ export default function MusicPlayer() {
 
               <button
                 onClick={handleNext}
+                aria-label="Next track"
                 style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.2rem', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 <SkipForward size={12} />
@@ -269,7 +272,11 @@ export default function MusicPlayer() {
 
           {/* Trigger Circle Button at the bottom-left */}
           <div
+            role="button"
+            tabIndex={0}
+            aria-label={isExpanded ? 'Collapse music player' : 'Expand music player'}
             onClick={handleToggleExpand}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleToggleExpand(e); } }}
             style={{
               position: 'fixed',
               bottom: '1.5rem',
@@ -300,7 +307,11 @@ export default function MusicPlayer() {
       ) : (
         /* ── DESKTOP STATE: SMOOTH MORPHING CAPSULE (COLLAPSED BY DEFAULT) ── */
         <div
+          role="button"
+          tabIndex={!isExpanded ? 0 : -1}
+          aria-label={!isExpanded ? 'Expand ambient music player' : 'Ambient music player'}
           onClick={handleToggleExpand}
+          onKeyDown={(e) => { if (!isExpanded && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); handleToggleExpand(e); } }}
           style={{
             position: 'fixed',
             bottom: '2rem',
@@ -341,6 +352,7 @@ export default function MusicPlayer() {
                     e.stopPropagation();
                     setIsExpanded(false);
                   }}
+                  aria-label="Collapse music player"
                   style={{
                     background: 'none', border: 'none', cursor: 'pointer',
                     padding: 0, margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',

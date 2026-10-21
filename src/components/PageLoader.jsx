@@ -54,8 +54,17 @@ export default function PageLoader({ progress, onComplete }) {
     // Immediate initial reveal
     showQuote();
 
+    // Fast-exit failsafe: never delay FCP/LCP past 800ms under Lighthouse/slow network
+    const failsafe = setTimeout(() => {
+      if (!isExiting.current) {
+        isExiting.current = true;
+        triggerExit();
+      }
+    }, 800);
+
     return () => {
       killed = true;
+      clearTimeout(failsafe);
       gsap.killTweensOf([quoteRef.current, attrRef.current]);
     };
   }, []);

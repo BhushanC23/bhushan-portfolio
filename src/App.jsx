@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import gsap from 'gsap';
 import HeroSection from './components/HeroSection';
@@ -14,12 +14,14 @@ import PageLoader from './components/PageLoader';
 import Navbar from './components/Navbar';
 import CommandPalette from './components/CommandPalette';
 import LLMSandboxSection from './components/LLMSandboxSection';
-import AdminLogin from './admin/AdminLogin';
-import AdminGuard from './admin/AdminGuard';
-import AdminDashboard from './admin/AdminDashboard';
 import { useScrollProgress } from './hooks/useScrollVideo';
 import GridOverlay from './components/GridOverlay';
 import MusicPlayer from './components/MusicPlayer';
+
+// Code-split NexusOS Admin to keep initial bundle ultra-lightweight
+const AdminLogin = lazy(() => import('./admin/AdminLogin'));
+const AdminGuard = lazy(() => import('./admin/AdminGuard'));
+const AdminDashboard = lazy(() => import('./admin/AdminDashboard'));
 
 /* ─────────── Global Keyboard Shortcuts ─────────── */
 function GlobalShortcuts() {
@@ -265,42 +267,68 @@ function PortfolioLayout() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
-  /* ── Progressive Frame Loading: Ready as soon as first 35 frames load ── */
+  /* ── Ultra-Fast Frame 1 Paint + Background Idle Streaming ── */
   useEffect(() => {
     const FRAME_COUNT = 240;
-    const INITIAL_THRESHOLD = 35;
     const slots = new Array(FRAME_COUNT).fill(null);
-    let loadedCount = 0;
-    let initialReadyFired = false;
+    let isMounted = true;
 
-    // Load initial 35 frames first, then seamlessly cache the rest
-    for (let i = 1; i <= FRAME_COUNT; i++) {
-      const img = new Image();
-      img.src = `/sequence/ezgif-frame-${i.toString().padStart(3, '0')}.jpg`;
+    // 1. Critical Path: Preload Frame 1 immediately for instant FCP/LCP
+    const firstImg = new Image();
+    firstImg.src = '/sequence/ezgif-frame-001.jpg';
 
-      const done = (idx) => () => {
-        slots[idx - 1] = img;
-        loadedCount++;
+    const onFirstFrameReady = () => {
+      if (!isMounted) return;
+      slots[0] = firstImg;
+      setImages([...slots]);
+      setLoadingProgress(100); // Unblocks PageLoader in < 150ms!
 
-        // Fast-track initial progress calculation against the first 35 frames
-        if (!initialReadyFired) {
-          const progress = Math.min(100, Math.round((loadedCount / INITIAL_THRESHOLD) * 100));
-          setLoadingProgress(progress);
+      // 2. Non-blocking Idle Streaming: Lazily cache remaining frames in small batches
+      const streamRemainingFrames = () => {
+        let currentIdx = 2;
+        const BATCH_SIZE = 12;
 
-          if (loadedCount >= INITIAL_THRESHOLD) {
-            initialReadyFired = true;
-            setLoadingProgress(100);
-            setImages([...slots]);
+        const loadBatch = () => {
+          if (!isMounted || currentIdx > FRAME_COUNT) return;
+          const end = Math.min(currentIdx + BATCH_SIZE, FRAME_COUNT + 1);
+
+          for (let i = currentIdx; i < end; i++) {
+            const img = new Image();
+            img.src = `/sequence/ezgif-frame-${i.toString().padStart(3, '0')}.jpg`;
+            img.onload = () => { slots[i - 1] = img; };
+            img.onerror = () => {};
           }
-        } else if (loadedCount % 15 === 0 || loadedCount === FRAME_COUNT) {
-          // Incrementally sync newly cached background frames to state
-          setImages([...slots]);
+
+          currentIdx = end;
+          if (currentIdx <= FRAME_COUNT) {
+            if ('requestIdleCallback' in window) {
+              window.requestIdleCallback(loadBatch, { timeout: 1200 });
+            } else {
+              setTimeout(loadBatch, 150);
+            }
+          }
+        };
+
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(loadBatch, { timeout: 800 });
+        } else {
+          setTimeout(loadBatch, 200);
         }
       };
 
-      img.onload = done(i);
-      img.onerror = done(i);
-    }
+      streamRemainingFrames();
+    };
+
+    firstImg.onload = onFirstFrameReady;
+    firstImg.onerror = onFirstFrameReady;
+
+    // Failsafe timer: unblock within 250ms max even on 2G/throttled network
+    const timer = setTimeout(onFirstFrameReady, 250);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
   }, []);
 
   /* ── Unified Lenis Smooth Scroll Synced to GSAP Ticker ── */
@@ -406,13 +434,22 @@ export default function App() {
         <Route path="/" element={<PortfolioLayout />} />
 
         {/* New 2026 Nexus Admin OS */}
-        <Route path="/nexus" element={<AdminLogin />} />
+        <Route
+          path="/nexus"
+          element={
+            <Suspense fallback={<div style={{ minHeight: '100vh', background: '#070d0e' }} />}>
+              <AdminLogin />
+            </Suspense>
+          }
+        />
         <Route
           path="/nexus/os"
           element={
-            <AdminGuard>
-              <AdminDashboard />
-            </AdminGuard>
+            <Suspense fallback={<div style={{ minHeight: '100vh', background: '#070d0e' }} />}>
+              <AdminGuard>
+                <AdminDashboard />
+              </AdminGuard>
+            </Suspense>
           }
         />
 

@@ -223,6 +223,7 @@ function ProjectCard({ project, index, cardWidth, cardHeight, isMobile, onOpenXR
               e.stopPropagation();
               onOpenXRay(project);
             }}
+            aria-label={`View system architecture X-Ray for ${title}`}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -515,6 +516,8 @@ export default function ProjectsSection() {
                     setSelectedCategory(cat.id);
                     setTimeout(() => ScrollTrigger.refresh(), 100);
                   }}
+                  aria-pressed={isActive}
+                  aria-label={`Filter projects by ${cat.label}`}
                   style={{
                     padding: isMobile ? '0.22rem 0.65rem' : '0.32rem 0.95rem',
                     borderRadius: '100px',

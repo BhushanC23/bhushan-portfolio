@@ -817,6 +817,7 @@ Portfolio: ${window.location.origin}`;
               <button
                 onClick={clearChat}
                 title="Clear chat"
+                aria-label="Clear chat conversation"
                 style={{
                   background: 'rgba(255,255,255,0.04)',
                   border: '1px solid rgba(255,255,255,0.08)',
@@ -844,6 +845,7 @@ Portfolio: ${window.location.origin}`;
             <button
               onClick={() => setIsOpen(false)}
               title="Close panel"
+              aria-label="Close Recruiter AI Agent sidebar"
               style={{
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.08)',
@@ -888,6 +890,8 @@ Portfolio: ${window.location.origin}`;
           }}>
             <button
               onClick={() => setActiveTab('chat')}
+              aria-pressed={activeTab === 'chat'}
+              aria-label="Switch to AI Chat tab"
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -916,6 +920,8 @@ Portfolio: ${window.location.origin}`;
 
             <button
               onClick={() => setActiveTab('matcher')}
+              aria-pressed={activeTab === 'matcher'}
+              aria-label="Switch to JD Role Matcher tab"
               style={{
                 display: 'flex',
                 alignItems: 'center',

@@ -1,0 +1,23 @@
+# Bhushan Chaturbhuj — Portfolio & Agentic Knowledge Base
+
+> Comprehensive technical profile of Bhushan Chaturbhuj: Full-Stack Developer, LLM Post-Training Engineer, and MCA candidate at Sanjivani University.
+
+## Core Specializations
+- Full-Stack Software Engineering (React 19, Node.js, Express, MongoDB, PostgreSQL, Redis)
+- Applied LLM Post-Training & Alignment (Supervised Fine-Tuning [SFT], Direct Preference Optimization [DPO/RLHF], Synthetic Data Generation)
+- High-Performance WebXR & Creative Frontend (Three.js, MindAR, A-Frame, 60fps mobile spatial rendering, GSAP)
+
+## Key Production Projects
+- **Heritage AR**: WebXR 3D spatial interactive cultural platform rendering browser-based historical monuments at locked 60fps. Built with React, Three.js, MindAR, and A-Frame.
+- **EVSync**: Enterprise EV fleet charging and smart station telemetry management platform integrating OCPP 2.0.1 IoT protocols, real-time WebSockets, and Redis.
+- **AlphabetIQ**: Full-stack handwritten character classifier and speech NLP platform built with React, Node.js, and TensorFlow.
+
+## Professional Experience
+- **Ethara AI** (April 2026 – June 2026): LLM Post-Training Intern. Engineered SFT pipelines, curated preference pairs, and built automated multi-turn alignment benchmarks.
+- **National Entrepreneurship Challenge (NEC 2025)**: National Rank 52 at E-Cell, IIT Bombay.
+
+## Contact & Profiles
+- Live Portfolio: https://bhushan-portfolio-peach.vercel.app/
+- GitHub: https://github.com/BhushanC23
+- LinkedIn: https://www.linkedin.com/in/bhushan-chaturbhuj/
+- Email: bhushanchaturbhuj23@gmail.com

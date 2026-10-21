@@ -222,6 +222,8 @@ export default function LLMSandboxSection() {
                   setActivePromptId(p.id);
                   handleSimulateInference();
                 }}
+                aria-pressed={isActive}
+                aria-label={`Test prompt: ${p.title}`}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -285,12 +287,14 @@ export default function LLMSandboxSection() {
                 }}>
                   <button
                     onClick={() => { setModelMode('base'); handleSimulateInference(); }}
+                    aria-pressed={modelMode === 'base'}
+                    aria-label="Select Base Unaligned Model"
                     style={{
                       padding: '0.45rem 1rem',
                       borderRadius: '8px',
                       border: 'none',
                       background: modelMode === 'base' ? 'rgba(239, 68, 68, 0.18)' : 'transparent',
-                      color: modelMode === 'base' ? '#f87171' : 'rgba(255, 255, 255, 0.5)',
+                      color: modelMode === 'base' ? '#f87171' : 'rgba(255, 255, 255, 0.7)',
                       fontSize: '0.78rem',
                       fontWeight: 700,
                       cursor: 'pointer',
@@ -306,12 +310,14 @@ export default function LLMSandboxSection() {
 
                   <button
                     onClick={() => { setModelMode('rlhf'); handleSimulateInference(); }}
+                    aria-pressed={modelMode === 'rlhf'}
+                    aria-label="Select Post-Trained SFT and RLHF Aligned Model"
                     style={{
                       padding: '0.45rem 1rem',
                       borderRadius: '8px',
                       border: 'none',
                       background: modelMode === 'rlhf' ? 'rgba(212, 255, 61, 0.18)' : 'transparent',
-                      color: modelMode === 'rlhf' ? '#d4ff3d' : 'rgba(255, 255, 255, 0.5)',
+                      color: modelMode === 'rlhf' ? '#d4ff3d' : 'rgba(255, 255, 255, 0.7)',
                       fontSize: '0.78rem',
                       fontWeight: 700,
                       cursor: 'pointer',

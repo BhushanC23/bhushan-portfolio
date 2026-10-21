@@ -361,6 +361,7 @@ export default function CommandPalette() {
             value={query}
             onChange={e => setQuery(e.target.value)}
             onKeyDown={handleInputKeyDown}
+            aria-label="Search portfolio commands, sections, and actions"
             placeholder="Type a command or jump to section (e.g. Resume, Projects, RLHF)..."
             style={{
               flex: 1,
@@ -375,6 +376,7 @@ export default function CommandPalette() {
           {query ? (
             <button
               onClick={() => setQuery('')}
+              aria-label="Clear search query"
               style={{
                 background: 'rgba(255, 255, 255, 0.06)',
                 border: 'none',

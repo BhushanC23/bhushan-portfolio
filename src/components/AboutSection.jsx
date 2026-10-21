@@ -419,7 +419,11 @@ export default function AboutSection() {
               <img
                 ref={photoImgRef}
                 src={photoSrc}
-                alt="Bhushan Chaturbhuj"
+                alt="Bhushan Chaturbhuj — Full Stack Developer and LLM Post-Training Engineer"
+                loading="lazy"
+                decoding="async"
+                width="400"
+                height="533"
                 style={{
                   width: '100%', height: '115%',
                   objectFit: 'cover', objectPosition: 'top',

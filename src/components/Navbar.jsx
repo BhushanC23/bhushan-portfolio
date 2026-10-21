@@ -132,6 +132,7 @@ export default function Navbar() {
         <button
           onClick={() => window.dispatchEvent(new CustomEvent('toggle_command_palette'))}
           title="Open Command Palette (Cmd + K / Ctrl + K)"
+          aria-label="Open Command Palette (Cmd + K)"
           style={{
             position: 'relative', zIndex: 1,
             display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
@@ -226,6 +227,7 @@ export default function Navbar() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <button
               onClick={() => window.dispatchEvent(new CustomEvent('toggle_command_palette'))}
+              aria-label="Open Command Palette (Cmd + K)"
               style={{
                 background: 'rgba(255, 255, 255, 0.05)',
                 border: '1px solid rgba(255, 255, 255, 0.12)',

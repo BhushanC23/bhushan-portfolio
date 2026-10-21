@@ -212,7 +212,7 @@ export default function ContactSection() {
     fontWeight: 600,
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
-    color: 'rgba(255, 255, 255, 0.5)'
+    color: '#cbd5e1'
   };
 
   const handleFocus = (e) => {
@@ -508,10 +508,10 @@ export default function ContactSection() {
                 ))}
 
                 {/* Purpose of Contact selector */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.25rem' }}>
-                  <label style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <div role="group" aria-labelledby="purpose-group-label" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.25rem' }}>
+                  <span id="purpose-group-label" style={labelStyle}>
                     Purpose of Contact
-                  </label>
+                  </span>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
                     {['General Inquiry', 'Hiring / Job Offer', 'Freelance Project'].map((opt) => {
                       const active = formState.purpose === opt;
@@ -519,6 +519,8 @@ export default function ContactSection() {
                         <button
                           key={opt}
                           type="button"
+                          aria-pressed={active}
+                          aria-label={`Select purpose: ${opt}`}
                           onClick={() => setField('purpose', opt)}
                           style={{
                             padding: '0.55rem 1.1rem',
@@ -528,7 +530,7 @@ export default function ContactSection() {
                             fontWeight: 500,
                             background: active ? 'var(--accent-lime)' : 'rgba(255, 255, 255, 0.03)',
                             border: `1.5px solid ${active ? 'var(--accent-lime)' : 'rgba(255, 255, 255, 0.08)'}`,
-                            color: active ? '#000000' : 'rgba(255, 255, 255, 0.6)',
+                            color: active ? '#000000' : 'rgba(255, 255, 255, 0.75)',
                             cursor: 'pointer',
                             transition: 'all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1)',
                           }}
@@ -595,8 +597,8 @@ export default function ContactSection() {
                               />
                             </div>
                           </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                            <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          <div role="group" aria-labelledby="jobtype-group-label" style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                            <span id="jobtype-group-label" style={labelStyle}>
                               Job Type
                             </span>
                             <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
@@ -606,6 +608,8 @@ export default function ContactSection() {
                                   <button
                                     key={t}
                                     type="button"
+                                    aria-pressed={active}
+                                    aria-label={`Job type: ${t}`}
                                     onClick={() => setField('jobType', t)}
                                     style={{
                                       padding: '0.45rem 1rem',
@@ -615,7 +619,7 @@ export default function ContactSection() {
                                       fontWeight: 500,
                                       background: active ? 'var(--accent-lime)' : 'transparent',
                                       border: `1.5px solid ${active ? 'var(--accent-lime)' : 'rgba(255, 255, 255, 0.08)'}`,
-                                      color: active ? '#000000' : 'rgba(255, 255, 255, 0.6)',
+                                      color: active ? '#000000' : 'rgba(255, 255, 255, 0.75)',
                                       cursor: 'pointer',
                                       transition: 'all 0.2s ease',
                                     }}
@@ -646,8 +650,8 @@ export default function ContactSection() {
                               onBlur={handleBlur}
                             />
                           </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                            <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          <div role="group" aria-labelledby="budget-group-label" style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                            <span id="budget-group-label" style={labelStyle}>
                               Project Budget (USD)
                             </span>
                             <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
@@ -657,6 +661,8 @@ export default function ContactSection() {
                                   <button
                                     key={b}
                                     type="button"
+                                    aria-pressed={active}
+                                    aria-label={`Project budget: ${b}`}
                                     onClick={() => setField('budget', b)}
                                     style={{
                                       padding: '0.45rem 1rem',
@@ -666,7 +672,7 @@ export default function ContactSection() {
                                       fontWeight: 500,
                                       background: active ? 'var(--accent-lime)' : 'transparent',
                                       border: `1.5px solid ${active ? 'var(--accent-lime)' : 'rgba(255, 255, 255, 0.08)'}`,
-                                      color: active ? '#000000' : 'rgba(255, 255, 255, 0.6)',
+                                      color: active ? '#000000' : 'rgba(255, 255, 255, 0.75)',
                                       cursor: 'pointer',
                                       transition: 'all 0.2s ease',
                                     }}

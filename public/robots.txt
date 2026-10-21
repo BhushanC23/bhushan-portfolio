@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /nexus
+Disallow: /nexus/os
+Disallow: /admin
+
+Sitemap: https://bhushan-portfolio-peach.vercel.app/sitemap.xml
